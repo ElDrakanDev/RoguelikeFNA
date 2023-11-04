@@ -1,0 +1,8 @@
+<!--
+	The main project needs a reference to this project. We use our own instead of the default MonoGame version so we can control
+	where our content gets built since we don't use "Content" but instead use "CompiledContent"
+	<Import Project="../MonoGameContent.targets" />
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	
+</Project>

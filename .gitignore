@@ -1,0 +1,13 @@
+.DS_Store
+.vs
+FNA/
+ImGui.NET/
+fnalibs/
+RoguelikeFNA/bin
+RoguelikeFNA/obj
+RoguelikeFNA/CompiledContent/bin
+RoguelikeFNA/CompiledContent/obj
+.mgstats
+imgui.ini
+imgui_log.txt
+
