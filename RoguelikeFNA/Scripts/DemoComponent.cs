@@ -6,40 +6,22 @@ using System.IO;
 
 namespace RoguelikeFNA
 {
-    [System.Serializable]
-    public class ExampleData : Component
-    {
-        public int Number;
-        public string Text;
-    }
-
     public class DemoComponent : Component
     {
-        public ExampleData exampleData;
-        const string PATH = "./example_data.data";
-
+        HitboxHandler hitboxHandler;
         public override void OnAddedToEntity()
         {
-            Core.GetGlobalManager<ImGuiManager>().RegisterDrawCommand(ImguiDraw);
-            exampleData = Entity.AddComponent<ExampleData>();
+            base.OnAddedToEntity();
+            hitboxHandler = Entity.AddComponent(new HitboxHandler());
+            hitboxHandler.OnCollisionEnter += col => Debug.Log($"Collided with {col}");
+            Core.GetGlobalManager<ImGuiManager>()?.RegisterDrawCommand(ImguiDraw);
         }
 
         void ImguiDraw()
         {
-            if(ImGui.Button("Export data"))
-            {
-                var nson = Nson.ToNson(exampleData, true);
-                using(StreamWriter writer = new StreamWriter(PATH))
-                {
-                    writer.Write(nson);
-                }
-            }
-            if(ImGui.Button("Import data"))
-            {
-                var nson = File.ReadAllText(PATH);
-                exampleData = (ExampleData)Nson.FromNson(nson);
-            }
-
+            if(ImGui.Begin("Hitbox Handler"))
+                if (ImGui.Button("Clear Collisions"))
+                    hitboxHandler.ClearCollisions();
         }
     }
 }

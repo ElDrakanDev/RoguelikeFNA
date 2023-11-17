@@ -8,17 +8,20 @@ namespace RoguelikeFNA
     public class HitboxHandler : Component, IUpdatable
     {
         BoxCollider _collider;
-        public List<HitboxGroup> HitboxFrames = new List<HitboxGroup>();
+        public List<HitboxGroup> HitboxFrames;
         int _activeIndex = 0;
         public int ActiveIndex { get =>  _activeIndex; set { if(value > 0 && value < HitboxFrames.Count) _activeIndex = value;} }
-        HashSet<Collider> _collisions = new HashSet<Collider>();
-        HashSet<Collider> _prevCollisions = new HashSet<Collider>();
+        HashSet<Entity> _collisions = new HashSet<Entity>();
+        HashSet<Entity> _newCollisions = new HashSet<Entity>();
         public int CollidesWithLayers { get => _collider.CollidesWithLayers; set => _collider.CollidesWithLayers = value; }
         public int PhysicsLayer { get => _collider.PhysicsLayer; set => _collider.PhysicsLayer = value; }
-        public event Action<Collider> OnCollisionEnter;
-        public event Action<Collider> OnCollisionStay;
-        public event Action<Collider> OnCollisionExit;
+        public event Action<Entity> OnCollisionEnter;
 
+        public HitboxHandler() : this(new List<HitboxGroup>()) { }
+        public HitboxHandler(List<HitboxGroup> hitboxes)
+        {
+            HitboxFrames = hitboxes;
+        }
 
         public override void OnAddedToEntity()
         {
@@ -30,9 +33,7 @@ namespace RoguelikeFNA
         {
             if(HitboxFrames.Count == 0) return;
 
-            _prevCollisions.Clear();
-            _prevCollisions.UnionWith(_collisions);
-            _collisions.Clear();
+            _newCollisions.Clear();
 
             var rect = HitboxFrames[_activeIndex].Bounds;
             rect.Location = rect.Location + Transform.Position;
@@ -51,32 +52,26 @@ namespace RoguelikeFNA
                 _collider.LocalOffset = hitbox.Location + rect.Size * 0.5f;
                 _collider.SetSize(rect.Width, rect.Height);
 
-                bool anycollisions = false;
-
                 foreach(var neighbor in neighbors)
                 {
-                    if(_collisions.Contains(neighbor) is false && _collider.Overlaps(neighbor))
+                    if(_collisions.Contains(neighbor.Entity) is false && _collider.Overlaps(neighbor))
                     {
-                        anycollisions = true;
-                        _collisions.Add(neighbor);
+                        _collisions.Add(neighbor.Entity);
+                        _newCollisions.Add(neighbor.Entity);
                     }
                 }
 
-                Debug.DrawHollowRect(rect, anycollisions ? Color.Yellow : Color.White);    
+                Debug.DrawHollowRect(rect, Color.Yellow);    
             }
 
             // Events
-            foreach(var collision in _collisions)
+            foreach (var collision in _newCollisions)
             {
-                if(_prevCollisions.Contains(collision))
-                    OnCollisionStay?.Invoke(collision);
-                else
-                    OnCollisionEnter?.Invoke(collision);
+                OnCollisionEnter?.Invoke(collision);
             }
-            foreach(var collision in _prevCollisions)
-                if(_collisions.Contains(collision) is false)
-                    OnCollisionExit?.Invoke(collision);
         }
+
+        public void ClearCollisions() => _collisions.Clear();
     }
 }
 
