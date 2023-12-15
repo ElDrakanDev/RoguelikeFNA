@@ -19,7 +19,8 @@ namespace Nez
 		{
 			public const string Directory = @".\Content\Atlases";
 		
-			// Ignored file '.keep';
+			public const string Out_atlas = @".\Content\Atlases\out.atlas";
+			public const string Out_png = @".\Content\Atlases\out.png";
 		}
 
 		public static class Audio
@@ -79,6 +80,13 @@ namespace Nez
 			{
 				public const string Directory = @".\Content\Tilemaps\test";
 			
+				public static class Atlas
+				{
+					public const string Directory = @".\Content\Tilemaps\test\atlas";
+				
+					public const string Cavernas_by_Adam_Saltsman_png = @".\Content\Tilemaps\test\atlas\Cavernas_by_Adam_Saltsman.png";
+				}
+
 				public static class Tiled
 				{
 					public const string Directory = @".\Content\Tilemaps\test\tiled";

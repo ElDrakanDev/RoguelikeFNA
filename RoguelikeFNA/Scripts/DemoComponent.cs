@@ -1,27 +1,40 @@
-﻿using ImGuiNET;
+﻿using Microsoft.Xna.Framework.Input;
 using Nez;
-using Nez.ImGuiTools;
-using Nez.Persistence;
-using System.IO;
+using Nez.Sprites;
 
 namespace RoguelikeFNA
 {
-    public class DemoComponent : Component
+    public class DemoComponent : Component, IUpdatable
     {
         HitboxHandler hitboxHandler;
+        SpriteAnimator spriteAnimator;
+        const string ATTACK_ANIM1 = "zero_attack1";
+        const string IDLE_ANIM = "zero_idle1";
+
         public override void OnAddedToEntity()
         {
-            base.OnAddedToEntity();
+            var atlas = Entity.Scene.Content.LoadSpriteAtlas(ContentPath.Atlases.Out_atlas);
+
+            spriteAnimator = Entity.SetLocalScale(2)
+                .AddComponent(new SpriteAnimator())
+                    .AddAnimationsFromAtlas(atlas);
+            spriteAnimator.Play("zero_attack1");
             hitboxHandler = Entity.AddComponent(new HitboxHandler());
             hitboxHandler.OnCollisionEnter += col => Debug.Log($"Collided with {col}");
-            Core.GetGlobalManager<ImGuiManager>()?.RegisterDrawCommand(ImguiDraw);
         }
 
-        void ImguiDraw()
+        public void Update()
         {
-            if(ImGui.Begin("Hitbox Handler"))
-                if (ImGui.Button("Clear Collisions"))
-                    hitboxHandler.ClearCollisions();
+            if (Input.IsKeyPressed(Keys.J))
+            {
+                hitboxHandler.ClearCollisions();
+                spriteAnimator.Play(ATTACK_ANIM1);
+
+            }
+            //else if(spriteAnimator.IsRunning is false && spriteAnimator.CurrentAnimationName != IDLE_ANIM)
+            //{
+            //    spriteAnimator.Play(IDLE_ANIM);
+            //}
         }
     }
 }
