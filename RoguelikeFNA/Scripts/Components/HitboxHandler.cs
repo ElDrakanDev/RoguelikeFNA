@@ -8,11 +8,14 @@ namespace RoguelikeFNA
 {
     public class HitboxHandler : Component, IUpdatable
     {
+        /// <summary>
+        /// The animator this handler's hitboxes will be bound to
+        /// </summary>
+        public SpriteAnimator Animator;
         BoxCollider _collider;
         [InspectorSerializable] public Dictionary<string, List<HitboxGroup>> AnimationsHitboxes;
-        SpriteAnimator _animator;
-        public string AnimationName => _animator.CurrentAnimationName;
-        public int SpriteIndex => _animator.CurrentFrame;
+        public string AnimationName => Animator.CurrentAnimationName;
+        public int SpriteIndex => Animator.CurrentFrame;
         HashSet<Entity> _collisions = new HashSet<Entity>();
         HashSet<Entity> _newCollisions = new HashSet<Entity>();
         public int CollidesWithLayers { get => _collider.CollidesWithLayers; set => _collider.CollidesWithLayers = value; }
@@ -29,12 +32,12 @@ namespace RoguelikeFNA
         {
             _collider = new BoxCollider(0, 0) { IsTrigger = true};
             Entity.AddComponent(_collider);
-            _animator = Entity.GetComponent<SpriteAnimator>();
+            Animator = Animator ?? Entity.GetComponent<SpriteAnimator>();
         }
 
         public void Update()
         {
-            if( _animator is null
+            if( Animator is null
                 || AnimationsHitboxes.Count == 0
                 || AnimationsHitboxes.ContainsKey(AnimationName) is false
                 || SpriteIndex >= AnimationsHitboxes[AnimationName].Count
@@ -49,8 +52,8 @@ namespace RoguelikeFNA
             _collider.LocalOffset = rect.Location + rect.Size * 0.5f;
             _collider.SetSize(rect.Width, rect.Height);
 
-            rect.Location = rect.Location * _collider.Entity.LocalScale + Transform.Position;
-            rect.Size = rect.Size * _collider.Entity.LocalScale;
+            rect.Location = rect.Location * _collider.Entity.Scale + Transform.Position;
+            rect.Size = rect.Size * _collider.Entity.Scale;
             var neighbors = Physics.BoxcastBroadphaseExcludingSelf(_collider, ref rect, CollidesWithLayers);
             Debug.DrawHollowRect(rect, Color.Green);
 
