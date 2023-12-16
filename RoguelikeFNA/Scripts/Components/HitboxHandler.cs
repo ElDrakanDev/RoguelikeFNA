@@ -2,6 +2,7 @@ using Nez;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System;
+using Nez.Sprites;
 
 namespace RoguelikeFNA
 {
@@ -9,14 +10,9 @@ namespace RoguelikeFNA
     {
         BoxCollider _collider;
         [InspectorSerializable] public Dictionary<string, List<HitboxGroup>> AnimationsHitboxes;
-        string _activeAnimation;
-        public string ActiveAnimation
-        { 
-            get => _activeAnimation;
-            set { if (AnimationsHitboxes.ContainsKey(value)) { _activeAnimation = value; } } 
-        }
-        int _activeIndex = 0;
-        public int ActiveIndex { get =>  _activeIndex; set { if(value > 0 && value < AnimationsHitboxes.Count) _activeIndex = value;} }
+        SpriteAnimator _animator;
+        public string AnimationName => _animator.CurrentAnimationName;
+        public int SpriteIndex => _animator.CurrentFrame;
         HashSet<Entity> _collisions = new HashSet<Entity>();
         HashSet<Entity> _newCollisions = new HashSet<Entity>();
         public int CollidesWithLayers { get => _collider.CollidesWithLayers; set => _collider.CollidesWithLayers = value; }
@@ -33,20 +29,21 @@ namespace RoguelikeFNA
         {
             _collider = new BoxCollider(0, 0) { IsTrigger = true};
             Entity.AddComponent(_collider);
+            _animator = Entity.GetComponent<SpriteAnimator>();
         }
 
         public void Update()
         {
-            if(AnimationsHitboxes.Count == 0
-                || ActiveAnimation is null
-                || AnimationsHitboxes.ContainsKey(ActiveAnimation) is false
-                || ActiveIndex >= AnimationsHitboxes[ActiveAnimation].Count
+            if( _animator is null
+                || AnimationsHitboxes.Count == 0
+                || AnimationsHitboxes.ContainsKey(AnimationName) is false
+                || SpriteIndex >= AnimationsHitboxes[AnimationName].Count
             )
                 return;
 
             _newCollisions.Clear();
 
-            var hitboxGroup = AnimationsHitboxes[ActiveAnimation][ActiveIndex];
+            var hitboxGroup = AnimationsHitboxes[AnimationName][SpriteIndex];
             var rect = hitboxGroup.Bounds;
 
             _collider.LocalOffset = rect.Location + rect.Size * 0.5f;

@@ -37,6 +37,13 @@ namespace Nez
 			// Ignored file '.keep';
 		}
 
+		public static class Hitboxes
+		{
+			public const string Directory = @".\Content\Hitboxes";
+		
+			public const string Zero_hitboxes_json = @".\Content\Hitboxes\zero_hitboxes.json";
+		}
+
 		public static class Materials
 		{
 			public const string Directory = @".\Content\Materials";

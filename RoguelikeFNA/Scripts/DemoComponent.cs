@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using Nez;
 using Nez.Sprites;
+using System.Collections.Generic;
 
 namespace RoguelikeFNA
 {
@@ -20,6 +21,8 @@ namespace RoguelikeFNA
                     .AddAnimationsFromAtlas(atlas);
             spriteAnimator.Play("zero_attack1");
             hitboxHandler = Entity.AddComponent(new HitboxHandler());
+            hitboxHandler.AnimationsHitboxes = Entity.Scene.Content.LoadJson<Dictionary<string, List<HitboxGroup>>>(
+                ContentPath.Hitboxes.Zero_hitboxes_json);
             hitboxHandler.OnCollisionEnter += col => Debug.Log($"Collided with {col}");
         }
 
