@@ -11,11 +11,16 @@ namespace RoguelikeFNA
         {
             base.Initialize();
 
-            //CreateEntity("test-tilemap")
-            //    .SetScale(3)
-            //    .AddComponent(new TiledMapRenderer(Content.LoadTiledMap(ContentPath.Tilemaps.Test.Tiled.AutoLayer_tmx), "IntGrid_layer"));
+            var tmxMap = CreateEntity("test-tilemap")
+                .AddComponent(new TiledMapRenderer(
+                    Content.LoadTiledMap(ContentPath.Tilemaps.Test.Tiled.AutoLayer_tmx), "IntGrid_layer", false)
+                );
 
-            CreateEntity("demo-entity").AddComponent(new DemoComponent());
+            CreateEntity("demo-entity").AddComponent(new DemoComponent(tmxMap));
+
+            var cam = FindEntity("camera");
+            cam.GetComponent<Camera>().SetZoom(1);
+            cam.AddComponent(new FollowCamera(FindEntity("demo-entity")));
         }
     }
 }

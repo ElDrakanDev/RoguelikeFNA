@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Input;
 using Nez;
 using Nez.Sprites;
+using Nez.Tiled;
 using System.Collections.Generic;
 
 namespace RoguelikeFNA
@@ -12,18 +13,40 @@ namespace RoguelikeFNA
         SpriteAnimator animator;
         bool _isAttacking = false;
         bool _facingRight;
-        [Inspectable] float _speed = 300;
+
+        [Inspectable] float _speed = 200;
+        [Inspectable] float _gravity = 20;
+        [Inspectable] float _jumpForce = 8;
+        [Inspectable] Vector2 _velocity;
+        Vector2 _prevVel;
+
         const string ATTACK_ANIM1 = "zero_attack1";
         const string IDLE_ANIM = "zero_idle";
         const string WALK_ANIM = "zero_walk";
+        const string JUMP_START_ANIM = "zero_jump_start";
+        const string JUMP_LOOP_ANIM = "zero_jump_loop";
+        const string FALL_START_ANIM = "zero_fall_start";
+        const string FALL_LOOP_ANIM = "zero_fall_loop";
+
         VirtualAxis _moveInput;
+        TiledMapMover _mover;
+        TiledMapMover.CollisionState _collisionState = new TiledMapMover.CollisionState();
+        BoxCollider _collider;
+
+        public DemoComponent(TiledMapRenderer tmxmap)
+        {
+            _mover = new TiledMapMover(tmxmap.CollisionLayer);
+        }
 
         public override void OnAddedToEntity()
         {
-            Entity.Transform.SetPosition(Vector2.One * 200);
             var atlas = Entity.Scene.Content.LoadSpriteAtlas(ContentPath.Atlases.Out_atlas);
             _facingRight = Entity.Scale.X >= 0;
-            Entity.Scale *= 4;
+
+            Entity.AddComponent(_mover);
+            _collider = Entity.AddComponent(new BoxCollider(new Rectangle(-12, -20, 33, 40)){
+                PhysicsLayer = (int)CollisionLayer.Player,
+                CollidesWithLayers = (int)CollisionLayer.Ground });
 
             var child = new Entity();
             child.SetParent(Entity);
@@ -34,11 +57,15 @@ namespace RoguelikeFNA
             animator.UpdateOrder = -1;
             Entity.Scene.AddEntity(child);
             animator.OnAnimationCompletedEvent += OnAnimationComplete;
+
             hitboxHandler = child.AddComponent(new HitboxHandler());
+            hitboxHandler.PhysicsLayer = (int)CollisionLayer.None;
+            hitboxHandler.CollidesWithLayers = (int)CollisionLayer.Enemy;
             hitboxHandler.AnimationsHitboxes = Entity.Scene.Content.LoadJson<Dictionary<string, List<HitboxGroup>>>(
                 ContentPath.Hitboxes.Zero_hitboxes_json);
             hitboxHandler.OnCollisionEnter += col => Debug.Log($"Collided with {col}");
             hitboxHandler.Animator = animator;
+
             _moveInput = new VirtualAxis(
                 new VirtualAxis.Node[]{new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.CancelOut, Keys.A, Keys.D)}
             );
@@ -46,40 +73,88 @@ namespace RoguelikeFNA
 
         public void Update()
         {
-            var xInput = _moveInput.Value;
-
-            if (Input.IsKeyPressed(Keys.J) && _isAttacking is false)
-            {
-                hitboxHandler.ClearCollisions();
-                animator.Play(ATTACK_ANIM1, SpriteAnimator.LoopMode.ClampForever);
-                _isAttacking = true;
-                animator.Speed = 2;
-
-            }
-            else if (_isAttacking is false && xInput == 0 && animator.IsAnimationActive(IDLE_ANIM) is false)
-            {
-                animator.Play(IDLE_ANIM);
-            }
-            else if(_isAttacking is false && xInput != 0)
-            {
-                if(animator.IsAnimationActive(WALK_ANIM) is false)
-                    animator.Play(WALK_ANIM);
-                // Facing side logic
-                Transform.Position += Time.DeltaTime * _speed * xInput * Vector2.UnitX;
-                if((xInput >= 0 && _facingRight is false) || (xInput < 0 && _facingRight is true))
-                {
-                    _facingRight = !_facingRight;
-                    Entity.Scale *= new Vector2(-1, 1);
-                }
-            }
+            HandleStates();
         }
 
         void OnAnimationComplete(string anim)
         {
             if (anim == ATTACK_ANIM1)
-            {
                 _isAttacking = false;
+        }
+
+        void HandleStates()
+        {
+            var xInput = _moveInput.Value;
+            _prevVel = _velocity;
+            _velocity.X = 0;
+
+            if (_collisionState.Below is false)
+                _velocity.Y += _gravity * Time.DeltaTime;
+            else
+            {
+                _velocity.Y = 0;
+                if (_isAttacking is false && Input.IsKeyPressed(Keys.Space))
+                    _velocity.Y = -_jumpForce;
+            }
+
+            // Attack1
+            if (Input.IsKeyPressed(Keys.J) && _isAttacking is false && _collisionState.Below)
+            {
+                hitboxHandler.ClearCollisions();
+                animator.Play(ATTACK_ANIM1, SpriteAnimator.LoopMode.ClampForever);
+                _isAttacking = true;
+                animator.Speed = 2;
+            }
+            // Jump
+            else if(_isAttacking is false && _velocity.Y < 0)
+            {
+                _velocity.X = _speed * xInput * Time.DeltaTime;
+                CheckFacingSide(xInput);
+                animator.Speed = 2;
+
+                if (_prevVel.Y >= 0 && animator.IsAnimationActive(JUMP_START_ANIM) is false)
+                    animator.Play(JUMP_START_ANIM, SpriteAnimator.LoopMode.ClampForever);
+                else if (animator.IsAnimationActive(JUMP_START_ANIM) is true && animator.IsRunning is false)
+                    animator.Play(JUMP_LOOP_ANIM);
+            }
+            // Fall
+            else if (_isAttacking is false && _velocity.Y > 0)
+            {
+                _velocity.X = _speed * xInput * Time.DeltaTime;
+                CheckFacingSide(xInput);
+                animator.Speed = 2;
+
+                if (_prevVel.Y <= 0 && animator.IsAnimationActive(FALL_START_ANIM) is false)
+                    animator.Play(FALL_START_ANIM, SpriteAnimator.LoopMode.ClampForever);
+                else if (animator.IsAnimationActive(FALL_START_ANIM) is true && animator.IsRunning is false)
+                    animator.Play(FALL_LOOP_ANIM);
+            }
+            // Idle
+            else if (_isAttacking is false && xInput == 0 && animator.IsAnimationActive(IDLE_ANIM) is false && _collisionState.Below)
+            {
+                animator.Play(IDLE_ANIM);
+                animator.Speed = 0.5f;
+            }
+            // Walk
+            else if (_isAttacking is false && xInput != 0 && _collisionState.Below)
+            {
                 animator.Speed = 1;
+                if (animator.IsAnimationActive(WALK_ANIM) is false)
+                    animator.Play(WALK_ANIM);
+
+                _velocity.X = _speed * xInput * Time.DeltaTime;
+                CheckFacingSide(xInput);
+            }
+
+            _mover.Move(_velocity, _collider, _collisionState);
+        }
+
+        void CheckFacingSide(float xInput)
+        {
+            if ((xInput > 0 && _facingRight is false) || (xInput < 0 && _facingRight is true))
+            {
+                _facingRight = !_facingRight;
+                Entity.Scale *= new Vector2(-1, 1);
             }
         }
     }

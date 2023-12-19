@@ -19,64 +19,106 @@ zero_z1standardframes6
 zero_z1standardframes7
 	0,98,80,48
 	0.5,0.5
-zero_idle1
+zero_fall3
 	0,147,80,48
 	0.5,0.5
-zero_idle2
+zero_fall4
 	81,98,80,48
 	0.5,0.5
-zero_idle3
+zero_fall5
+	0,196,80,48
+	0.5,0.5
+zero_fall1
 	81,147,80,48
 	0.5,0.5
-zero_idle4
+zero_fall2
 	162,98,80,48
 	0.5,0.5
-zero_idle5
+zero_idle1
+	81,196,80,48
+	0.5,0.5
+zero_idle2
 	162,147,80,48
 	0.5,0.5
-zero_idle6
+zero_idle3
+	162,196,80,48
+	0.5,0.5
+zero_idle4
 	243,0,80,48
 	0.5,0.5
-zero_walk1
+zero_idle5
 	243,49,80,48
 	0.5,0.5
-zero_walk10
+zero_idle6
 	324,0,80,48
 	0.5,0.5
-zero_walk11
+zero_jump3
 	243,98,80,48
 	0.5,0.5
-zero_walk2
+zero_jump4
 	324,49,80,48
 	0.5,0.5
-zero_walk3
+zero_jump5
 	243,147,80,48
 	0.5,0.5
-zero_walk4
-	405,0,80,48
-	0.5,0.5
-zero_walk5
+zero_jump1
 	324,98,80,48
 	0.5,0.5
-zero_walk6
-	405,49,80,48
+zero_jump2
+	243,196,80,48
 	0.5,0.5
-zero_walk7
+zero_walk1
 	324,147,80,48
 	0.5,0.5
+zero_walk10
+	324,196,80,48
+	0.5,0.5
+zero_walk11
+	0,245,80,48
+	0.5,0.5
+zero_walk2
+	0,294,80,48
+	0.5,0.5
+zero_walk3
+	81,245,80,48
+	0.5,0.5
+zero_walk4
+	81,294,80,48
+	0.5,0.5
+zero_walk5
+	162,245,80,48
+	0.5,0.5
+zero_walk6
+	162,294,80,48
+	0.5,0.5
+zero_walk7
+	243,245,80,48
+	0.5,0.5
 zero_walk8
-	405,98,80,48
+	243,294,80,48
 	0.5,0.5
 zero_walk9
-	405,147,80,48
+	324,245,80,48
 	0.5,0.5
 
 zero_attack1
 	7
 	0,1,2,3,4,5,6
+zero_fall_loop
+	7
+	7,8,9
+zero_fall_start
+	7
+	10,11
 zero_idle
 	7
-	7,8,9,10,11,12
+	12,13,14,15,16,17
+zero_jump_loop
+	7
+	18,19,20
+zero_jump_start
+	7
+	21,22
 zero_walk
 	7
-	13,14,15,16,17,18,19,20,21,22,23
+	23,24,25,26,27,28,29,30,31,32,33

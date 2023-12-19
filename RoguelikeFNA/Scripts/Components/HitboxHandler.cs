@@ -26,11 +26,11 @@ namespace RoguelikeFNA
         public HitboxHandler(Dictionary<string, List<HitboxGroup>> hitboxes)
         {
             AnimationsHitboxes = hitboxes;
+            _collider = new BoxCollider(0, 0) { IsTrigger = true};
         }
 
         public override void OnAddedToEntity()
         {
-            _collider = new BoxCollider(0, 0) { IsTrigger = true};
             Entity.AddComponent(_collider);
             Animator = Animator ?? Entity.GetComponent<SpriteAnimator>();
         }
