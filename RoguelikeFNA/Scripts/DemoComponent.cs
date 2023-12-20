@@ -27,6 +27,7 @@ namespace RoguelikeFNA
         const string JUMP_LOOP_ANIM = "zero_jump_loop";
         const string FALL_START_ANIM = "zero_fall_start";
         const string FALL_LOOP_ANIM = "zero_fall_loop";
+        const string ATTACK_AIR_ANIM = "zero_attack_air";
 
         VirtualAxis _moveInput;
         TiledMapMover _mover;
@@ -78,7 +79,7 @@ namespace RoguelikeFNA
 
         void OnAnimationComplete(string anim)
         {
-            if (anim == ATTACK_ANIM1)
+            if (anim == ATTACK_ANIM1 || anim == ATTACK_AIR_ANIM)
                 _isAttacking = false;
         }
 
@@ -97,13 +98,36 @@ namespace RoguelikeFNA
                     _velocity.Y = -_jumpForce;
             }
 
+            // Attack cancelling
+            if(animator.IsAnimationActive(ATTACK_AIR_ANIM) && _collisionState.Below)
+            {
+                _isAttacking = false;
+            }
+
             // Attack1
             if (Input.IsKeyPressed(Keys.J) && _isAttacking is false && _collisionState.Below)
             {
                 hitboxHandler.ClearCollisions();
                 animator.Play(ATTACK_ANIM1, SpriteAnimator.LoopMode.ClampForever);
                 _isAttacking = true;
-                animator.Speed = 2;
+                animator.Speed = 3;
+            }
+            // Air attack
+            else if(
+                (Input.IsKeyPressed(Keys.J) && _isAttacking is false && _collisionState.Below is false)
+                || (_isAttacking is true && _collisionState.Below is false)
+            )
+            {
+                // If just started
+                if(_isAttacking is false)
+                {
+                    hitboxHandler.ClearCollisions();
+                    _isAttacking = true;
+                    animator.Play(ATTACK_AIR_ANIM, SpriteAnimator.LoopMode.ClampForever);
+                    animator.Speed = 3;
+                }
+                _velocity.X = _speed * xInput * Time.DeltaTime;
+                CheckFacingSide(xInput);
             }
             // Jump
             else if(_isAttacking is false && _velocity.Y < 0)
@@ -126,7 +150,7 @@ namespace RoguelikeFNA
 
                 if (_prevVel.Y <= 0 && animator.IsAnimationActive(FALL_START_ANIM) is false)
                     animator.Play(FALL_START_ANIM, SpriteAnimator.LoopMode.ClampForever);
-                else if (animator.IsAnimationActive(FALL_START_ANIM) is true && animator.IsRunning is false)
+                else if (animator.IsRunning is false) // if other animation is done
                     animator.Play(FALL_LOOP_ANIM);
             }
             // Idle
