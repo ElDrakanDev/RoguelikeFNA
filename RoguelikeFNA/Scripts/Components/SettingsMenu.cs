@@ -151,7 +151,7 @@ namespace RoguelikeFNA
 
         Slider AddSlider(Table table, string label, float startValue = 0)
         {
-            var newSlider = new Slider(0, 100, 1, false, _sliderStyle);
+            var newSlider = new Slider(0, 1, 0.05f, false, _sliderStyle);
             newSlider.Value = startValue;
             var row = new Table()
                 .PadBottom(20);

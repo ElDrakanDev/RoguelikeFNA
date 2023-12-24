@@ -68,9 +68,9 @@ namespace RoguelikeFNA
         {
             Config = new GameConfig();
             Config.Fullscreen = false;
-            Config.MasterVolume = 100;
-            Config.BackgroundMusicVolume = 100;
-            Config.SoundEffectVolume = 100;
+            Config.MasterVolume = 1;
+            Config.BackgroundMusicVolume = 1;
+            Config.SoundEffectVolume = 1;
             Config.ScreenResolution = ScreenResolution.Current();
             Config.Language = "english";
 
@@ -84,20 +84,20 @@ namespace RoguelikeFNA
         public bool Fullscreen = false;
         float _masterVolume;
         public float MasterVolume {
-            get => Mathf.Clamp(_masterVolume, 0, 100);
-            set => _masterVolume = Mathf.Clamp(value, 0, 100); 
+            get => Mathf.Clamp(_masterVolume, 0, 1);
+            set => _masterVolume = Mathf.Clamp(value, 0, 1); 
         }
         float _backgroundMusicVolume;
         public float BackgroundMusicVolume
         {
-            get => Mathf.Clamp(_backgroundMusicVolume, 0, 100);
-            set => _backgroundMusicVolume = Mathf.Clamp(value, 0, 100);
+            get => Mathf.Clamp(_backgroundMusicVolume, 0, 1);
+            set => _backgroundMusicVolume = Mathf.Clamp(value, 0, 1);
         }
         float _soundEffectVolume;
         public float SoundEffectVolume
         {
-            get => Mathf.Clamp(_soundEffectVolume, 0, 100);
-            set => _soundEffectVolume = Mathf.Clamp(value, 0, 100);
+            get => Mathf.Clamp(_soundEffectVolume, 0, 1);
+            set => _soundEffectVolume = Mathf.Clamp(value, 0, 1);
         }
         public ScreenResolution ScreenResolution;
         public string Language;

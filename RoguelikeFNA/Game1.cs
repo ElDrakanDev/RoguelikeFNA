@@ -17,6 +17,7 @@ namespace RoguelikeFNA
             Scene = new MainMenuScene();
             Core.RegisterGlobalManager(new ConfigManager());
             Core.RegisterGlobalManager(new TranslationManager());
+            Core.RegisterGlobalManager(new SoundEffectManager());
 
 #if DEBUG
             System.Diagnostics.Debug.Listeners.Add(new System.Diagnostics.TextWriterTraceListener(System.Console.Out));

@@ -28,6 +28,8 @@ namespace Nez
 			public const string Directory = @".\Content\Audio";
 		
 			// Ignored file '.keep';
+			public const string SaberSlash_WAV = @".\Content\Audio\Saber - Slash.WAV";
+			public const string ZeroDash_WAV = @".\Content\Audio\Zero - Dash.WAV";
 		}
 
 		public static class Fonts

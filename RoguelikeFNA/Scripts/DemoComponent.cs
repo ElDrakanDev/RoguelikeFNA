@@ -1,17 +1,21 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Input;
 using Nez;
 using Nez.Sprites;
 using Nez.Tiled;
-using Nez.Timers;
 using System.Collections.Generic;
 
 namespace RoguelikeFNA
 {
     public class DemoComponent : Component, IUpdatable
     {
-        HitboxHandler hitboxHandler;
-        SpriteAnimator animator;
+        SoundEffectManager _sfxManager;
+        SoundEffect _slashSfx;
+        SoundEffect _dashSfx;
+
+        HitboxHandler _hitboxHandler;
+        SpriteAnimator _animator;
         bool _isAttacking = false;
         bool _isDashing => (_collisionState.Below && _dashState && _dashTime > 0) || (!_collisionState.Below && _dashState);
         bool _dashState = false;
@@ -47,8 +51,22 @@ namespace RoguelikeFNA
             _mover = new TiledMapMover(tmxmap.CollisionLayer);
         }
 
+        void Test(InputEvent evt)
+        {
+            
+            var inpEvt = evt;
+            var idx = inpEvt.GamePadIndex;
+        }
+
         public override void OnAddedToEntity()
         {
+            Input.Emitter.AddObserver(InputEventType.GamePadConnected, Test);
+            Input.Emitter.AddObserver(InputEventType.GamePadDisconnected, Test);
+
+            _sfxManager = Core.GetGlobalManager<SoundEffectManager>();
+            _slashSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.SaberSlash_WAV);
+            _dashSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.ZeroDash_WAV);
+
             var atlas = Entity.Scene.Content.LoadSpriteAtlas(ContentPath.Atlases.Out_atlas);
             _facingRight = Entity.Scale.X >= 0;
 
@@ -59,26 +77,26 @@ namespace RoguelikeFNA
 
             var child = new Entity();
             child.SetParent(Entity);
-            animator = child.AddComponent(new SpriteAnimator())
+            _animator = child.AddComponent(new SpriteAnimator())
                     .AddAnimationsFromAtlas(atlas);
-            animator.Play(IDLE_ANIM);
+            _animator.Play(IDLE_ANIM);
             child.LocalPosition = new Vector2(20, 0);
-            animator.UpdateOrder = -1;
+            _animator.UpdateOrder = -1;
             Entity.Scene.AddEntity(child);
-            animator.OnAnimationCompletedEvent += OnAnimationComplete;
+            _animator.OnAnimationCompletedEvent += OnAnimationComplete;
 
             _spriteTrail = child.AddComponent(new SpriteTrail());
             _spriteTrail.SetInitialColor(new Color(0.5f, 0, 0, 0.5f)).SetFadeToColor(Color.Transparent);
             _spriteTrail.SetFadeDuration(0.2f).SetMaxSpriteInstances(30).SetMinDistanceBetweenInstances(0.1f);
             _spriteTrail.DisableSpriteTrail();
 
-            hitboxHandler = child.AddComponent(new HitboxHandler());
-            hitboxHandler.PhysicsLayer = (int)CollisionLayer.None;
-            hitboxHandler.CollidesWithLayers = (int)CollisionLayer.Enemy;
-            hitboxHandler.AnimationsHitboxes = Entity.Scene.Content.LoadJson<Dictionary<string, List<HitboxGroup>>>(
+            _hitboxHandler = child.AddComponent(new HitboxHandler());
+            _hitboxHandler.PhysicsLayer = (int)CollisionLayer.None;
+            _hitboxHandler.CollidesWithLayers = (int)CollisionLayer.Enemy;
+            _hitboxHandler.AnimationsHitboxes = Entity.Scene.Content.LoadJson<Dictionary<string, List<HitboxGroup>>>(
                 ContentPath.Hitboxes.Zero_hitboxes_json);
-            hitboxHandler.OnCollisionEnter += col => Debug.Log($"Collided with {col}");
-            hitboxHandler.Animator = animator;
+            _hitboxHandler.OnCollisionEnter += col => Debug.Log($"Collided with {col}");
+            _hitboxHandler.Animator = _animator;
 
             _moveInput = new VirtualAxis(
                 new VirtualAxis.Node[]{new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.CancelOut, Keys.A, Keys.D)}
@@ -88,6 +106,8 @@ namespace RoguelikeFNA
         public void Update()
         {
             HandleStates();
+            var gpds = Input.GamePads;
+            gpds.Equals("");
         }
 
         void HandleStates()
@@ -112,6 +132,7 @@ namespace RoguelikeFNA
                 _dashState = true;
                 _isAttacking = false;
                 _spriteTrail.EnableSpriteTrail();
+                _sfxManager.Play(_dashSfx);
             }
             if (Input.IsKeyReleased(Keys.L))
                 _dashTime = 0;
@@ -123,7 +144,7 @@ namespace RoguelikeFNA
             }
 
             // Attack cancelling
-            if(animator.IsAnimationActive(ATTACK_AIR_ANIM) && _collisionState.Below)
+            if(_animator.IsAnimationActive(ATTACK_AIR_ANIM) && _collisionState.Below)
             {
                 _isAttacking = false;
             }
@@ -133,10 +154,11 @@ namespace RoguelikeFNA
             // Attack1
             if (Input.IsKeyPressed(Keys.J) && _isAttacking is false && _isDashing is false && _collisionState.Below)
             {
-                hitboxHandler.ClearCollisions();
-                animator.Play(ATTACK_ANIM1, SpriteAnimator.LoopMode.ClampForever);
+                _hitboxHandler.ClearCollisions();
+                _animator.Play(ATTACK_ANIM1, SpriteAnimator.LoopMode.ClampForever);
                 _isAttacking = true;
-                animator.Speed = 3;
+                _animator.Speed = 3;
+                _sfxManager.Play(_slashSfx);
             }
             // Air attack
             else if(
@@ -147,10 +169,11 @@ namespace RoguelikeFNA
                 // If just started
                 if(_isAttacking is false)
                 {
-                    hitboxHandler.ClearCollisions();
+                    _hitboxHandler.ClearCollisions();
                     _isAttacking = true;
-                    animator.Play(ATTACK_AIR_ANIM, SpriteAnimator.LoopMode.ClampForever);
-                    animator.Speed = 3;
+                    _animator.Play(ATTACK_AIR_ANIM, SpriteAnimator.LoopMode.ClampForever);
+                    _animator.Speed = 3;
+                    _sfxManager.Play(_slashSfx);
                 }
                 _velocity.X = speed * xInput * Time.DeltaTime;
                 CheckFacingSide(xInput);
@@ -160,31 +183,31 @@ namespace RoguelikeFNA
             {
                 _velocity.X = speed * xInput * Time.DeltaTime;
                 CheckFacingSide(xInput);
-                animator.Speed = 2;
+                _animator.Speed = 2;
 
-                if (_prevVel.Y >= 0 && animator.IsAnimationActive(JUMP_START_ANIM) is false)
-                    animator.Play(JUMP_START_ANIM, SpriteAnimator.LoopMode.ClampForever);
-                else if (animator.IsAnimationActive(JUMP_START_ANIM) is true && animator.IsRunning is false)
-                    animator.Play(JUMP_LOOP_ANIM);
+                if (_prevVel.Y >= 0 && _animator.IsAnimationActive(JUMP_START_ANIM) is false)
+                    _animator.Play(JUMP_START_ANIM, SpriteAnimator.LoopMode.ClampForever);
+                else if (_animator.IsAnimationActive(JUMP_START_ANIM) is true && _animator.IsRunning is false)
+                    _animator.Play(JUMP_LOOP_ANIM);
             }
             // Fall
             else if (_isAttacking is false && _velocity.Y > 0 && _collisionState.Below is false)
             {
                 _velocity.X = speed * xInput * Time.DeltaTime;
                 CheckFacingSide(xInput);
-                animator.Speed = 2;
+                _animator.Speed = 2;
 
-                if (_prevVel.Y <= 0 && animator.IsAnimationActive(FALL_START_ANIM) is false)
-                    animator.Play(FALL_START_ANIM, SpriteAnimator.LoopMode.ClampForever);
-                else if (animator.IsRunning is false) // if other animation is done
-                    animator.Play(FALL_LOOP_ANIM);
+                if (_prevVel.Y <= 0 && _animator.IsAnimationActive(FALL_START_ANIM) is false)
+                    _animator.Play(FALL_START_ANIM, SpriteAnimator.LoopMode.ClampForever);
+                else if (_animator.IsRunning is false) // if other animation is done
+                    _animator.Play(FALL_LOOP_ANIM);
             }
             // Dash
             else if(_isDashing && _collisionState.Below)
             {
-                if (animator.IsAnimationActive(DASH_ANIM) is false)
-                    animator.Play(DASH_ANIM);
-                animator.Speed = 2;
+                if (_animator.IsAnimationActive(DASH_ANIM) is false)
+                    _animator.Play(DASH_ANIM);
+                _animator.Speed = 2;
                 CheckFacingSide(xInput);
                 int side = _facingRight ? 1 : -1;
                 _velocity.X = speed * side * Time.DeltaTime;
@@ -192,18 +215,18 @@ namespace RoguelikeFNA
             // Idle
             else if (
                 _isAttacking is false && _isDashing is false
-                && xInput == 0 && animator.IsAnimationActive(IDLE_ANIM) is false && _collisionState.Below
+                && xInput == 0 && _animator.IsAnimationActive(IDLE_ANIM) is false && _collisionState.Below
             )
             {
-                animator.Play(IDLE_ANIM);
-                animator.Speed = 0.5f;
+                _animator.Play(IDLE_ANIM);
+                _animator.Speed = 0.5f;
             }
             // Walk
             else if (_isAttacking is false && xInput != 0 && _collisionState.Below)
             {
-                animator.Speed = 1;
-                if (animator.IsAnimationActive(WALK_ANIM) is false)
-                    animator.Play(WALK_ANIM);
+                _animator.Speed = 1;
+                if (_animator.IsAnimationActive(WALK_ANIM) is false)
+                    _animator.Play(WALK_ANIM);
 
                 _velocity.X = speed * xInput * Time.DeltaTime;
                 CheckFacingSide(xInput);
