@@ -13,10 +13,11 @@ namespace RoguelikeFNA
 
             var tmxMap = CreateEntity("test-tilemap")
                 .AddComponent(new TiledMapRenderer(
-                    Content.LoadTiledMap(ContentPath.Tilemaps.Test.Tiled.AutoLayer_tmx), "IntGrid_layer", false)
+                    Content.LoadTiledMap(ContentPath.Tilemaps.Mosaic.Tiled.Mosaic_demo_tmx), "Walls_1", false)
+                { RenderLayer = 1}
                 );
 
-            CreateEntity("demo-entity").AddComponent(new DemoComponent(tmxMap));
+            CreateEntity("demo-entity").SetLocalPosition(new Vector2(200, 200)).AddComponent(new DemoComponent(tmxMap));
 
             var cam = FindEntity("camera");
             cam.GetComponent<Camera>().SetZoom(1);

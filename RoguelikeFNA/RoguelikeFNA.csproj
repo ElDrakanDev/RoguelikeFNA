@@ -78,6 +78,10 @@
         </Content>
     </ItemGroup>
     <ItemGroup>
+      <None Remove="Content\Tilemaps\mosaic\tiled\Inca_back2_by_Kronbits.png" />
+      <None Remove="Content\Tilemaps\mosaic\tiled\Inca_front_by_Kronbits-extended.png" />
+    </ItemGroup>
+    <ItemGroup>
       <PackageReference Include="FastExcel" Version="3.0.13" />
     </ItemGroup>
     <ItemGroup>

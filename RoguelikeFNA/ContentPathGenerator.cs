@@ -30,6 +30,7 @@ namespace Nez
 			// Ignored file '.keep';
 			public const string SaberSlash_WAV = @".\Content\Audio\Saber - Slash.WAV";
 			public const string ZeroDash_WAV = @".\Content\Audio\Zero - Dash.WAV";
+			public const string ZeroWalkJump_WAV = @".\Content\Audio\Zero - Walk-Jump.WAV";
 		}
 
 		public static class Fonts
@@ -85,6 +86,21 @@ namespace Nez
 		{
 			public const string Directory = @".\Content\Tilemaps";
 		
+			public static class Mosaic
+			{
+				public const string Directory = @".\Content\Tilemaps\mosaic";
+			
+				public static class Tiled
+				{
+					public const string Directory = @".\Content\Tilemaps\mosaic\tiled";
+				
+					public const string Mosaic_world = @".\Content\Tilemaps\mosaic\tiled\mosaic.world";
+					public const string Mosaic_demo_tmx = @".\Content\Tilemaps\mosaic\tiled\Mosaic_demo.tmx";
+					public const string Wallsintgrid_png = @".\Content\Tilemaps\mosaic\tiled\Walls.intgrid.png";
+				}
+
+			}
+
 			public static class Test
 			{
 				public const string Directory = @".\Content\Tilemaps\test";
@@ -108,6 +124,7 @@ namespace Nez
 			}
 
 			// Ignored file '.keep';
+			public const string Mosaic_ldtk = @".\Content\Tilemaps\mosaic.ldtk";
 			public const string Test_ldtk = @".\Content\Tilemaps\test.ldtk";
 		}
 

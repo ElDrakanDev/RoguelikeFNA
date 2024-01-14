@@ -5,6 +5,7 @@ using Nez;
 using Nez.Sprites;
 using Nez.Tiled;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RoguelikeFNA
 {
@@ -13,6 +14,7 @@ namespace RoguelikeFNA
         SoundEffectManager _sfxManager;
         SoundEffect _slashSfx;
         SoundEffect _dashSfx;
+        SoundEffect _jumpSfx;
 
         HitboxHandler _hitboxHandler;
         SpriteAnimator _animator;
@@ -40,7 +42,8 @@ namespace RoguelikeFNA
         const string ATTACK_AIR_ANIM = "zero_attack_air";
         const string DASH_ANIM = "zero_dash";
 
-        VirtualAxis _moveInput;
+        PlayerInput _input;
+
         TiledMapMover _mover;
         TiledMapMover.CollisionState _collisionState = new TiledMapMover.CollisionState();
         BoxCollider _collider;
@@ -52,8 +55,7 @@ namespace RoguelikeFNA
         }
 
         void Test(InputEvent evt)
-        {
-            
+        {  
             var inpEvt = evt;
             var idx = inpEvt.GamePadIndex;
         }
@@ -66,6 +68,7 @@ namespace RoguelikeFNA
             _sfxManager = Core.GetGlobalManager<SoundEffectManager>();
             _slashSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.SaberSlash_WAV);
             _dashSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.ZeroDash_WAV);
+            _jumpSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.ZeroWalkJump_WAV);
 
             var atlas = Entity.Scene.Content.LoadSpriteAtlas(ContentPath.Atlases.Out_atlas);
             _facingRight = Entity.Scale.X >= 0;
@@ -98,35 +101,44 @@ namespace RoguelikeFNA
             _hitboxHandler.OnCollisionEnter += col => Debug.Log($"Collided with {col}");
             _hitboxHandler.Animator = _animator;
 
-            _moveInput = new VirtualAxis(
-                new VirtualAxis.Node[]{new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.CancelOut, Keys.A, Keys.D)}
-            );
+            _input = new PlayerInput();
         }
 
         public void Update()
         {
             HandleStates();
             var gpds = Input.GamePads;
+            var gpd = gpds.ElementAtOrDefault(0);
+            if (gpd != null)
+            {
+                var btn = gpd.GetFirstPressedButton();
+
+            }
             gpds.Equals("");
         }
 
         void HandleStates()
         {
-            var xInput = _moveInput.Value;
+            var xInput = _input.Horizontal;
             _prevVel = _velocity;
             _velocity.X = 0;
             _dashTime -= Time.DeltaTime;
 
+            if (_collisionState.Above is true && _velocity.Y < 0)
+                _velocity.Y = 0;
             if (_collisionState.Below is false)
                 _velocity.Y += _gravity * Time.DeltaTime;
             else
             {
-                _velocity.Y = 0.01f;
-                if (_isAttacking is false && Input.IsKeyPressed(Keys.Space))
+                _velocity.Y = 0;
+                if (_isAttacking is false && _input.Jump.IsPressed)
+                {
                     _velocity.Y = -_jumpForce;
+                    _sfxManager.Play(_jumpSfx);
+                }
             }
 
-            if(_collisionState.Below && Input.IsKeyPressed(Keys.L))
+            if(_collisionState.Below && _input.Special.IsPressed)
             {
                 _dashTime = _dashDuration;
                 _dashState = true;
@@ -134,7 +146,7 @@ namespace RoguelikeFNA
                 _spriteTrail.EnableSpriteTrail();
                 _sfxManager.Play(_dashSfx);
             }
-            if (Input.IsKeyReleased(Keys.L))
+            if (_input.Special.IsReleased)
                 _dashTime = 0;
             if (_isDashing && _collisionState.BecameGroundedThisFrame || _collisionState.Below && _dashTime <= 0)
             {
@@ -152,7 +164,7 @@ namespace RoguelikeFNA
             float speed = _isDashing ? _dashSpeed : _speed;
 
             // Attack1
-            if (Input.IsKeyPressed(Keys.J) && _isAttacking is false && _isDashing is false && _collisionState.Below)
+            if (_input.Attack.IsPressed && _isAttacking is false && _isDashing is false && _collisionState.Below)
             {
                 _hitboxHandler.ClearCollisions();
                 _animator.Play(ATTACK_ANIM1, SpriteAnimator.LoopMode.ClampForever);
@@ -162,7 +174,7 @@ namespace RoguelikeFNA
             }
             // Air attack
             else if(
-                (Input.IsKeyPressed(Keys.J) && _isAttacking is false && _collisionState.Below is false)
+                (_input.Attack.IsPressed && _isAttacking is false && _collisionState.Below is false)
                 || (_isAttacking is true && _collisionState.Below is false)
             )
             {
