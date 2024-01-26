@@ -78,6 +78,9 @@
         </Content>
     </ItemGroup>
     <ItemGroup>
+      <Content Remove="Content\Hitboxes\zero_hitboxes.json" />
+    </ItemGroup>
+    <ItemGroup>
       <None Remove="Content\Tilemaps\mosaic\tiled\Inca_back2_by_Kronbits.png" />
       <None Remove="Content\Tilemaps\mosaic\tiled\Inca_front_by_Kronbits-extended.png" />
     </ItemGroup>
@@ -102,6 +105,9 @@
       <None Update="ContentPathGenerator.tt">
         <Generator>TextTemplatingFileGenerator</Generator>
         <LastGenOutput>ContentPathGenerator.cs</LastGenOutput>
+      </None>
+      <None Update="Content\Hitboxes\zero_hitboxes.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>
 </Project>

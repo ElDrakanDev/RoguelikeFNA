@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Input;
 using Nez;
 using Nez.Sprites;
 using Nez.Tiled;
@@ -49,22 +48,15 @@ namespace RoguelikeFNA
         BoxCollider _collider;
         SpriteTrail _spriteTrail;
 
+        EntityStats _stats;
+
         public DemoComponent(TiledMapRenderer tmxmap)
         {
             _mover = new TiledMapMover(tmxmap.CollisionLayer);
         }
 
-        void Test(InputEvent evt)
-        {  
-            var inpEvt = evt;
-            var idx = inpEvt.GamePadIndex;
-        }
-
         public override void OnAddedToEntity()
         {
-            Input.Emitter.AddObserver(InputEventType.GamePadConnected, Test);
-            Input.Emitter.AddObserver(InputEventType.GamePadDisconnected, Test);
-
             _sfxManager = Core.GetGlobalManager<SoundEffectManager>();
             _slashSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.SaberSlash_WAV);
             _dashSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.ZeroDash_WAV);
@@ -98,23 +90,22 @@ namespace RoguelikeFNA
             _hitboxHandler.CollidesWithLayers = (int)CollisionLayer.Enemy;
             _hitboxHandler.AnimationsHitboxes = Entity.Scene.Content.LoadJson<Dictionary<string, List<HitboxGroup>>>(
                 ContentPath.Hitboxes.Zero_hitboxes_json);
-            _hitboxHandler.OnCollisionEnter += col => Debug.Log($"Collided with {col}");
+            _hitboxHandler.OnCollisionEnter += OnHitOther;
             _hitboxHandler.Animator = _animator;
 
-            _input = new PlayerInput();
+            _input = Core.GetGlobalManager<InputManager>().Players.First();
+
+            _stats = Entity.AddComponent(new EntityStats());
+
+            Entity.Scene.CreateEntity("test-colldider")
+                .SetLocalPosition(Entity.Position)
+                .AddComponent(new BoxCollider(80, 80) { PhysicsLayer = (int)CollisionLayer.Enemy, CollidesWithLayers = (int)CollisionLayer.Player})
+                .AddComponent(new HealthManager(1000));
         }
 
         public void Update()
         {
             HandleStates();
-            var gpds = Input.GamePads;
-            var gpd = gpds.ElementAtOrDefault(0);
-            if (gpd != null)
-            {
-                var btn = gpd.GetFirstPressedButton();
-
-            }
-            gpds.Equals("");
         }
 
         void HandleStates()
@@ -131,7 +122,7 @@ namespace RoguelikeFNA
             else
             {
                 _velocity.Y = 0;
-                if (_isAttacking is false && _input.Jump.IsPressed)
+                if (_isAttacking is false && _input.Attack.IsPressed is false && _input.Jump.IsPressed is true)
                 {
                     _velocity.Y = -_jumpForce;
                     _sfxManager.Play(_jumpSfx);
@@ -159,6 +150,7 @@ namespace RoguelikeFNA
             if(_animator.IsAnimationActive(ATTACK_AIR_ANIM) && _collisionState.Below)
             {
                 _isAttacking = false;
+                _hitboxHandler.ClearCollisions();
             }
 
             float speed = _isDashing ? _dashSpeed : _speed;
@@ -260,6 +252,15 @@ namespace RoguelikeFNA
         {
             if (anim == ATTACK_ANIM1 || anim == ATTACK_AIR_ANIM)
                 _isAttacking = false;
+        }
+
+        void OnHitOther(Entity other)
+        {
+            float baseDamage = 5;
+            if(other.TryGetComponent(out HealthManager health))
+            {
+                health.Hit(new DamageInfo(baseDamage * _stats.Damage, Entity));
+            }
         }
     }
 }

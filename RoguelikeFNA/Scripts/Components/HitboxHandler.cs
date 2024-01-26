@@ -52,12 +52,11 @@ namespace RoguelikeFNA
             _collider.LocalOffset = rect.Location + rect.Size * 0.5f;
             _collider.SetSize(rect.Width, rect.Height);
 
-            rect.Location = rect.Location * _collider.Entity.Scale + Transform.Position;
-            rect.Size = rect.Size * _collider.Entity.Scale;
+            rect = rect.Transformed(Transform);
             var neighbors = Physics.BoxcastBroadphaseExcludingSelf(_collider, ref rect, CollidesWithLayers);
             Debug.DrawHollowRect(rect, Color.Green);
 
-            foreach(var hitbox in hitboxGroup.Hitboxes)
+            foreach (var hitbox in hitboxGroup.Hitboxes)
             {
                 rect = hitbox;
 
@@ -72,9 +71,8 @@ namespace RoguelikeFNA
                         _newCollisions.Add(neighbor.Entity);
                     }
                 }
-                rect.Location = Transform.Position + rect.Location * Entity.Scale;
-                rect.Size = rect.Size * Entity.Scale;
-                Debug.DrawHollowRect(rect, Color.Yellow);    
+                rect = rect.Transformed(Transform);
+                Debug.DrawHollowRect(rect, Color.Yellow);
             }
 
             // Events
@@ -84,7 +82,11 @@ namespace RoguelikeFNA
             }
         }
 
-        public void ClearCollisions() => _collisions.Clear();
+        public void ClearCollisions()
+        {
+            _collisions.Clear();
+            _newCollisions.Clear();
+        }
     }
 }
 

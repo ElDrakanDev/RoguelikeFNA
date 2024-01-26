@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Nez;
-using Nez.Sprites;
-using System.Collections.Generic;
 
 namespace RoguelikeFNA
 {

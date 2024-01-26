@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using Nez;
 using System;
+using System.Linq;
+using System.Xml.Serialization;
 
 namespace RoguelikeFNA
 {
@@ -9,6 +11,18 @@ namespace RoguelikeFNA
     {
         public readonly int GamePadIndex;
         public bool IsGamepad;
+        public GamePadData GamePad
+        {
+            get
+            {
+                if(IsGamepad is false)
+                    return null;
+                var gamepad = Input.GamePads.ElementAtOrDefault(GamePadIndex);
+                if(gamepad != null && gamepad.IsConnected() is false)
+                    return null;
+                return gamepad;
+            }
+        }
 
         // Gamepad
         public Buttons GamePadLeftAlt = Buttons.DPadLeft;
@@ -33,31 +47,29 @@ namespace RoguelikeFNA
         public Keys KeySelect = Keys.Tab;
 
         // Virtual Nodes
-        public VirtualAxis Horizontal { get; private set; }
-        public VirtualAxis Vertical { get; private set; }
-        public VirtualButton Jump { get; private set; }
-        public VirtualButton Attack { get; private set; }
-        public VirtualButton Special { get; private set; }
-        public VirtualButton Start { get; private set; }
-        public VirtualButton Select { get; private set; }
+        [XmlIgnore] public VirtualAxis Horizontal { get; private set; }
+        [XmlIgnore] public VirtualAxis Vertical { get; private set; }
+        [XmlIgnore] public VirtualButton Jump { get; private set; }
+        [XmlIgnore] public VirtualButton Attack { get; private set; }
+        [XmlIgnore] public VirtualButton Special { get; private set; }
+        [XmlIgnore] public VirtualButton Start { get; private set; }
+        [XmlIgnore] public VirtualButton Select { get; private set; }
 
         public PlayerInput()
         {
             IsGamepad = false;
-            ResetVirtualNodes();
         }
         public PlayerInput(int? gamepadIndex)
         {
             if (gamepadIndex.HasValue)
             {
-                GamePadIndex = (int)gamepadIndex;
+                GamePadIndex = gamepadIndex.Value;
                 IsGamepad = true;
             }
             else
             {
                 IsGamepad = false;
             }
-            ResetVirtualNodes();
         }
 
         public void ResetVirtualNodes()
