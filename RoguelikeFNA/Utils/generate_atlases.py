@@ -3,9 +3,9 @@ from pathlib import Path
 
 
 FPS = 7
-CONTENT_SOURCE_PATH = "../ContentSource/Atlases"
-CONTENT_PATH = "../Content/Atlases"
-EXECUTABLE_PATH = "../../Nez/Nez.SpriteAtlasPacker/PrebuiltExecutable/SpriteAtlasPacker.exe"
+CONTENT_SOURCE_PATH = "C:/Users/drakan/source/repos/RoguelikeFNA/RoguelikeFNA/ContentSource/Atlases"
+CONTENT_PATH = "C:/Users/drakan/source/repos/RoguelikeFNA/RoguelikeFNA/Content/Atlases"
+EXECUTABLE_PATH = "C:/Users/drakan/source/repos/RoguelikeFNA/Nez/Nez.SpriteAtlasPacker/PrebuiltExecutable/SpriteAtlasPacker.exe"
 
 
 def generate_sprite_atlases():

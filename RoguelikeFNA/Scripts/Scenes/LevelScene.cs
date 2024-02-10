@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Nez;
-using Nez.Tiled;
 
 namespace RoguelikeFNA
 {
@@ -15,7 +14,7 @@ namespace RoguelikeFNA
 
             _tmxMap = CreateEntity("test-tilemap")
                 .AddComponent(new TiledMapRenderer(
-                    Content.LoadTiledMap(ContentPath.Tilemaps.Mosaic.Tiled._0001_Mosaic_demo_tmx), "Walls_1", false)
+                    Content.LoadTiledMap(ContentPath.Tilemaps.Mosaic.Tiled._0001_Mosaic_demo_tmx), "Walls_1", true)
                 { RenderLayer = 1}
                 );
 
@@ -30,13 +29,10 @@ namespace RoguelikeFNA
             cam.AddComponent(new FollowCamera(FindComponentsOfType<DemoComponent>()[0].Entity));
 
 
-            var deathSound = Content.LoadSoundEffect(ContentPath.Audio.EnemyExplode_WAV);
-            CreateEntity("test-collider")
-               .SetLocalPosition(new Vector2(200, 200))
-               .AddComponent(new BoxCollider(80, 80) { PhysicsLayer = (int)CollisionLayer.Enemy, CollidesWithLayers = (int)CollisionLayer.Player })
-               .AddComponent(new HealthManager(25)).onDeath += dat => {
-                   FindEntity("test-collider")?.Destroy(); Core.GetGlobalManager<SoundEffectManager>().Play(deathSound);
-               };
+            CreateEntity("test-enemy")
+               .SetLocalPosition(new Vector2(300, 235))
+               .AddComponent(new DemoEnemy());
+               
         }
 
         void AddPlayer(PlayerInput input)

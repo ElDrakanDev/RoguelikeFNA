@@ -63,7 +63,7 @@ namespace RoguelikeFNA
             _dashSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.ZeroDash_WAV);
             _jumpSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.ZeroWalkJump_WAV);
 
-            var atlas = Entity.Scene.Content.LoadSpriteAtlas(ContentPath.Atlases.Out_atlas);
+            var atlas = Entity.Scene.Content.LoadSpriteAtlas(ContentPath.Atlases.Zero.Zero_atlas);
             _facingRight = Entity.Scale.X >= 0;
 
             Entity.AddComponent(_mover);

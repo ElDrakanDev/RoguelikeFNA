@@ -19,8 +19,22 @@ namespace Nez
 		{
 			public const string Directory = @".\Content\Atlases";
 		
-			public const string Out_atlas = @".\Content\Atlases\out.atlas";
-			public const string Out_png = @".\Content\Atlases\out.png";
+			public static class Enemy
+			{
+				public const string Directory = @".\Content\Atlases\enemy";
+			
+				public const string Enemy_atlas = @".\Content\Atlases\enemy\enemy.atlas";
+				public const string Enemy_png = @".\Content\Atlases\enemy\enemy.png";
+			}
+
+			public static class Zero
+			{
+				public const string Directory = @".\Content\Atlases\zero";
+			
+				public const string Zero_atlas = @".\Content\Atlases\zero\zero.atlas";
+				public const string Zero_png = @".\Content\Atlases\zero\zero.png";
+			}
+
 		}
 
 		public static class Audio

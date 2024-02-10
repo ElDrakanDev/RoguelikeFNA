@@ -1,4 +1,4 @@
-enemy_hit
+enemy_hit1
 	0,0,48,48
 	0.5,0.5
 enemy_idle1
@@ -11,6 +11,9 @@ enemy_idle3
 	49,49,48,48
 	0.5,0.5
 
+enemy_hit
+	8
+	0
 enemy_idle
 	8
 	1,2,3
