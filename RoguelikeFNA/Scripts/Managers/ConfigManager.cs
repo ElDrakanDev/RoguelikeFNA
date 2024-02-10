@@ -72,7 +72,7 @@ namespace RoguelikeFNA
             Config.BackgroundMusicVolume = 1;
             Config.SoundEffectVolume = 1;
             Config.ScreenResolution = ScreenResolution.Current();
-            Config.Language = "english";
+            Config.Language = "English";
 
             ApplyChanges();
         }

@@ -41,7 +41,6 @@ namespace RoguelikeFNA
         const string ATTACK_AIR_ANIM = "zero_attack_air";
         const string DASH_ANIM = "zero_dash";
 
-        PlayerInput _input;
 
         TiledMapMover _mover;
         TiledMapMover.CollisionState _collisionState = new TiledMapMover.CollisionState();
@@ -49,10 +48,12 @@ namespace RoguelikeFNA
         SpriteTrail _spriteTrail;
 
         EntityStats _stats;
+        public PlayerInput PlayerInput;
 
-        public DemoComponent(TiledMapRenderer tmxmap)
+        public DemoComponent(TiledMapRenderer tmxmap, PlayerInput input)
         {
             _mover = new TiledMapMover(tmxmap.CollisionLayer);
+            PlayerInput = input;
         }
 
         public override void OnAddedToEntity()
@@ -93,14 +94,9 @@ namespace RoguelikeFNA
             _hitboxHandler.OnCollisionEnter += OnHitOther;
             _hitboxHandler.Animator = _animator;
 
-            _input = Core.GetGlobalManager<InputManager>().Players.First();
+            // PlayerInput = Core.GetGlobalManager<InputManager>().InputConfigs.First();
 
             _stats = Entity.AddComponent(new EntityStats());
-
-            Entity.Scene.CreateEntity("test-colldider")
-                .SetLocalPosition(Entity.Position)
-                .AddComponent(new BoxCollider(80, 80) { PhysicsLayer = (int)CollisionLayer.Enemy, CollidesWithLayers = (int)CollisionLayer.Player})
-                .AddComponent(new HealthManager(1000));
         }
 
         public void Update()
@@ -110,7 +106,7 @@ namespace RoguelikeFNA
 
         void HandleStates()
         {
-            var xInput = _input.Horizontal;
+            var xInput = PlayerInput.Horizontal;
             _prevVel = _velocity;
             _velocity.X = 0;
             _dashTime -= Time.DeltaTime;
@@ -122,14 +118,14 @@ namespace RoguelikeFNA
             else
             {
                 _velocity.Y = 0;
-                if (_isAttacking is false && _input.Attack.IsPressed is false && _input.Jump.IsPressed is true)
+                if (_isAttacking is false && PlayerInput.Attack.IsPressed is false && PlayerInput.Jump.IsPressed is true)
                 {
                     _velocity.Y = -_jumpForce;
                     _sfxManager.Play(_jumpSfx);
                 }
             }
 
-            if(_collisionState.Below && _input.Special.IsPressed)
+            if(_collisionState.Below && PlayerInput.Special.IsPressed)
             {
                 _dashTime = _dashDuration;
                 _dashState = true;
@@ -137,7 +133,7 @@ namespace RoguelikeFNA
                 _spriteTrail.EnableSpriteTrail();
                 _sfxManager.Play(_dashSfx);
             }
-            if (_input.Special.IsReleased)
+            if (PlayerInput.Special.IsReleased)
                 _dashTime = 0;
             if (_isDashing && _collisionState.BecameGroundedThisFrame || _collisionState.Below && _dashTime <= 0)
             {
@@ -156,7 +152,7 @@ namespace RoguelikeFNA
             float speed = _isDashing ? _dashSpeed : _speed;
 
             // Attack1
-            if (_input.Attack.IsPressed && _isAttacking is false && _isDashing is false && _collisionState.Below)
+            if (PlayerInput.Attack.IsPressed && _isAttacking is false && _isDashing is false && _collisionState.Below)
             {
                 _hitboxHandler.ClearCollisions();
                 _animator.Play(ATTACK_ANIM1, SpriteAnimator.LoopMode.ClampForever);
@@ -166,7 +162,7 @@ namespace RoguelikeFNA
             }
             // Air attack
             else if(
-                (_input.Attack.IsPressed && _isAttacking is false && _collisionState.Below is false)
+                (PlayerInput.Attack.IsPressed && _isAttacking is false && _collisionState.Below is false)
                 || (_isAttacking is true && _collisionState.Below is false)
             )
             {

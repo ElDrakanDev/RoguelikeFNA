@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using Nez;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
 
@@ -9,7 +10,7 @@ namespace RoguelikeFNA
     [Serializable]
     public class PlayerInput
     {
-        public readonly int GamePadIndex;
+        [XmlIgnore] public int GamePadIndex { get; private set; }
         public bool IsGamepad;
         public GamePadData GamePad
         {
@@ -36,15 +37,15 @@ namespace RoguelikeFNA
         public Buttons GamePadSelect = Buttons.Back;
 
         // Keyboard
-        public Keys KeyLeft = Keys.A;
-        public Keys KeyRight = Keys.D;
-        public Keys KeyUp = Keys.W;
-        public Keys KeyDown = Keys.S;
-        public Keys KeyJump = Keys.Space;
-        public Keys KeyAttack = Keys.J;
-        public Keys KeySpecial = Keys.L;
-        public Keys KeyStart = Keys.Enter;
-        public Keys KeySelect = Keys.Tab;
+        public Keys KeyLeft;
+        public Keys KeyRight;
+        public Keys KeyUp;
+        public Keys KeyDown;
+        public Keys KeyJump;
+        public Keys KeyAttack;
+        public Keys KeySpecial;
+        public Keys KeyStart;
+        public Keys KeySelect;
 
         // Virtual Nodes
         [XmlIgnore] public VirtualAxis Horizontal { get; private set; }
@@ -70,6 +71,27 @@ namespace RoguelikeFNA
             {
                 IsGamepad = false;
             }
+        }
+
+        public void SetGamepadIndex(int gamepadIndex)
+        {
+            GamePadIndex = gamepadIndex;
+            ResetVirtualNodes();
+        }
+
+        public bool StartPressedOnGamepads(IList<int> gamepads, out int index)
+        {
+            index = -1;
+            foreach(var gamepadIdx in gamepads)
+            {
+                var btn = new VirtualButton(new VirtualButton.GamePadButton(gamepadIdx, GamePadStart));
+                if (btn.IsPressed)
+                {
+                    index = gamepadIdx;
+                    return true;
+                }
+            }
+            return false;
         }
 
         public void ResetVirtualNodes()

@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <LangVersion>8.0</LangVersion>
+        <LangVersion>11.0</LangVersion>
         <TargetFramework>net48</TargetFramework>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <PlatformTarget>AnyCPU</PlatformTarget>
@@ -22,24 +22,14 @@
     </ItemGroup>
     
     <!-- Includes Nez default effects and textures -->
+
     <ItemGroup>
-        <Content Include="../Nez/DefaultContent/FNAEffects/**/*.fxb">
-            <Link>Content/nez/effects/%(RecursiveDir)%(Filename)%(Extension)</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="../Nez/DefaultContent/textures/**/*.xnb">
-            <Link>Content/nez/textures/%(RecursiveDir)%(Filename)%(Extension)</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-    </ItemGroup>
-    
-    <ItemGroup>
-      <Content Include="Content/**" Exclude="**/*.fx">
-        <Link>Content\%(RecursiveDir)\%(Filename)%(Extension)</Link>
-        <TargetPath>Content\%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
+      <Content Include="Content\**\*.*">
+        <Link>Content\%(RecursiveDir)%(Filename)%(Extension)</Link>
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
+  
     
     <!-- MonoGames content pipeline needs this defined -->
     <ItemGroup>
@@ -78,18 +68,11 @@
         </Content>
     </ItemGroup>
     <ItemGroup>
-      <Content Remove="Content\Hitboxes\zero_hitboxes.json" />
+      <ContentWithTargetPath Remove="Content\Audio\Enemy - Explode.WAV" />
     </ItemGroup>
-    <ItemGroup>
-      <None Remove="Content\Tilemaps\mosaic\tiled\Inca_back2_by_Kronbits.png" />
-      <None Remove="Content\Tilemaps\mosaic\tiled\Inca_front_by_Kronbits-extended.png" />
-    </ItemGroup>
+    
     <ItemGroup>
       <PackageReference Include="FastExcel" Version="3.0.13" />
-    </ItemGroup>
-    <ItemGroup>
-      <Content Update="Content\nez-logo-black.png" Link="Content\Sprites\nez-logo-black.png" />
-      <Content Update="Content\translations.xlsx" Link="Content\translations.xlsx" />
     </ItemGroup>
     <ItemGroup>
       <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
@@ -105,9 +88,6 @@
       <None Update="ContentPathGenerator.tt">
         <Generator>TextTemplatingFileGenerator</Generator>
         <LastGenOutput>ContentPathGenerator.cs</LastGenOutput>
-      </None>
-      <None Update="Content\Hitboxes\zero_hitboxes.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>
 </Project>

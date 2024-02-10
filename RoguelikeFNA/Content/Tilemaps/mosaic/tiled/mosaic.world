@@ -1,4 +1,4 @@
 {
-	"maps": [{ "fileName": "Mosaic_demo.tmx", "x": 0, "y": 0 }],
+	"maps": [ { "fileName": "0001_Mosaic_demo.tmx", "x": 0, "y": 0 }, { "fileName": "0002_World_Level_1.tmx", "x": 816, "y": 0 } ],
 	"type": "world"
 }

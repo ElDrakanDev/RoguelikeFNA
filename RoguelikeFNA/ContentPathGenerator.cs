@@ -28,6 +28,7 @@ namespace Nez
 			public const string Directory = @".\Content\Audio";
 		
 			// Ignored file '.keep';
+			public const string EnemyExplode_WAV = @".\Content\Audio\Enemy - Explode.WAV";
 			public const string SaberSlash_WAV = @".\Content\Audio\Saber - Slash.WAV";
 			public const string ZeroDash_WAV = @".\Content\Audio\Zero - Dash.WAV";
 			public const string ZeroWalkJump_WAV = @".\Content\Audio\Zero - Walk-Jump.WAV";
@@ -94,8 +95,9 @@ namespace Nez
 				{
 					public const string Directory = @".\Content\Tilemaps\mosaic\tiled";
 				
+					public const string _0001_Mosaic_demo_tmx = @".\Content\Tilemaps\mosaic\tiled\0001_Mosaic_demo.tmx";
+					public const string _0002_World_Level_1_tmx = @".\Content\Tilemaps\mosaic\tiled\0002_World_Level_1.tmx";
 					public const string Mosaic_world = @".\Content\Tilemaps\mosaic\tiled\mosaic.world";
-					public const string Mosaic_demo_tmx = @".\Content\Tilemaps\mosaic\tiled\Mosaic_demo.tmx";
 					public const string Wallsintgrid_png = @".\Content\Tilemaps\mosaic\tiled\Walls.intgrid.png";
 				}
 
@@ -121,6 +123,14 @@ namespace Nez
 					public const string Test_world = @".\Content\Tilemaps\test\tiled\test.world";
 				}
 
+			}
+
+			public static class Tiles
+			{
+				public const string Directory = @".\Content\Tilemaps\Tiles";
+			
+				public const string Inca_back2_by_Kronbits_png = @".\Content\Tilemaps\Tiles\Inca_back2_by_Kronbits.png";
+				public const string Inca_front_by_Kronbitsextended_png = @".\Content\Tilemaps\Tiles\Inca_front_by_Kronbits-extended.png";
 			}
 
 			// Ignored file '.keep';
