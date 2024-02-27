@@ -74,6 +74,8 @@ namespace Nez
 			public const string Directory = @".\Content\Particles";
 		
 			// Ignored file '.keep';
+			public const string Explosion_pex = @".\Content\Particles\explosion.pex";
+			public const string Trippy_pex = @".\Content\Particles\Trippy.pex";
 		}
 
 		public static class Shaders

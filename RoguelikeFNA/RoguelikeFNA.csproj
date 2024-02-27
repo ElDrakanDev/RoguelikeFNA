@@ -70,6 +70,10 @@
     <ItemGroup>
       <ContentWithTargetPath Remove="Content\Audio\Enemy - Explode.WAV" />
     </ItemGroup>
+    <ItemGroup>
+      <None Remove="Content\Particles\explosion.pex" />
+      <None Remove="Content\Particles\Trippy.pex" />
+    </ItemGroup>
     
     <ItemGroup>
       <PackageReference Include="FastExcel" Version="3.0.13" />

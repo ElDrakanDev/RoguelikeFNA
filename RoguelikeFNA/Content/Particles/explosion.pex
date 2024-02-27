@@ -1,0 +1,40 @@
+<particleEmitterConfig>
+  <yCoordFlipped value="1" />
+  <sourcePosition x="150" y="50" />
+  <sourcePositionVariance x="0" y="0" />
+  <speed value="9.00" />
+  <speedVariance value="74.37" />
+  <particleLifeSpan value="0.0000" />
+  <particleLifespanVariance value="1.0000" />
+  <angle value="0" />
+  <angleVariance value="63" />
+  <gravity x="1.54" y="0.7" />
+  <radialAcceleration value="0.00" />
+  <radialAccelVariance value="0.00" />
+  <tangentialAcceleration value="0.00" />
+  <tangentialAccelVariance value="0.00" />
+  <startColor red="0.83" green="0.52" blue="0.18" alpha="1.00" />
+  <startColorVariance red="0.00" green="0.20" blue="0.20" alpha="0.50" />
+  <finishColor red="0.21" green="0.01" blue="0.00" alpha="1.00" />
+  <finishColorVariance red="0.00" green="0.00" blue="0.00" alpha="1.00" />
+  <maxParticles value="159" />
+  <startParticleSize value="15.00" />
+  <startParticleSizeVariance value="1.00" />
+  <finishParticleSize value="0.00" />
+  <finishParticleSizeVariance value="0.00" />
+  <duration value="0.00" />
+  <emitterType value="0" />
+  <maxRadius value="0.00" />
+  <maxRadiusVariance value="0.00" />
+  <minRadius value="300.00" />
+  <minRadiusVariance value="0.00" />
+  <rotatePerSecond value="360.00" />
+  <rotatePerSecondVariance value="0.00" />
+  <blendFuncSource value="770" />
+  <blendFuncDestination value="1" />
+  <rotationStart value="0.00" />
+  <rotationStartVariance value="0.00" />
+  <rotationEnd value="0.00" />
+  <rotationEndVariance value="0.00" />
+  <texture name="texture.png" data="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" />
+</particleEmitterConfig>
