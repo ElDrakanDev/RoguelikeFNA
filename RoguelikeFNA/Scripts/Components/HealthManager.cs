@@ -96,7 +96,7 @@ namespace RoguelikeFNA
         /// <summary>
         /// Event invoked when entity dies
         /// </summary>
-        public event Action<DeathInfo> onDeath;
+        public event Action<object> onDeath;
 
         public void Hit(DamageInfo info)
         {
@@ -115,7 +115,7 @@ namespace RoguelikeFNA
         public void Die(DeathInfo info)
         {
             preDeath?.Invoke(info);
-            if(info.Canceled is false) onDeath?.Invoke(info);
+            if(info.Canceled is false) onDeath?.Invoke(info.Source);
         }
     }
 }

@@ -29,21 +29,22 @@ namespace RoguelikeFNA
                         Debug.Error(ex.ToString());
                     }
                 }
-                var component = Activator.CreateInstance(type);
-                var fields = component.GetType().GetFields();
+                var entity = new Entity(obj.Name);
+                map.Entity.Scene.AddEntity(entity);
+                var prefabComponent = Activator.CreateInstance(type) as IPrefab;
+                entity.AddComponent((Component)prefabComponent);
+                var fields = prefabComponent.GetType().GetFields();
 
                 foreach ( var field in fields )
                 {
                     if (obj.Properties.TryGetValue(field.Name, out string value))
                     {
-                        SetFieldValue(component, field, value);
+                        SetFieldValue(prefabComponent, field, value);
                     }
                 }
 
-                var entity = new Entity(obj.Name);
-                entity.AddComponent((Component)component);
+                prefabComponent.AddComponents();
                 entity.Transform.SetParent(map.Transform);
-                map.Entity.Scene.AddEntity(entity);
                 entity.SetLocalPosition(new Vector2(obj.X, obj.Y));
             }
         }

@@ -4,7 +4,7 @@ using Nez.Sprites;
 
 namespace RoguelikeFNA
 {
-    public class DemoEnemy : Component
+    public class DemoEnemy : Component, IPrefab
     {
         public int Health = 10;
         HealthManager _healthManager;
@@ -15,19 +15,26 @@ namespace RoguelikeFNA
 
         public override void OnAddedToEntity()
         {
-            var atlas = Entity.Scene.Content.LoadSpriteAtlas(ContentPath.Atlases.Enemy.Enemy_atlas);
-
-            _animator = Entity.AddComponent(new SpriteAnimator().AddAnimationsFromAtlas(atlas));
-            Entity.AddComponent(new BoxCollider(28, 38) { PhysicsLayer = (int)CollisionLayer.Enemy, CollidesWithLayers = (int)CollisionLayer.Player });
-
-            _healthManager = Entity.AddComponent(new HealthManager(Health));
-            _healthManager.onDeath += OnDeath;
+            _healthManager = Entity.GetComponent<HealthManager>();
+            _animator = Entity.GetComponent<SpriteAnimator>();
             _animator.Play(IDLE_ANIM);
+            _healthManager.onDeath += OnDeath;
             _animator.OnAnimationCompletedEvent += OnAnimationComplete;
-            _healthManager.onDamageTaken += info =>
-            {
-                if(info.Canceled is false) _animator.Play(HIT_ANIM, SpriteAnimator.LoopMode.Once);
-            };
+            _healthManager.onDamageTaken += OnHit;
+        }
+
+        public override void OnRemovedFromEntity() => RemoveEventListeners();
+
+        void RemoveEventListeners()
+        {
+            _healthManager.onDeath -= OnDeath;
+            _healthManager.onDamageTaken -= OnHit;
+            _animator.OnAnimationCompletedEvent -= OnAnimationComplete;
+        }
+
+        void OnHit(DamageInfo info)
+        {
+            if (info.Canceled is false) _animator.Play(HIT_ANIM, SpriteAnimator.LoopMode.Once);
         }
 
         void OnAnimationComplete(string anim)
@@ -38,15 +45,26 @@ namespace RoguelikeFNA
             }
         }
 
-        void OnDeath(DeathInfo info)
+        void OnDeath(object source)
         {
-            if (info.Canceled) return;
+            // Entity seems to become null on clone as soon as HealthManager.onDeath is called, but it doesnt set it to null or remove the entity?
             var deathSound = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.EnemyExplode_WAV);
             Core.GetGlobalManager<SoundEffectManager>().Play(deathSound);
             Entity.Scene.CreateEntity("DeathEffect", Transform.Position)
                 .AddComponent(new ParticleEmitter(Entity.Scene.Content.LoadParticleEmitterConfig(ContentPath.Particles.Explosion_pex)))
                 .OnAllParticlesExpired += (particle) => particle.Entity.Destroy();
             Entity.Destroy();
+            //_healthManager.Heal(new HealInfo(99999, Entity));
+            //RemoveEventListeners();
+            //Entity.Scene.AddEntity(Entity.Clone(Transform.Position)).SetParent(Transform.Parent);
+        }
+
+        public void AddComponents()
+        {
+            var atlas = Entity.Scene.Content.LoadSpriteAtlas(ContentPath.Atlases.Enemy.Enemy_atlas);
+            _animator = Entity.AddComponent(new SpriteAnimator().AddAnimationsFromAtlas(atlas));
+            Entity.AddComponent(new BoxCollider(28, 38) { PhysicsLayer = (int)CollisionLayer.Enemy, CollidesWithLayers = (int)CollisionLayer.Player });
+            _healthManager = Entity.AddComponent(new HealthManager(Health));
         }
     }
 }

@@ -28,10 +28,6 @@ namespace RoguelikeFNA
             var cam = FindEntity("camera");
             cam.GetComponent<Camera>().SetZoom(1);
             cam.AddComponent(new FollowCamera(FindComponentsOfType<DemoComponent>()[0].Entity));
-
-            //CreateEntity("test-enemy")
-            //   .SetLocalPosition(new Vector2(300, 235))
-            //   .AddComponent(new DemoEnemy());
         }
 
         void AddPlayer(PlayerInput input)
