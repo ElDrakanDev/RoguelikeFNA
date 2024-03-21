@@ -27,6 +27,14 @@ namespace Nez
 				public const string Enemy_png = @".\Content\Atlases\enemy\enemy.png";
 			}
 
+			public static class Projectiles
+			{
+				public const string Directory = @".\Content\Atlases\projectiles";
+			
+				public const string Projectiles_atlas = @".\Content\Atlases\projectiles\projectiles.atlas";
+				public const string Projectiles_png = @".\Content\Atlases\projectiles\projectiles.png";
+			}
+
 			public static class Zero
 			{
 				public const string Directory = @".\Content\Atlases\zero";
@@ -42,6 +50,7 @@ namespace Nez
 			public const string Directory = @".\Content\Audio";
 		
 			// Ignored file '.keep';
+			public const string BusterShot_WAV = @".\Content\Audio\Buster - Shot.WAV";
 			public const string EnemyExplode_WAV = @".\Content\Audio\Enemy - Explode.WAV";
 			public const string SaberSlash_WAV = @".\Content\Audio\Saber - Slash.WAV";
 			public const string ZeroDash_WAV = @".\Content\Audio\Zero - Dash.WAV";
@@ -97,6 +106,7 @@ namespace Nez
 			public const string Directory = @".\Content\Textures";
 		
 			// Ignored file '.keep';
+			public const string Debug_circle_png = @".\Content\Textures\debug_circle.png";
 		}
 
 		public static class Tilemaps

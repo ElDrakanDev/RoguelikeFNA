@@ -6,18 +6,18 @@ namespace RoguelikeFNA
     public class LevelScene : BaseScene
     {
         InputManager _inputManager;
-        TiledMapRenderer _tmxRenderer;
+        public TiledMapRenderer activeTiledMap;
 
         public override void Initialize()
         {
             base.Initialize();
 
-            _tmxRenderer = CreateEntity("test-tilemap")
+            activeTiledMap = CreateEntity("test-tilemap")
                 .AddComponent(new TiledMapRenderer(
                     Content.LoadTiledMap(ContentPath.Tilemaps.Mosaic.Tiled._0001_Mosaic_demo_tmx), "Walls_1", true)
-                { RenderLayer = 1}
+                { RenderLayer = 1, PhysicsLayer = (int)CollisionLayer.Ground}
                 );
-            _tmxRenderer.CreateObjects();
+            activeTiledMap.CreateObjects();
 
             _inputManager = Core.GetGlobalManager<InputManager>();
             foreach(var input in _inputManager.AvailablePlayers)
@@ -32,7 +32,7 @@ namespace RoguelikeFNA
 
         void AddPlayer(PlayerInput input)
         {
-            AddEntity(new Entity()).SetLocalPosition(new Vector2(200, 200)).AddComponent(new DemoComponent(_tmxRenderer, input));
+            AddEntity(new Entity()).SetLocalPosition(new Vector2(200, 200)).AddComponent(new DemoComponent(activeTiledMap, input));
         }
     }
 }

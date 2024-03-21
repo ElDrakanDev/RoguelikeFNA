@@ -59,6 +59,8 @@ namespace RoguelikeFNA
                 field.SetValue(obj, value);
             else if (field.FieldType == typeof(bool))
                 field.SetValue(obj, bool.Parse(value));
+            else if (field.FieldType.IsEnum)
+                field.SetValue(obj, Enum.Parse(field.FieldType, value));
             else
                 throw new NotImplementedException();
         }

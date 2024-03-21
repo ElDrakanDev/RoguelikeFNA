@@ -78,13 +78,14 @@ namespace RoguelikeFNA
                 KeyDown = Keys.S,
                 KeyJump = Keys.Space,
                 KeyAttack = Keys.J,
-                KeySpecial = Keys.L,
+                KeySpecial = Keys.K,
+                KeyDash = Keys.L,
                 KeyStart = Keys.Enter,
                 KeySelect = Keys.Tab,
             });
             InputConfigs.Add(new PlayerInput() {
                 KeyLeft = Keys.Left, KeyRight = Keys.Right, KeyDown = Keys.Down, KeyUp = Keys.Up,
-                KeyAttack = Keys.NumPad1, KeyJump = Keys.NumPad0, KeySpecial = Keys.NumPad3,
+                KeyAttack = Keys.NumPad1, KeyJump = Keys.NumPad0, KeySpecial = Keys.NumPad2, KeyDash = Keys.NumPad3,
                 KeySelect = Keys.Subtract, KeyStart = Keys.Multiply
             });
             ApplyChanges();
@@ -101,6 +102,7 @@ namespace RoguelikeFNA
                 }
                 else if (input.StartPressedOnGamepads(_availableGamepads, out int idx) && AvailablePlayers.Contains(input) is false)
                 {
+                    // TODO: Check code
                     input.SetGamepadIndex(idx);
                     AvailablePlayers.Add(input);
                     OnPlayerJoined.Invoke(input);

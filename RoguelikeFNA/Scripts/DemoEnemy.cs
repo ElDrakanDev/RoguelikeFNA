@@ -47,16 +47,12 @@ namespace RoguelikeFNA
 
         void OnDeath(object source)
         {
-            // Entity seems to become null on clone as soon as HealthManager.onDeath is called, but it doesnt set it to null or remove the entity?
             var deathSound = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.EnemyExplode_WAV);
             Core.GetGlobalManager<SoundEffectManager>().Play(deathSound);
             Entity.Scene.CreateEntity("DeathEffect", Transform.Position)
                 .AddComponent(new ParticleEmitter(Entity.Scene.Content.LoadParticleEmitterConfig(ContentPath.Particles.Explosion_pex)))
                 .OnAllParticlesExpired += (particle) => particle.Entity.Destroy();
             Entity.Destroy();
-            //_healthManager.Heal(new HealInfo(99999, Entity));
-            //RemoveEventListeners();
-            //Entity.Scene.AddEntity(Entity.Clone(Transform.Position)).SetParent(Transform.Parent);
         }
 
         public void AddComponents()

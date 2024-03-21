@@ -32,6 +32,7 @@ namespace RoguelikeFNA
         public Buttons GamePadDownAlt = Buttons.DPadDown;
         public Buttons GamePadJump = Buttons.A;
         public Buttons GamePadAttack = Buttons.RightShoulder;
+        public Buttons GamePadDash = Buttons.LeftShoulder;
         public Buttons GamePadSpecial = Buttons.LeftShoulder;
         public Buttons GamePadStart = Buttons.Start;
         public Buttons GamePadSelect = Buttons.Back;
@@ -43,6 +44,7 @@ namespace RoguelikeFNA
         public Keys KeyDown;
         public Keys KeyJump;
         public Keys KeyAttack;
+        public Keys KeyDash;
         public Keys KeySpecial;
         public Keys KeyStart;
         public Keys KeySelect;
@@ -53,6 +55,7 @@ namespace RoguelikeFNA
         [XmlIgnore] public VirtualButton Jump { get; private set; }
         [XmlIgnore] public VirtualButton Attack { get; private set; }
         [XmlIgnore] public VirtualButton Special { get; private set; }
+        [XmlIgnore] public VirtualButton Dash { get; private set; }
         [XmlIgnore] public VirtualButton Start { get; private set; }
         [XmlIgnore] public VirtualButton Select { get; private set; }
 
@@ -109,6 +112,7 @@ namespace RoguelikeFNA
                 Jump = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, GamePadJump));
                 Attack = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, GamePadAttack));
                 Special = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, GamePadSpecial));
+                Dash = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, GamePadDash));
                 Start = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, GamePadStart));
                 Select = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, GamePadSelect));
             }
@@ -123,6 +127,7 @@ namespace RoguelikeFNA
                 Jump = new VirtualButton(new VirtualButton.KeyboardKey(KeyJump));
                 Attack = new VirtualButton(new VirtualButton.KeyboardKey(KeyAttack));
                 Special = new VirtualButton(new VirtualButton.KeyboardKey(KeySpecial));
+                Dash = new VirtualButton(new VirtualButton.KeyboardKey(KeyDash));
                 Start = new VirtualButton(new VirtualButton.KeyboardKey(KeyStart));
                 Select = new VirtualButton(new VirtualButton.KeyboardKey(KeySelect));
             }

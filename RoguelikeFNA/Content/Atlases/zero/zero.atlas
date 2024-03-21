@@ -37,95 +37,113 @@ zero_z1standardframes6
 zero_z1standardframes7
 	0,243,120,80
 	0.5,0.5
-zero_dash1
+zero_buster1
 	0,324,120,80
 	0.5,0.5
-zero_dash2
+zero_buster2
 	121,243,120,80
 	0.5,0.5
-zero_dash3
+zero_buster3
 	0,405,120,80
 	0.5,0.5
-zero_dash4
+zero_buster_air1
 	121,324,120,80
 	0.5,0.5
-zero_fall_loop1
+zero_buster_air2
 	242,243,120,80
 	0.5,0.5
-zero_fall_loop2
+zero_buster_air3
 	121,405,120,80
 	0.5,0.5
-zero_fall_loop3
+zero_dash1
 	242,324,120,80
 	0.5,0.5
-zero_fall_start1
+zero_dash2
 	363,243,120,80
 	0.5,0.5
-zero_fall_start2
+zero_dash3
 	242,405,120,80
 	0.5,0.5
-zero_idle1
+zero_dash4
 	363,324,120,80
 	0.5,0.5
-zero_idle2
+zero_fall_loop1
 	363,405,120,80
 	0.5,0.5
-zero_idle3
+zero_fall_loop2
 	484,0,120,80
 	0.5,0.5
-zero_idle4
+zero_fall_loop3
 	484,81,120,80
 	0.5,0.5
-zero_idle5
+zero_fall_start1
 	605,0,120,80
 	0.5,0.5
-zero_idle6
+zero_fall_start2
 	484,162,120,80
 	0.5,0.5
-zero_jump3
+zero_idle1
 	605,81,120,80
 	0.5,0.5
-zero_jump4
+zero_idle2
 	726,0,120,80
 	0.5,0.5
-zero_jump5
+zero_idle3
 	484,243,120,80
 	0.5,0.5
-zero_jump1
+zero_idle4
 	605,162,120,80
 	0.5,0.5
-zero_jump2
+zero_idle5
 	726,81,120,80
 	0.5,0.5
-zero_walk1
+zero_idle6
 	484,324,120,80
 	0.5,0.5
-zero_walk10
+zero_jump3
 	847,0,120,80
 	0.5,0.5
-zero_walk2
+zero_jump4
 	605,243,120,80
 	0.5,0.5
-zero_walk3
+zero_jump5
 	726,162,120,80
 	0.5,0.5
-zero_walk4
+zero_jump1
 	484,405,120,80
 	0.5,0.5
-zero_walk5
+zero_jump2
 	847,81,120,80
 	0.5,0.5
-zero_walk6
+zero_walk1
 	605,324,120,80
 	0.5,0.5
-zero_walk7
+zero_walk10
 	726,243,120,80
 	0.5,0.5
-zero_walk8
+zero_walk2
 	847,162,120,80
 	0.5,0.5
-zero_walk9
+zero_walk3
 	605,405,120,80
+	0.5,0.5
+zero_walk4
+	726,324,120,80
+	0.5,0.5
+zero_walk5
+	847,243,120,80
+	0.5,0.5
+zero_walk6
+	726,405,120,80
+	0.5,0.5
+zero_walk7
+	847,324,120,80
+	0.5,0.5
+zero_walk8
+	847,405,120,80
+	0.5,0.5
+zero_walk9
+	0,486,120,80
 	0.5,0.5
 
 zero_attack1
@@ -134,24 +152,30 @@ zero_attack1
 zero_attack_air
 	8
 	0,1,2,3,4,5
+zero_buster
+	8
+	13,14,15
+zero_buster_air
+	8
+	16,17,18
 zero_dash
 	8
-	13,14,15,16
+	19,20,21,22
 zero_fall_loop
 	8
-	17,18,19
+	23,24,25
 zero_fall_start
 	8
-	20,21
+	26,27
 zero_idle
 	8
-	22,23,24,25,26,27
+	28,29,30,31,32,33
 zero_jump_loop
 	8
-	28,29,30
+	34,35,36
 zero_jump_start
 	8
-	31,32
+	37,38
 zero_walk
 	8
-	33,34,35,36,37,38,39,40,41,42
+	39,40,41,42,43,44,45,46,47,48
