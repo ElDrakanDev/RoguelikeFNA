@@ -23,7 +23,10 @@ namespace RoguelikeFNA
         bool _dashState = false;
         bool _facingRight;
         float _dashTime;
+        float _groundedBufferTime;
+        float _jumpInputBufferTime;
 
+        [Inspectable] float _jumpBufferMax = 0.11f;
         [Inspectable] Vector2 _shootOffset = Vector2.UnitX * 40;
         [Inspectable] Vector2 _shootOffsetAir = Vector2.UnitX * 35;
         [Inspectable] float _speed = 150;
@@ -56,13 +59,13 @@ namespace RoguelikeFNA
         SpriteTrail _spriteTrail;
 
         EntityStats _stats;
-        public PlayerInput PlayerInput;
+        PlayerInput _input;
         Vector2 AimDirection => _facingRight ? Vector2.UnitX : -Vector2.UnitX;
 
         public DemoComponent(TiledMapRenderer tmxmap, PlayerInput input)
         {
             _mover = new TiledMapMover(tmxmap.CollisionLayer);
-            PlayerInput = input;
+            _input = input;
         }
 
 
@@ -116,29 +119,18 @@ namespace RoguelikeFNA
 
         void HandleStates()
         {
-            var xInput = PlayerInput.Horizontal;
+            var xInput = _input.Horizontal;
             _prevVel = _velocity;
             _velocity.X = 0;
             _dashTime -= Time.DeltaTime;
+            _groundedBufferTime -= Time.DeltaTime;
+            _jumpInputBufferTime -= Time.DeltaTime;
 
-            if (_collisionState.Above is true && _velocity.Y < 0)
-                _velocity.Y = 0;
-            if (_collisionState.Below is false)
-                _velocity.Y += _gravity * Time.DeltaTime;
-            else
-            {
-                _velocity.Y = 0;
-                if (_isAttacking is false && PlayerInput.Attack.IsPressed is false && PlayerInput.Jump.IsPressed is true)
-                {
-                    _velocity.Y = -_jumpForce;
-                    _collisionState.Below = false;
-                    _sfxManager.Play(_jumpSfx);
-                }
-            }
-            if (_collisionState.Below is false && _velocity.Y < 0 && PlayerInput.Jump.IsReleased)
-                _velocity.Y *= 0.5f;
+            // Check Jump Buffers
+            if (_input.Jump.IsPressed)
+                _jumpInputBufferTime = _jumpBufferMax;
 
-            if(_collisionState.Below && PlayerInput.Dash.IsPressed)
+            if(_collisionState.Below && _input.Dash.IsPressed)
             {
                 _dashTime = _dashDuration;
                 _dashState = true;
@@ -146,7 +138,7 @@ namespace RoguelikeFNA
                 _spriteTrail.EnableSpriteTrail();
                 _sfxManager.Play(_dashSfx);
             }
-            if (PlayerInput.Dash.IsReleased)
+            if (_input.Dash.IsReleased)
                 _dashTime = 0;
             if (_isDashing && _collisionState.BecameGroundedThisFrame || _collisionState.Below && _dashTime <= 0)
             {
@@ -154,6 +146,30 @@ namespace RoguelikeFNA
                 _dashState = false;
                 _spriteTrail.DisableSpriteTrail();
             }
+
+            if (_collisionState.Above is true && _velocity.Y < 0)
+                _velocity.Y = 0;
+
+            if (_collisionState.Below is false)
+                _velocity.Y += _gravity * Time.DeltaTime;
+            else
+            {
+                _velocity.Y = 0;
+                _groundedBufferTime = _jumpBufferMax;
+            }
+            
+            if(_groundedBufferTime > 0 && _isAttacking is false && _input.Attack.IsPressed is false && _jumpInputBufferTime > 0)
+            {
+                _jumpInputBufferTime = 0;
+                _groundedBufferTime = 0;
+                _velocity.Y = -_jumpForce;
+                _collisionState.Below = false;
+                _sfxManager.Play(_jumpSfx);
+            }
+
+            if (_collisionState.Below is false && _velocity.Y < 0 && _input.Jump.IsReleased)
+                _velocity.Y *= 0.5f;
+
 
             // Attack cancelling
             if((_animator.IsAnimationActive(ATTACK_AIR_ANIM) || _animator.IsAnimationActive(SHOOT_AIR_ANIM)) && _collisionState.Below)
@@ -165,7 +181,7 @@ namespace RoguelikeFNA
             float speed = _isDashing ? _dashSpeed : _speed;
 
             // Attack1
-            if (PlayerInput.Attack.IsPressed && _isAttacking is false && _collisionState.Below)
+            if (_input.Attack.IsPressed && _isAttacking is false && _collisionState.Below)
             {
                 _hitboxHandler.ClearCollisions();
                 _animator.Play(ATTACK_ANIM1, SpriteAnimator.LoopMode.ClampForever);
@@ -176,7 +192,7 @@ namespace RoguelikeFNA
             }
             // Air attack
             else if(
-                (PlayerInput.Attack.IsPressed && _isAttacking is false && _collisionState.Below is false)
+                (_input.Attack.IsPressed && _isAttacking is false && _collisionState.Below is false)
                 || (_isAttacking is true && _collisionState.Below is false)
             )
             {
@@ -193,7 +209,7 @@ namespace RoguelikeFNA
                 CheckFacingSide(xInput);
             }
             // Shoot
-            else if(PlayerInput.Special.IsPressed && _isAttacking is false && _collisionState.Below && _ammo > 0)
+            else if(_input.Special.IsPressed && _isAttacking is false && _collisionState.Below && _ammo > 0)
             {
                 _animator.Play(SHOOT_ANIM, SpriteAnimator.LoopMode.ClampForever);
                 _dashState = false;
@@ -202,7 +218,7 @@ namespace RoguelikeFNA
             }
             // Air shoot
             else if (
-                (PlayerInput.Special.IsPressed && _isAttacking is false && _collisionState.Below is false)
+                (_input.Special.IsPressed && _isAttacking is false && _collisionState.Below is false)
                 || (_isAttacking is true && _collisionState.Below is false)
             )
             {
@@ -313,7 +329,8 @@ namespace RoguelikeFNA
             var anim = entity.AddComponent(new SpriteAnimator().AddAnimationsFromAtlas(Entity.Scene.Content.LoadSpriteAtlas(
                 ContentPath.Atlases.Projectiles.Projectiles_atlas
             )));
-            entity.AddComponent(new Projectile() { Velocity = AimDirection * _projectileVelocity, damage = _stats.Damage, GroundHitBehaviour = GroundHitBehaviour.Bounce });
+            entity.AddComponent(new Projectile()
+                { Velocity = AimDirection * _projectileVelocity, Damage = _stats.Damage, GroundHitBehaviour = GroundHitBehaviour.Bounce, Lifetime = 5 });
             anim.Play(anim.Animations.Keys.First());
             entity.AddComponent(new ProjecitleHoming());
         }

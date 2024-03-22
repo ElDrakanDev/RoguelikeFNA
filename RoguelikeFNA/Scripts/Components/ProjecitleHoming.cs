@@ -8,7 +8,7 @@ namespace RoguelikeFNA
     public class ProjecitleHoming : Component, IUpdatable
     {
         Projectile _proj;
-        [Inspectable] float _attractSpeed = 0.1f;
+        [Inspectable] float _attractSpeed = 0.07f;
         [Inspectable] float _homingRange = 150f;
 
         public override void OnAddedToEntity()
