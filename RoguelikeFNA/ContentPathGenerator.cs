@@ -27,6 +27,14 @@ namespace Nez
 				public const string Enemy_png = @".\Content\Atlases\enemy\enemy.png";
 			}
 
+			public static class Portal
+			{
+				public const string Directory = @".\Content\Atlases\portal";
+			
+				public const string Portal_atlas = @".\Content\Atlases\portal\portal.atlas";
+				public const string Portal_png = @".\Content\Atlases\portal\portal.png";
+			}
+
 			public static class Projectiles
 			{
 				public const string Directory = @".\Content\Atlases\projectiles";
@@ -92,6 +100,8 @@ namespace Nez
 			public const string Directory = @".\Content\Shaders";
 		
 			// Ignored file '.keep';
+			public const string Outline_fx = @".\Content\Shaders\Outline.fx";
+			public const string Outline_fxb = @".\Content\Shaders\Outline.fxb";
 		}
 
 		public static class Sprites

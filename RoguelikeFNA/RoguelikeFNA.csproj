@@ -68,11 +68,17 @@
         </Content>
     </ItemGroup>
     <ItemGroup>
+      <Content Remove="Content\Shaders\Outline.fx" />
+      <Content Remove="Content\Shaders\Outline.mgfxo" />
+    </ItemGroup>
+    <ItemGroup>
       <ContentWithTargetPath Remove="Content\Audio\Enemy - Explode.WAV" />
     </ItemGroup>
     <ItemGroup>
       <None Remove="Content\Particles\explosion.pex" />
       <None Remove="Content\Particles\Trippy.pex" />
+      <None Remove="Content\Shaders\Outline.fx" />
+      <None Remove="Content\Shaders\Outline.mgfxo" />
     </ItemGroup>
     
     <ItemGroup>

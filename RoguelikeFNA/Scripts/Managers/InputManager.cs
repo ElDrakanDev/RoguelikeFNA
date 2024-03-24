@@ -82,11 +82,12 @@ namespace RoguelikeFNA
                 KeyDash = Keys.L,
                 KeyStart = Keys.Enter,
                 KeySelect = Keys.Tab,
+                KeyInteract = Keys.E,
             });
             InputConfigs.Add(new PlayerInput() {
                 KeyLeft = Keys.Left, KeyRight = Keys.Right, KeyDown = Keys.Down, KeyUp = Keys.Up,
                 KeyAttack = Keys.NumPad1, KeyJump = Keys.NumPad0, KeySpecial = Keys.NumPad2, KeyDash = Keys.NumPad3,
-                KeySelect = Keys.Subtract, KeyStart = Keys.Multiply
+                KeySelect = Keys.Subtract, KeyStart = Keys.Multiply, KeyInteract = Keys.NumPad9
             });
             ApplyChanges();
         }

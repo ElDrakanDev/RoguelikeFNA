@@ -36,6 +36,7 @@ namespace RoguelikeFNA
         public Buttons GamePadSpecial = Buttons.LeftShoulder;
         public Buttons GamePadStart = Buttons.Start;
         public Buttons GamePadSelect = Buttons.Back;
+        public Buttons GamePadInteract = Buttons.B;
 
         // Keyboard
         public Keys KeyLeft;
@@ -48,6 +49,7 @@ namespace RoguelikeFNA
         public Keys KeySpecial;
         public Keys KeyStart;
         public Keys KeySelect;
+        public Keys KeyInteract;
 
         // Virtual Nodes
         [XmlIgnore] public VirtualAxis Horizontal { get; private set; }
@@ -58,6 +60,7 @@ namespace RoguelikeFNA
         [XmlIgnore] public VirtualButton Dash { get; private set; }
         [XmlIgnore] public VirtualButton Start { get; private set; }
         [XmlIgnore] public VirtualButton Select { get; private set; }
+        [XmlIgnore] public VirtualButton Interact { get; private set; }
 
         public PlayerInput()
         {
@@ -115,6 +118,7 @@ namespace RoguelikeFNA
                 Dash = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, GamePadDash));
                 Start = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, GamePadStart));
                 Select = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, GamePadSelect));
+                Interact = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, GamePadInteract));
             }
             else
             {
@@ -130,6 +134,7 @@ namespace RoguelikeFNA
                 Dash = new VirtualButton(new VirtualButton.KeyboardKey(KeyDash));
                 Start = new VirtualButton(new VirtualButton.KeyboardKey(KeyStart));
                 Select = new VirtualButton(new VirtualButton.KeyboardKey(KeySelect));
+                Interact = new VirtualButton(new VirtualButton.KeyboardKey(KeyInteract));
             }
         }
     }

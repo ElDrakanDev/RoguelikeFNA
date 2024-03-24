@@ -68,7 +68,6 @@ namespace RoguelikeFNA
             _input = input;
         }
 
-
         public override void OnAddedToEntity()
         {
             _sfxManager = Core.GetGlobalManager<SoundEffectManager>();
@@ -102,7 +101,7 @@ namespace RoguelikeFNA
 
             _hitboxHandler = child.AddComponent(new HitboxHandler());
             _hitboxHandler.PhysicsLayer = (int)CollisionLayer.None;
-            _hitboxHandler.CollidesWithLayers = (int)CollisionLayer.Enemy;
+            _hitboxHandler.CollidesWithLayers = (int)(CollisionLayer.Enemy | CollisionLayer.Interactable);
             _hitboxHandler.AnimationsHitboxes = Entity.Scene.Content.LoadJson<Dictionary<string, List<HitboxGroup>>>(
                 ContentPath.Hitboxes.Zero_hitboxes_json);
             _hitboxHandler.OnCollisionEnter += OnHitOther;
@@ -115,6 +114,28 @@ namespace RoguelikeFNA
         public void Update()
         {
             HandleStates();
+            HandleInteractables();
+        }
+
+        void HandleInteractables()
+        {
+            var entities = Entity.Scene.Entities.EntitiesOfType<Entity>();
+            entities = entities.Where(e =>
+            {
+                var collider = e.GetComponent<Collider>();
+                if(collider is null)
+                    return false;
+                return collider.PhysicsLayer.IsFlagSet((int)CollisionLayer.Interactable) &&
+                    collider.CollidesWith(_collider, out var _)
+                    && e.HasComponent<IInteractListener>();
+            }).ToList();
+            if(entities.Count > 0)
+            {
+                var entity = entities.Closest(Transform.Position);
+                entity.GetComponents<IInteractListener>().ForEach(i => i.OnHover(Entity));
+                if (_input.Interact.IsPressed)
+                    entity.GetComponents<IInteractListener>().ForEach(i => i.OnInteract(Entity));
+            }
         }
 
         void HandleStates()
@@ -330,7 +351,7 @@ namespace RoguelikeFNA
                 ContentPath.Atlases.Projectiles.Projectiles_atlas
             )));
             entity.AddComponent(new Projectile()
-                { Velocity = AimDirection * _projectileVelocity, Damage = _stats.Damage, GroundHitBehaviour = GroundHitBehaviour.Bounce, Lifetime = 5 });
+                { Velocity = AimDirection * _projectileVelocity, Damage = _stats.Damage, GroundHitBehaviour = GroundHitBehaviour.Ignore, Lifetime = 5 });
             anim.Play(anim.Animations.Keys.First());
             entity.AddComponent(new ProjecitleHoming());
         }
