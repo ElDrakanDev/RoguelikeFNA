@@ -13,8 +13,8 @@ namespace RoguelikeFNA
     {
         const float DEFAULT_MIN_STAT = 0.1f;
         public readonly Stat Damage;
-        public EntityTeam Team;
-        public int TargetTeams;
+        [Inspectable] public EntityTeam Team;
+        [Inspectable] public int TargetTeams;
         public HealthManager HealthManager { get; private set; }
 
         public EntityStats(float damage = 1)
