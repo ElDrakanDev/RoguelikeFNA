@@ -33,7 +33,9 @@ namespace RoguelikeFNA
                 map.Entity.Scene.AddEntity(entity);
                 var prefabComponent = Activator.CreateInstance(type) as IPrefab;
                 entity.AddComponent((Component)prefabComponent);
-                var fields = prefabComponent.GetType().GetFields();
+                var fields = prefabComponent.GetType().GetFields(
+                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance
+                );
 
                 foreach ( var field in fields )
                 {

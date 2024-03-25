@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RoguelikeFNA
+namespace RoguelikeFNA.Prefabs
 {
     public class Portal : Component, IInteractListener, IPrefab
     {
@@ -19,18 +19,18 @@ namespace RoguelikeFNA
             _anim = Entity.AddComponent(new SpriteAnimator())
                 .AddAnimationsFromAtlas(Entity.Scene.Content.LoadSpriteAtlas(ContentPath.Atlases.Portal.Portal_atlas));
             _anim.Play(_anim.Animations.Keys.First());
-            if(IsEntrance is false)
+            if (IsEntrance is false)
                 Entity.AddComponent(new InteractableOutline());
         }
 
         public void OnHover(Entity source)
         {
-            
+
         }
 
         public void OnInteract(Entity source)
         {
-            
+
         }
     }
 }

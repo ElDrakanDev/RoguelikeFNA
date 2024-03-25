@@ -25,7 +25,10 @@ namespace RoguelikeFNA
         public Vector2 Velocity;
         public bool FaceVelocity = true;
         public bool ContactDamage = true;
+        public EntityTeam Team;
+        public int TargetTeams;
         public GroundHitBehaviour GroundHitBehaviour = GroundHitBehaviour.Destroy;
+        public Entity Owner;
 
         public override void OnAddedToEntity()
         {
@@ -60,10 +63,12 @@ namespace RoguelikeFNA
 
         public void OnTriggerEnter(Collider other, Collider local)
         {
-            if(_collisions.Contains(other) is false && other.Entity.TryGetComponent(out HealthManager health))
+            if(_collisions.Contains(other) is false
+                && other.Entity.TryGetComponent(out EntityStats stats)
+                && Flags.IsFlagSet(TargetTeams, (int)stats.Team))
             {
                 if(ContactDamage)
-                    health.Hit(new DamageInfo(Damage, Entity));
+                    stats.HealthManager?.Hit(new DamageInfo(Damage, Entity));
 
                 Entity.GetComponents<IProjectileListener>().ForEach(x => x.OnEntityHit(this, other));
                 Entity.Destroy();
@@ -87,5 +92,12 @@ namespace RoguelikeFNA
         }
 
         public void OnTriggerExit(Collider other, Collider local) { }
+
+        public void SetValuesFromEntityStats(EntityStats stats)
+        {
+            Owner = stats.Entity;
+            Team = stats.Team;
+            TargetTeams = stats.TargetTeams;
+        }
     }
 }

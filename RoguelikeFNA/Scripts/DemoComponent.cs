@@ -107,7 +107,8 @@ namespace RoguelikeFNA
             _hitboxHandler.OnCollisionEnter += OnHitOther;
             _hitboxHandler.Animator = _animator;
 
-            _stats = Entity.AddComponent(new EntityStats(5));
+            Entity.AddComponent(new HealthManager(25));
+            _stats = Entity.AddComponent(new EntityStats(5) { Team = EntityTeam.Friendly });
             _ammo = _maxAmmo;
         }
 
@@ -350,8 +351,9 @@ namespace RoguelikeFNA
             var anim = entity.AddComponent(new SpriteAnimator().AddAnimationsFromAtlas(Entity.Scene.Content.LoadSpriteAtlas(
                 ContentPath.Atlases.Projectiles.Projectiles_atlas
             )));
-            entity.AddComponent(new Projectile()
-                { Velocity = AimDirection * _projectileVelocity, Damage = _stats.Damage, GroundHitBehaviour = GroundHitBehaviour.Ignore, Lifetime = 5 });
+            var proj = entity.AddComponent(new Projectile()
+                { Velocity = AimDirection * _projectileVelocity, Damage = _stats.Damage, Lifetime = 5 });
+            proj.SetValuesFromEntityStats(_stats);
             anim.Play(anim.Animations.Keys.First());
             entity.AddComponent(new ProjecitleHoming());
         }

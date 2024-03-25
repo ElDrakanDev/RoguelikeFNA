@@ -2,12 +2,15 @@
 using Nez.Particles;
 using Nez.Sprites;
 
-namespace RoguelikeFNA
+namespace RoguelikeFNA.Prefabs
 {
     public class DemoEnemy : Component, IPrefab
     {
-        public int Health = 10;
+        int Health = 10;
+        int Damage = 5;
+        EntityTeam Team = EntityTeam.Enemy;
         HealthManager _healthManager;
+        EntityStats _stats;
         SpriteAnimator _animator;
 
         const string IDLE_ANIM = "enemy_idle";
@@ -39,7 +42,7 @@ namespace RoguelikeFNA
 
         void OnAnimationComplete(string anim)
         {
-            if(anim == HIT_ANIM)
+            if (anim == HIT_ANIM)
             {
                 _animator.Play(IDLE_ANIM, SpriteAnimator.LoopMode.Loop);
             }
@@ -61,6 +64,7 @@ namespace RoguelikeFNA
             _animator = Entity.AddComponent(new SpriteAnimator().AddAnimationsFromAtlas(atlas));
             Entity.AddComponent(new BoxCollider(28, 38) { PhysicsLayer = (int)CollisionLayer.Enemy, CollidesWithLayers = (int)CollisionLayer.Player });
             _healthManager = Entity.AddComponent(new HealthManager(Health));
+            _stats = Entity.AddComponent(new EntityStats(Damage) { Team = Team });
         }
     }
 }

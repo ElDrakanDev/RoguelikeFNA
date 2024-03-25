@@ -802,7 +802,7 @@
 					"acceptFileTypes": null,
 					"defaultOverride": {
 						"id": "V_String",
-						"params": ["RoguelikeFNA.Portal"]
+						"params": ["RoguelikeFNA.Prefabs.Portal"]
 					},
 					"textLanguageMode": null,
 					"symmetricalRef": false,
@@ -952,7 +952,7 @@
 					"acceptFileTypes": null,
 					"defaultOverride": {
 						"id": "V_String",
-						"params": ["RoguelikeFNA.DemoEnemy"]
+						"params": ["RoguelikeFNA.Prefabs.DemoEnemy"]
 					},
 					"textLanguageMode": null,
 					"symmetricalRef": false,
@@ -1071,7 +1071,7 @@
 							"px": [144,272],
 							"fieldInstances": [
 								{ "__identifier": "Health", "__type": "Int", "__value": 30, "__tile": null, "defUid": 69, "realEditorValues": [{ "id": "V_Int", "params": [30] }] },
-								{ "__identifier": "InternalType", "__type": "String", "__value": "RoguelikeFNA.DemoEnemy", "__tile": null, "defUid": 70, "realEditorValues": [] }
+								{ "__identifier": "InternalType", "__type": "String", "__value": "RoguelikeFNA.Prefabs.DemoEnemy", "__tile": null, "defUid": 70, "realEditorValues": [] }
 							]
 						},
 						{
@@ -1088,7 +1088,7 @@
 							"px": [368,224],
 							"fieldInstances": [
 								{ "__identifier": "Health", "__type": "Int", "__value": 32767, "__tile": null, "defUid": 69, "realEditorValues": [{ "id": "V_Int", "params": [32767] }] },
-								{ "__identifier": "InternalType", "__type": "String", "__value": "RoguelikeFNA.DemoEnemy", "__tile": null, "defUid": 70, "realEditorValues": [] }
+								{ "__identifier": "InternalType", "__type": "String", "__value": "RoguelikeFNA.Prefabs.DemoEnemy", "__tile": null, "defUid": 70, "realEditorValues": [] }
 							]
 						},
 						{
@@ -1104,7 +1104,7 @@
 							"defUid": 65,
 							"px": [640,192],
 							"fieldInstances": [
-								{ "__identifier": "InternalType", "__type": "String", "__value": "RoguelikeFNA.Portal", "__tile": null, "defUid": 71, "realEditorValues": [] },
+								{ "__identifier": "InternalType", "__type": "String", "__value": "RoguelikeFNA.Prefabs.Portal", "__tile": null, "defUid": 71, "realEditorValues": [] },
 								{ "__identifier": "IsEntrance", "__type": "Bool", "__value": false, "__tile": null, "defUid": 72, "realEditorValues": [] }
 							]
 						}
