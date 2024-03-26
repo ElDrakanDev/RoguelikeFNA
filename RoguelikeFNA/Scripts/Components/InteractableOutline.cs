@@ -5,11 +5,6 @@ using Nez.Sprites;
 
 namespace RoguelikeFNA
 {
-    public interface IInteractListener
-    {
-        public void OnHover(Entity source);
-        public void OnInteract(Entity source);
-    }
     public class InteractableOutline : Component, IUpdatable, IInteractListener
     {
         public static Color InteractColor = Color.White;

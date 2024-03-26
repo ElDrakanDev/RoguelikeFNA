@@ -52,7 +52,6 @@ namespace RoguelikeFNA
         const string SHOOT_ANIM = "zero_buster";
         const string SHOOT_AIR_ANIM = "zero_buster_air";
 
-
         TiledMapMover _mover;
         TiledMapMover.CollisionState _collisionState = new TiledMapMover.CollisionState();
         BoxCollider _collider;
