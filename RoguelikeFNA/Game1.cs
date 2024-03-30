@@ -20,7 +20,9 @@ namespace RoguelikeFNA
             Core.RegisterGlobalManager(new SoundEffectManager());
             Core.RegisterGlobalManager(new InputManager());
 
+
 #if DEBUG
+            DebugRenderEnabled = true;
             System.Diagnostics.Debug.Listeners.Add(new System.Diagnostics.TextWriterTraceListener(System.Console.Out));
 
             // optionally render Nez in an ImGui window

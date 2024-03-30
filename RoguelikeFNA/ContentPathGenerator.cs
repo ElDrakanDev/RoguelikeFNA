@@ -76,6 +76,7 @@ namespace Nez
 		{
 			public const string Directory = @".\Content\Hitboxes";
 		
+			public const string Demoenemy_hitbox_json = @".\Content\Hitboxes\demoenemy_hitbox.json";
 			public const string Zero_hitboxes_json = @".\Content\Hitboxes\zero_hitboxes.json";
 		}
 

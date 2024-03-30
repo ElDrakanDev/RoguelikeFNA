@@ -11,14 +11,14 @@ namespace RoguelikeFNA
         public object Source;
         public bool Canceled = false;
 
-        public DamageInfo(int damage, object source, Vector2 knockback = default)
+        public DamageInfo(int damage, Entity source, Vector2 knockback = default)
         {
             Damage = damage;
             Knockback = knockback;
             Source = source;
         }
 
-        public DamageInfo(float damage, object source, Vector2 knockback = default) : this(Mathf.RoundToInt(damage), source, knockback) { }
+        public DamageInfo(float damage, Entity source, Vector2 knockback = default) : this(Mathf.RoundToInt(damage), source, knockback) { }
     }
 
     public class HealInfo
@@ -26,7 +26,7 @@ namespace RoguelikeFNA
         public int Amount;
         public object Source;
 
-        public HealInfo(int amount, object source)
+        public HealInfo(int amount, Entity source)
         {
             Amount = amount;
             Source = source;
@@ -96,7 +96,7 @@ namespace RoguelikeFNA
         /// <summary>
         /// Event invoked when entity dies
         /// </summary>
-        public event Action<object> onDeath;
+        public event Action<DeathInfo> onDeath;
 
         public void Hit(DamageInfo info)
         {
@@ -115,7 +115,7 @@ namespace RoguelikeFNA
         public void Die(DeathInfo info)
         {
             preDeath?.Invoke(info);
-            if(info.Canceled is false) onDeath?.Invoke(info.Source);
+            if(info.Canceled is false) onDeath?.Invoke(info);
         }
     }
 }

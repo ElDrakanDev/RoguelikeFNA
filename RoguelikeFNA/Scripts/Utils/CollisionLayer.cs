@@ -6,9 +6,8 @@ namespace RoguelikeFNA
     public enum CollisionLayer
     {
         None = 0,
-        Player = 1,
+        Entity = 1,
         Ground = 2,
-        Enemy = 4,
-        Interactable = 8,
+        Interactable = 4,
     }
 }

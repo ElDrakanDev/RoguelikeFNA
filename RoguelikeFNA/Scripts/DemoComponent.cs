@@ -21,7 +21,6 @@ namespace RoguelikeFNA
         bool _isAttacking = false;
         bool _isDashing => (_collisionState.Below && _dashState && _dashTime > 0) || (!_collisionState.Below && _dashState);
         bool _dashState = false;
-        bool _facingRight;
         float _dashTime;
         float _groundedBufferTime;
         float _jumpInputBufferTime;
@@ -56,10 +55,11 @@ namespace RoguelikeFNA
         TiledMapMover.CollisionState _collisionState = new TiledMapMover.CollisionState();
         BoxCollider _collider;
         SpriteTrail _spriteTrail;
+        FaceDirection _fDir;
 
         EntityStats _stats;
         PlayerInput _input;
-        Vector2 AimDirection => _facingRight ? Vector2.UnitX : -Vector2.UnitX;
+        Vector2 AimDirection => _fDir.FacingRight ? Vector2.UnitX : -Vector2.UnitX;
 
         public DemoComponent(TiledMapRenderer tmxmap, PlayerInput input)
         {
@@ -69,6 +69,7 @@ namespace RoguelikeFNA
 
         public override void OnAddedToEntity()
         {
+            _fDir = Entity.AddComponent(new FaceDirection());
             _sfxManager = Core.GetGlobalManager<SoundEffectManager>();
             _slashSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.SaberSlash_WAV);
             _dashSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.ZeroDash_WAV);
@@ -76,11 +77,10 @@ namespace RoguelikeFNA
             _shootSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.BusterShot_WAV);
 
             var atlas = Entity.Scene.Content.LoadSpriteAtlas(ContentPath.Atlases.Zero.Zero_atlas);
-            _facingRight = Entity.Scale.X >= 0;
 
             Entity.AddComponent(_mover);
             _collider = Entity.AddComponent(new BoxCollider(new Rectangle(-12, -20, 33, 40)){
-                PhysicsLayer = (int)CollisionLayer.Player,
+                PhysicsLayer = (int)CollisionLayer.Entity,
                 CollidesWithLayers = (int)CollisionLayer.Ground });
 
             var child = new Entity();
@@ -100,13 +100,13 @@ namespace RoguelikeFNA
 
             _hitboxHandler = child.AddComponent(new HitboxHandler());
             _hitboxHandler.PhysicsLayer = (int)CollisionLayer.None;
-            _hitboxHandler.CollidesWithLayers = (int)(CollisionLayer.Enemy | CollisionLayer.Interactable);
+            _hitboxHandler.CollidesWithLayers = (int)(CollisionLayer.Entity | CollisionLayer.Interactable);
             _hitboxHandler.AnimationsHitboxes = Entity.Scene.Content.LoadJson<Dictionary<string, List<HitboxGroup>>>(
                 ContentPath.Hitboxes.Zero_hitboxes_json);
             _hitboxHandler.OnCollisionEnter += OnHitOther;
             _hitboxHandler.Animator = _animator;
 
-            Entity.AddComponent(new HealthManager(25));
+            Entity.AddComponent(new HealthManager(25)).onDeath += e => { if (e.Canceled is false) Entity.Destroy(); };
             _stats = Entity.AddComponent(new EntityStats(5) { Team = EntityTeam.Friendly });
             _ammo = _maxAmmo;
         }
@@ -227,7 +227,7 @@ namespace RoguelikeFNA
                     _sfxManager.Play(_slashSfx);
                 }
                 _velocity.X = speed * xInput * Time.DeltaTime;
-                CheckFacingSide(xInput);
+                _fDir.CheckFacingSide(xInput);
             }
             // Shoot
             else if(_input.Special.IsPressed && _isAttacking is false && _collisionState.Below && _ammo > 0)
@@ -250,13 +250,13 @@ namespace RoguelikeFNA
                     Shoot(_shootOffsetAir);
                 }
                 _velocity.X = speed * xInput * Time.DeltaTime;
-                CheckFacingSide(xInput);
+                _fDir.CheckFacingSide(xInput);
             }
             // Jump
             else if(_isAttacking is false && _velocity.Y < 0)
             {
                 _velocity.X = speed * xInput * Time.DeltaTime;
-                CheckFacingSide(xInput);
+                _fDir.CheckFacingSide(xInput);
                 _animator.Speed = 2;
 
                 if (_prevVel.Y >= 0 && _animator.IsAnimationActive(JUMP_START_ANIM) is false)
@@ -268,7 +268,7 @@ namespace RoguelikeFNA
             else if (_isAttacking is false && _velocity.Y > 0 && _collisionState.Below is false)
             {
                 _velocity.X = speed * xInput * Time.DeltaTime;
-                CheckFacingSide(xInput);
+                _fDir.CheckFacingSide(xInput);
                 _animator.Speed = 2;
 
                 if (_prevVel.Y <= 0 && _animator.IsAnimationActive(FALL_START_ANIM) is false)
@@ -282,8 +282,8 @@ namespace RoguelikeFNA
                 if (_animator.IsAnimationActive(DASH_ANIM) is false)
                     _animator.Play(DASH_ANIM);
                 _animator.Speed = 2;
-                CheckFacingSide(xInput);
-                int side = _facingRight ? 1 : -1;
+                _fDir.CheckFacingSide(xInput);
+                int side = _fDir.FacingRight ? 1 : -1;
                 _velocity.X = speed * side * Time.DeltaTime;
             }
             // Idle
@@ -303,19 +303,10 @@ namespace RoguelikeFNA
                     _animator.Play(WALK_ANIM);
 
                 _velocity.X = speed * xInput * Time.DeltaTime;
-                CheckFacingSide(xInput);
+                _fDir.CheckFacingSide(xInput);
             }
 
             _mover.Move(_velocity, _collider, _collisionState);
-        }
-
-        void CheckFacingSide(float xInput)
-        {
-            if ((xInput > 0 && _facingRight is false) || (xInput < 0 && _facingRight is true))
-            {
-                _facingRight = !_facingRight;
-                Entity.Scale *= new Vector2(-1, 1);
-            }
         }
 
         void OnAnimationComplete(string anim)
@@ -354,7 +345,6 @@ namespace RoguelikeFNA
                 { Velocity = AimDirection * _projectileVelocity, Damage = _stats.Damage, Lifetime = 5 });
             proj.SetValuesFromEntityStats(_stats);
             anim.Play(anim.Animations.Keys.First());
-            entity.AddComponent(new ProjecitleHoming());
         }
     }
 }

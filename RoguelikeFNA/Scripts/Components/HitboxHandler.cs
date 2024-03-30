@@ -12,15 +12,17 @@ namespace RoguelikeFNA
         /// The animator this handler's hitboxes will be bound to
         /// </summary>
         public SpriteAnimator Animator;
-        BoxCollider _collider;
         [InspectorSerializable] public Dictionary<string, List<HitboxGroup>> AnimationsHitboxes;
         public string AnimationName => Animator.CurrentAnimationName;
         public int SpriteIndex => Animator.CurrentFrame;
-        HashSet<Entity> _collisions = new HashSet<Entity>();
-        HashSet<Entity> _newCollisions = new HashSet<Entity>();
         public int CollidesWithLayers { get => _collider.CollidesWithLayers; set => _collider.CollidesWithLayers = value; }
         public int PhysicsLayer { get => _collider.PhysicsLayer; set => _collider.PhysicsLayer = value; }
         public event Action<Entity> OnCollisionEnter;
+        
+        BoxCollider _collider;
+        HashSet<Entity> _collisions = new HashSet<Entity>();
+        HashSet<Entity> _newCollisions = new HashSet<Entity>();
+        bool _clear;
 
         public HitboxHandler() : this(new Dictionary<string, List<HitboxGroup>>()) { }
         public HitboxHandler(Dictionary<string, List<HitboxGroup>> hitboxes)
@@ -44,6 +46,13 @@ namespace RoguelikeFNA
             )
                 return;
 
+            if (_clear)
+            {
+                _clear = false;
+                _collisions.Clear();
+                _newCollisions.Clear();
+            }
+
             _newCollisions.Clear();
 
             var hitboxGroup = AnimationsHitboxes[AnimationName][SpriteIndex];
@@ -65,7 +74,7 @@ namespace RoguelikeFNA
 
                 foreach(var neighbor in neighbors)
                 {
-                    if(_collisions.Contains(neighbor.Entity) is false && _collider.Overlaps(neighbor))
+                    if(neighbor.Entity != Entity && _collisions.Contains(neighbor.Entity) is false && _collider.Overlaps(neighbor))
                     {
                         _collisions.Add(neighbor.Entity);
                         _newCollisions.Add(neighbor.Entity);
@@ -82,11 +91,7 @@ namespace RoguelikeFNA
             }
         }
 
-        public void ClearCollisions()
-        {
-            _collisions.Clear();
-            _newCollisions.Clear();
-        }
+        public void ClearCollisions() => _clear = true;
     }
 }
 
