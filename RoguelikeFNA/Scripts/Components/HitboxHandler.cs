@@ -63,7 +63,7 @@ namespace RoguelikeFNA
 
             rect = rect.Transformed(Transform);
             var neighbors = Physics.BoxcastBroadphaseExcludingSelf(_collider, ref rect, CollidesWithLayers);
-            Debug.DrawHollowRect(rect, Color.Green);
+            Debug.DrawHollowRect(rect, Color.Yellow);
 
             foreach (var hitbox in hitboxGroup.Hitboxes)
             {

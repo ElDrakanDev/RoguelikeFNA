@@ -1,0 +1,1 @@
+RoguelikeFNA.Items.SerializedItem(ItemId:"example_item",TexturePath:"Content/Sprites/ExampleSword.png",Effects:[RoguelikeFNA.Items.ProjectileHomingEffect(HomingRange:100,HomingSpeed:0.07)])

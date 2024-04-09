@@ -102,7 +102,7 @@ namespace RoguelikeFNA
             _hitboxHandler.PhysicsLayer = (int)CollisionLayer.None;
             _hitboxHandler.CollidesWithLayers = (int)(CollisionLayer.Entity | CollisionLayer.Interactable);
             _hitboxHandler.AnimationsHitboxes = Entity.Scene.Content.LoadJson<Dictionary<string, List<HitboxGroup>>>(
-                ContentPath.Hitboxes.Zero_hitboxes_json);
+                ContentPath.Serializables.Hitboxes.Zero_hitboxes_json);
             _hitboxHandler.OnCollisionEnter += OnHitOther;
             _hitboxHandler.Animator = _animator;
 
@@ -345,6 +345,14 @@ namespace RoguelikeFNA
                 { Velocity = AimDirection * _projectileVelocity, Damage = _stats.Damage, Lifetime = 5 });
             proj.SetValuesFromEntityStats(_stats);
             anim.Play(anim.Animations.Keys.First());
+            FireEvent<IProjectileShootListener, Projectile>(proj);
+        }
+
+        void FireEvent<TListener, TParam>(TParam param) where TListener : class, IEvent<TParam>
+        {
+            Entity.GetComponents<TListener>().ForEach(i => i.Fire(param));
+            foreach (var item in Entity.GetComponents<Item>())
+                item.FireEvent<TListener, TParam>(param);
         }
     }
 }

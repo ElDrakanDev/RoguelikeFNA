@@ -43,6 +43,8 @@ namespace RoguelikeFNA
                 foreach ( var row in rows.Skip(1))
                 {
                     var cells = row.Cells.ToArray();
+                    // If row doesnt have at least ID and translation it is an empty / invalid row
+                    if (cells.Length < 2) continue; 
                     _translations.Add((string)cells[idIndex].Value, (string)cells[languageIndex].Value);
                 }
             }

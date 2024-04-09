@@ -72,14 +72,6 @@ namespace Nez
 			// Ignored file '.keep';
 		}
 
-		public static class Hitboxes
-		{
-			public const string Directory = @".\Content\Hitboxes";
-		
-			public const string Demoenemy_hitbox_json = @".\Content\Hitboxes\demoenemy_hitbox.json";
-			public const string Zero_hitboxes_json = @".\Content\Hitboxes\zero_hitboxes.json";
-		}
-
 		public static class Materials
 		{
 			public const string Directory = @".\Content\Materials";
@@ -96,6 +88,27 @@ namespace Nez
 			public const string Trippy_pex = @".\Content\Particles\Trippy.pex";
 		}
 
+		public static class Serializables
+		{
+			public const string Directory = @".\Content\Serializables";
+		
+			public static class Hitboxes
+			{
+				public const string Directory = @".\Content\Serializables\Hitboxes";
+			
+				public const string Demoenemy_hitbox_json = @".\Content\Serializables\Hitboxes\demoenemy_hitbox.json";
+				public const string Zero_hitboxes_json = @".\Content\Serializables\Hitboxes\zero_hitboxes.json";
+			}
+
+			public static class Items
+			{
+				public const string Directory = @".\Content\Serializables\Items";
+			
+				public const string Example_item_item = @".\Content\Serializables\Items\example_item.item";
+			}
+
+		}
+
 		public static class Shaders
 		{
 			public const string Directory = @".\Content\Shaders";
@@ -109,6 +122,7 @@ namespace Nez
 		{
 			public const string Directory = @".\Content\Sprites";
 		
+			public const string ExampleSword_png = @".\Content\Sprites\ExampleSword.png";
 			public const string Nezlogoblack_png = @".\Content\Sprites\nez-logo-black.png";
 		}
 

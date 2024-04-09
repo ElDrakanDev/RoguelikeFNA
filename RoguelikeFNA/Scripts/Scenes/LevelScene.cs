@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Nez;
+using RoguelikeFNA.Items;
 
 namespace RoguelikeFNA
 {
@@ -8,9 +9,9 @@ namespace RoguelikeFNA
         InputManager _inputManager;
         public TiledMapRenderer activeTiledMap;
 
-        public override void Initialize()
+        public override void Begin()
         {
-            base.Initialize();
+            base.Begin();
 
             activeTiledMap = CreateEntity("test-tilemap")
                 .AddComponent(new TiledMapRenderer(
@@ -18,6 +19,10 @@ namespace RoguelikeFNA
                 { RenderLayer = 1, PhysicsLayer = (int)CollisionLayer.Ground}
                 );
             activeTiledMap.CreateObjects();
+            CreateEntity("test-item")
+                .SetPosition(180, 160)
+                .AddComponent(ItemLoader.LoadItem(ContentPath.Serializables.Items.Example_item_item));
+                //.AddComponent(new ProjectileHomingEffect() { HomingRange = 100, HomingSpeed = 0.08f });
 
             _inputManager = Core.GetGlobalManager<InputManager>();
             foreach(var input in _inputManager.AvailablePlayers)

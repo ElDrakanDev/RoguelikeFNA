@@ -92,7 +92,8 @@ namespace RoguelikeFNA.Prefabs
         public void AddComponents()
         {
             var atlas = Entity.Scene.Content.LoadSpriteAtlas(ContentPath.Atlases.Enemy.Enemy_atlas);
-            var hitboxes = Entity.Scene.Content.LoadJson<Dictionary<string, List<HitboxGroup>>>(ContentPath.Hitboxes.Demoenemy_hitbox_json);
+            var hitboxes = Entity.Scene.Content.LoadJson<Dictionary<string, List<HitboxGroup>>>(
+                ContentPath.Serializables.Hitboxes.Demoenemy_hitbox_json);
             Entity.AddComponent(new SpriteAnimator().AddAnimationsFromAtlas(atlas));
             Entity.AddComponent(new BoxCollider(28, 38) { PhysicsLayer = (int)CollisionLayer.Entity, CollidesWithLayers = (int)CollisionLayer.Entity });
             _healthManager = Entity.AddComponent(new HealthManager(Health));
@@ -149,7 +150,8 @@ namespace RoguelikeFNA.Prefabs
 
         void Patrol_Tick()
         {
-            if (Vector2.Distance(Transform.Position, _movingTowards) < 1)
+            // Arrived at target location or vertical axis is unaligned from target
+            if (Vector2.Distance(Transform.Position, _movingTowards) < 1 || Math.Abs(_movingTowards.Y - Transform.Position.Y) > 1)
             {
                 CurrentState = PatrolStates.Stay;
                 return;
@@ -197,9 +199,14 @@ namespace RoguelikeFNA.Prefabs
             _animator.Play(ATTACK_ANIM, SpriteAnimator.LoopMode.Once);
             _velocity.X = 0;
             _hitbox.ClearCollisions();
+            _animator.Speed = 0.8f;
         }
 
-        void Attack_Exit() => _hitbox.ClearCollisions();
+        void Attack_Exit()
+        {
+            _hitbox.ClearCollisions();
+            _animator.Speed = 1;
+        }
 
         #endregion
 
@@ -210,7 +217,7 @@ namespace RoguelikeFNA.Prefabs
                     && s.InRange(Transform.Position, _detectRange)
                     && s.LineOfSight(Transform.Position)).ToList();
 
-            Debug.DrawCircle(Transform.Position, Color.Red, _detectRange);
+            Debug.DrawCircle(Transform.Position, Color.Yellow, _detectRange);
 
             if(enemies.Count > 0)
                 return enemies.Closest(Transform.Position);
