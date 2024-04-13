@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using RoguelikeFNA.Items;
 using System.IO;
-using System.Xml.Serialization;
 using Nez.Persistence;
+using Nez.ImGuiTools;
 
 namespace RoguelikeFNA
 {
@@ -23,18 +23,43 @@ namespace RoguelikeFNA
         int _removeIndex;
 
         SerializedItem _item = new();
-        
+        //FileSelectorPopup _popup;
 
         public CreateItemWindow()
         {
             _effectTypes = ReflectionUtils.GetAllSubclasses(typeof(ItemEffect), true);
+            //_popup = new(Title, _supportedExtensions);
+            //_popup.OnFileSelected += file => _item.TexturePath = file;
         }
 
         public override void Show()
         {
             _removeIndex = -1;
             ImGui.InputText("Item ID", ref _item.ItemId, 200);
-            ImGui.InputText("Texture Path", ref _item.TexturePath, 200);
+
+            ImGui.Text(
+                _item.TexturePath != string.Empty ?
+                    _item.TexturePath.Replace(Environment.CurrentDirectory + Path.DirectorySeparatorChar, "")
+                    : "No texture selected."
+            );
+            ImGui.SameLine();
+            if (ImGui.Button("Browse..."))
+                ImGui.OpenPopup("open-texture");
+
+            bool isFileSelectOpen = true;
+            if(ImGui.BeginPopupModal("open-texture", ref isFileSelectOpen, ImGuiWindowFlags.NoTitleBar))
+            {
+                var picker = FilePicker.GetFilePicker(this, Path.Combine(Environment.CurrentDirectory, "Content"), ".png");
+                picker.DontAllowTraverselBeyondRootFolder = true;
+
+                if (picker.Draw())
+                {
+                    _item.TexturePath = picker.SelectedFile;
+                }
+                ImGui.EndPopup();
+            }
+
+            //_popup.Draw();
 
             if (ImGui.CollapsingHeader("Effects"))
             {
