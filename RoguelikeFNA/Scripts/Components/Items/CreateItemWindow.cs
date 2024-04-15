@@ -7,8 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using RoguelikeFNA.Items;
 using System.IO;
+using System.Reflection;
 using Nez.Persistence;
-using Nez.ImGuiTools;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace RoguelikeFNA
 {
@@ -21,15 +22,18 @@ namespace RoguelikeFNA
         List<Type> _effectTypes;
         int _effectTypeSelected;
         int _removeIndex;
+        TextureInspector _texInspector;
 
         SerializedItem _item = new();
-        //FileSelectorPopup _popup;
+        Texture2D _itemTex;
 
         public CreateItemWindow()
         {
             _effectTypes = ReflectionUtils.GetAllSubclasses(typeof(ItemEffect), true);
-            //_popup = new(Title, _supportedExtensions);
-            //_popup.OnFileSelected += file => _item.TexturePath = file;
+            _texInspector = new TextureInspector();
+            _texInspector.SetTarget(this,
+                GetType().GetField(nameof(_itemTex), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic));
+            _texInspector.Initialize();
         }
 
         public override void Show()
@@ -37,27 +41,7 @@ namespace RoguelikeFNA
             _removeIndex = -1;
             ImGui.InputText("Item ID", ref _item.ItemId, 200);
 
-            ImGui.Text(
-                _item.TexturePath != string.Empty ?
-                    _item.TexturePath.Replace(Environment.CurrentDirectory + Path.DirectorySeparatorChar, "")
-                    : "No texture selected."
-            );
-            ImGui.SameLine();
-            if (ImGui.Button("Browse..."))
-                ImGui.OpenPopup("open-texture");
-
-            bool isFileSelectOpen = true;
-            if(ImGui.BeginPopupModal("open-texture", ref isFileSelectOpen, ImGuiWindowFlags.NoTitleBar))
-            {
-                var picker = FilePicker.GetFilePicker(this, Path.Combine(Environment.CurrentDirectory, "Content"), ".png");
-                picker.DontAllowTraverselBeyondRootFolder = true;
-
-                if (picker.Draw())
-                {
-                    _item.TexturePath = picker.SelectedFile;
-                }
-                ImGui.EndPopup();
-            }
+            _texInspector.Draw();
 
             //_popup.Draw();
 
@@ -68,6 +52,7 @@ namespace RoguelikeFNA
                 ImGui.Combo("Effect", ref _effectTypeSelected, _effectTypes.Select(e => e.Name).ToArray(), _effectTypes.Count);
                 if(ImGui.Button("Add Selected Effect"))
                 {
+                    _itemTex = Core.Scene.Content.LoadTexture(ContentPath.Textures.Debug_circle_png);
                     var effect = (ItemEffect)Activator.CreateInstance(_effectTypes[_effectTypeSelected]);
                     _item.Effects.Add(effect);
                     var fieldsToInspect = TypeInspectorUtils.GetAllFieldsWithAttribute<InspectableAttribute>(effect.GetType());
