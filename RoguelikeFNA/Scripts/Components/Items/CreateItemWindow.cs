@@ -17,12 +17,12 @@ namespace RoguelikeFNA
     {
         public override string Title => "Create Item";
 
-        string _savePath = string.Empty;
         List<List<AbstractTypeInspector>> _effectInspectors = new List<List<AbstractTypeInspector>>();
         List<Type> _effectTypes;
         int _effectTypeSelected;
         int _removeIndex;
         TextureInspector _texInspector;
+        BitmaskInspector _bitmaskInspector;
 
         SerializedItem _item = new();
         Texture2D _itemTex;
@@ -30,10 +30,19 @@ namespace RoguelikeFNA
         public CreateItemWindow()
         {
             _effectTypes = ReflectionUtils.GetAllSubclasses(typeof(ItemEffect), true);
+
             _texInspector = new TextureInspector();
             _texInspector.SetTarget(this,
                 GetType().GetField(nameof(_itemTex), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic));
             _texInspector.Initialize();
+
+            _bitmaskInspector = new BitmaskInspector();
+            _bitmaskInspector.SetTarget(
+                _item,
+                _item.GetType().GetField(
+                    nameof(_item.ItemPoolMask), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
+            ));
+            _bitmaskInspector.Initialize();
         }
 
         public override void Show()
@@ -41,9 +50,8 @@ namespace RoguelikeFNA
             _removeIndex = -1;
             ImGui.InputText("Item ID", ref _item.ItemId, 200);
 
+            _bitmaskInspector.Draw();
             _texInspector.Draw();
-
-            //_popup.Draw();
 
             if (ImGui.CollapsingHeader("Effects"))
             {
@@ -103,15 +111,23 @@ namespace RoguelikeFNA
                 _effectInspectors.Clear();
             }
 
-            ImGui.InputText("Save Path", ref _savePath, 200);
+            var savePath = "./new_item.item";
             if (ImGui.Button("Save Item"))
             {
-                if (File.Exists(_item.TexturePath) is false)
-                    Debug.Error($"Couldn't find item texture at '{_item.TexturePath}' when saving item '{_item.ItemId}'.");
+                bool isValid = _item.TexturePath != string.Empty && _item.ItemId != string.Empty;
+                Insist.IsTrue(isValid, "Please fill at least ItemID and Texture Path");
 
-                Directory.CreateDirectory(Directory.GetParent(_savePath).FullName);
-                File.WriteAllText(_savePath, NsonEncoder.ToNson(_item, new NsonSettings()));
-                System.Diagnostics.Process.Start(Directory.GetParent(_savePath).FullName);
+                if (isValid)
+                {
+                    Insist.IsTrue(
+                        File.Exists(_item.TexturePath),
+                        $"Couldn't find item texture at '{_item.TexturePath}' when saving item '{_item.ItemId}'."
+                    );
+
+                    Directory.CreateDirectory(Directory.GetParent(savePath).FullName);
+                    File.WriteAllText(savePath, NsonEncoder.ToNson(_item, new NsonSettings()));
+                    System.Diagnostics.Process.Start(Directory.GetParent(savePath).FullName);
+                }
             }
         }
     }

@@ -2,20 +2,31 @@
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using Nez;
+using Nez.ImGuiTools.ObjectInspectors;
 using Nez.Sprites;
-using Nez.Textures;
 using RoguelikeFNA.Items;
 
 namespace RoguelikeFNA
 {
+    [System.Flags]
+    public enum ItemPool
+    {
+        Normal = 1,
+        Shop = 2,
+        Boss = 4,
+        Story = 8,
+    }
+
     public class Item : Component, IInteractListener, IUpdatable
     {
         public string ItemId;
         public Texture2D Texture;
         public List<ItemEffect> Effects = new List<ItemEffect>();
         public string Name => TranslationManager.GetTranslation($"{ItemId}_name");
+        [BitmaskInspectable(typeof(ItemPool))] public int ItemPoolMask;
         public string Description => TranslationManager.GetTranslation($"{ItemId}_desc");
         bool _hasBeenPickedUp = false;
+
 
         #region test
         public override void OnAddedToEntity()
