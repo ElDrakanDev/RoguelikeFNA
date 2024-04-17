@@ -35,6 +35,7 @@ namespace RoguelikeFNA
             _texInspector.SetTarget(this,
                 GetType().GetField(nameof(_itemTex), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic));
             _texInspector.Initialize();
+            _texInspector.OnTexturePicked += path => _item.TexturePath = path;
 
             _bitmaskInspector = new BitmaskInspector();
             _bitmaskInspector.SetTarget(
@@ -111,9 +112,9 @@ namespace RoguelikeFNA
                 _effectInspectors.Clear();
             }
 
-            var savePath = "./new_item.item";
             if (ImGui.Button("Save Item"))
             {
+                var savePath = $"./{_item.ItemId}.item";
                 bool isValid = _item.TexturePath != string.Empty && _item.ItemId != string.Empty;
                 Insist.IsTrue(isValid, "Please fill at least ItemID and Texture Path");
 
