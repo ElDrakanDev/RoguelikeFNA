@@ -2,7 +2,6 @@
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using Nez;
-using Nez.ImGuiTools.ObjectInspectors;
 using Nez.Sprites;
 using RoguelikeFNA.Items;
 
@@ -23,7 +22,7 @@ namespace RoguelikeFNA
         public Texture2D Texture;
         public List<ItemEffect> Effects = new List<ItemEffect>();
         public string Name => TranslationManager.GetTranslation($"{ItemId}_name");
-        [BitmaskInspectable(typeof(ItemPool))] public int ItemPoolMask;
+        public ItemPool ItemPoolMask;
         public string Description => TranslationManager.GetTranslation($"{ItemId}_desc");
         bool _hasBeenPickedUp = false;
 
@@ -54,7 +53,7 @@ namespace RoguelikeFNA
             if (_hasBeenPickedUp) return;
             _hasBeenPickedUp = true;
             var itemClone = source.AddComponent((Item)Clone());
-            itemClone.Effects = Effects.Select(e => (ItemEffect)e.Clone()).ToList();
+            //itemClone.Effects = Effects.Select(e => (ItemEffect)e.Clone()).ToList();
             foreach (var effect in itemClone.Effects)
                 effect.OnPickup(source, itemClone);
             Entity.Destroy();
@@ -85,6 +84,13 @@ namespace RoguelikeFNA
                 if(effect is TListener listener)
                     listener.Fire(param);
             }
+        }
+
+        public override Component Clone()
+        {
+            var item = (Item)base.Clone();
+            item.Effects = Effects.Select(e => (ItemEffect)e.Clone()).ToList();
+            return item;
         }
     }
 }

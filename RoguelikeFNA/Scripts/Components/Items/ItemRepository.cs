@@ -1,17 +1,16 @@
 ﻿using Nez;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RoguelikeFNA.Items
 {
-    public class ItemRepository : GlobalManager
+    public class ItemRepository : GlobalManager, IRNGDependent
     {
         public Item[] Items { get; private set; }
-        public List<Item> ItemPool;
+        public RNG RNG { get; set; }
+
+        public List<Item> AvailableItems;
 
         public override void OnEnabled()
         {
@@ -26,14 +25,37 @@ namespace RoguelikeFNA.Items
         {
             var enumerable = Directory.EnumerateFiles(ContentPath.Serializables.Items.Directory, "*.item");
             Items = enumerable.Select(LoadItem).ToArray();
+            AvailableItems = Items.ToList();
         }
 
         public Item LoadItem(string path)
         {
             var serializedItem = Core.Content.LoadNson<SerializedItem>(path);
             var texture = Core.Content.LoadTexture(serializedItem.TexturePath);
-            var item = new Item() { ItemId = serializedItem.ItemId, Texture = texture, Effects = serializedItem.Effects };
+            var item = new Item(){
+                ItemId = serializedItem.ItemId,
+                Texture = texture,
+                Effects = serializedItem.Effects,
+                ItemPoolMask = serializedItem.ItemPoolMask };
             return item;
+        }
+
+        public Item GetItemById(string id) => AvailableItems.First(item => item.ItemId == id);
+        public Item PopItemById(string id)
+        {
+            var item = AvailableItems.First(item => item.ItemId == id);
+            if (item == null)
+            {
+                AvailableItems.Remove(item);
+                return item;
+            }
+            return null;
+        }
+
+        public Item GetRandomItemFromPool(ItemPool pool)
+        {
+            var itemsFromPool = AvailableItems.Where(item => Flags.IsFlagSet((int)item.ItemPoolMask, (int)pool)).ToArray();
+            return itemsFromPool[RNG.Range(0, itemsFromPool.Length)];
         }
     }
 }

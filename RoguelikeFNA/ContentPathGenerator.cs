@@ -122,6 +122,7 @@ namespace Nez
 		{
 			public const string Directory = @".\Content\Sprites";
 		
+			public const string Apple_png = @".\Content\Sprites\Apple.png";
 			public const string ExampleSword_png = @".\Content\Sprites\ExampleSword.png";
 			public const string Nezlogoblack_png = @".\Content\Sprites\nez-logo-black.png";
 		}

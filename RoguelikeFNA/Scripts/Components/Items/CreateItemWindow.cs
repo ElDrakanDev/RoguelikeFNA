@@ -61,7 +61,6 @@ namespace RoguelikeFNA
                 ImGui.Combo("Effect", ref _effectTypeSelected, _effectTypes.Select(e => e.Name).ToArray(), _effectTypes.Count);
                 if(ImGui.Button("Add Selected Effect"))
                 {
-                    _itemTex = Core.Scene.Content.LoadTexture(ContentPath.Textures.Debug_circle_png);
                     var effect = (ItemEffect)Activator.CreateInstance(_effectTypes[_effectTypeSelected]);
                     _item.Effects.Add(effect);
                     var fieldsToInspect = TypeInspectorUtils.GetAllFieldsWithAttribute<InspectableAttribute>(effect.GetType());

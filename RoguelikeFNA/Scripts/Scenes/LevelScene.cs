@@ -29,6 +29,10 @@ namespace RoguelikeFNA
             var cam = FindEntity("camera");
             cam.GetComponent<Camera>().SetZoom(1);
             cam.AddComponent(new FollowCamera(FindComponentsOfType<DemoComponent>()[0].Entity));
+
+            CreateEntity("random-normal-item")
+                .SetLocalPosition(Vector2.One * 200)
+                .AddComponent(Core.GetGlobalManager<ItemRepository>().GetRandomItemFromPool(ItemPool.Normal).Clone());
         }
 
         void AddPlayer(PlayerInput input)
