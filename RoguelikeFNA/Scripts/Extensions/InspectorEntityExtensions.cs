@@ -14,7 +14,6 @@ namespace RoguelikeFNA.Scripts.Extensions
     public class InspectorEntityExtensions
     {
         static Type[] _prefabTypes;
-        static int _index;
         static Type _activePrefabType;
 
         static Type[] GetPrefabTypes()

@@ -105,8 +105,10 @@ namespace Nez
 				public const string Directory = @".\Content\Serializables\Items";
 			
 				public const string Example_item_item = @".\Content\Serializables\Items\example_item.item";
+				public const string Regen_item_item = @".\Content\Serializables\Items\regen_item.item";
 			}
 
+			public const string Testserializable_nson = @".\Content\Serializables\test-serializable.nson";
 		}
 
 		public static class Shaders

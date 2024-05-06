@@ -1,0 +1,25 @@
+RoguelikeFNA.Utils.SerializedEntity(
+	Name: "test-serializable",
+	Enabled: true,
+	Tag: 0,
+	TypeName: "",
+	Offset: Microsoft.Xna.Framework.Vector2(
+		X: 0,
+		Y: 0
+	),
+	Scale: Microsoft.Xna.Framework.Vector2(
+		X: 1,
+		Y: 1
+	),
+	Rotation: 0,
+	Components: [
+		RoguelikeFNA.LevelScene+SerializableComponent(
+			PublicFieldInclude: "789",
+			_privateFieldInclude: "123",
+			Entity: null
+		)
+	],
+	Children: [
+
+	]
+)

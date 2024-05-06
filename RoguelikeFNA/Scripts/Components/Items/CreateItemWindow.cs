@@ -25,7 +25,9 @@ namespace RoguelikeFNA
         BitmaskInspector _bitmaskInspector;
 
         SerializedItem _item = new();
+#pragma warning disable CS0649 // El campo 'CreateItemWindow._itemTex' nunca se asigna y siempre tendrá el valor predeterminado null
         Texture2D _itemTex;
+#pragma warning restore CS0649 // El campo 'CreateItemWindow._itemTex' nunca se asigna y siempre tendrá el valor predeterminado null
 
         public CreateItemWindow()
         {

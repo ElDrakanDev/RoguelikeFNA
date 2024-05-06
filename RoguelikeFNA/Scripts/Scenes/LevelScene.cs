@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Nez;
+using Nez.Persistence;
 using RoguelikeFNA.Items;
+using RoguelikeFNA.Utils;
 
 namespace RoguelikeFNA
 {
@@ -8,6 +10,14 @@ namespace RoguelikeFNA
     {
         InputManager _inputManager;
         public TiledMapRenderer activeTiledMap;
+
+        [System.Serializable]
+        class SerializableComponent : Component
+        {
+            public string PublicFieldInclude;
+            [Inspectable]string _privateFieldExclude;
+            [NsonInclude, Inspectable] string _privateFieldInclude;
+        }
 
         public override void Begin()
         {
@@ -33,6 +43,9 @@ namespace RoguelikeFNA
             CreateEntity("random-normal-item")
                 .SetLocalPosition(Vector2.One * 200)
                 .AddComponent(Core.GetGlobalManager<ItemRepository>().GetRandomItemFromPool(ItemPool.Normal).Clone());
+
+            //CreateEntity("test-serializable").AddComponent(new SerializableComponent());
+            Content.LoadNson<SerializedEntity>(ContentPath.Serializables.Testserializable_nson).AddToScene(this);
         }
 
         void AddPlayer(PlayerInput input)
