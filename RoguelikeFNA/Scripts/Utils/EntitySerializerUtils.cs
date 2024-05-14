@@ -33,12 +33,13 @@ namespace RoguelikeFNA.Utils
         /// </summary>
         /// <param name="scene"></param>
         /// <param name="parent"></param>
-        public void AddToScene(Scene scene, Entity parent = null)
+        public Entity AddToScene(Scene scene, Entity parent = null)
         {
             var entity = ToEntity(parent);
             scene.AddEntity(entity);
             foreach(var child in Children)
                 child.AddToScene(scene, entity);
+            return entity;
         }
 
         /// <summary>
@@ -73,7 +74,7 @@ namespace RoguelikeFNA.Utils
             entity.Tag = Tag;
 
             foreach(var component in Components)
-                entity.AddComponent(component.Clone());
+               entity.AddComponent(component.Clone());
 
             return entity;
         }

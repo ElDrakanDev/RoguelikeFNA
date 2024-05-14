@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Audio;
 using Nez;
 using Nez.Sprites;
 using Nez.Tiled;
+using RoguelikeFNA.Utils;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -61,6 +62,8 @@ namespace RoguelikeFNA
         PlayerInput _input;
         Vector2 AimDirection => _fDir.FacingRight ? Vector2.UnitX : -Vector2.UnitX;
 
+        SerializedEntity _projectile;
+
         public DemoComponent(TiledMapRenderer tmxmap, PlayerInput input)
         {
             _mover = new TiledMapMover(tmxmap.CollisionLayer);
@@ -109,6 +112,8 @@ namespace RoguelikeFNA
             Entity.AddComponent(new HealthManager(25)).onDeath += e => { if (e.Canceled is false) Entity.Destroy(); };
             _stats = Entity.AddComponent(new EntityStats(5) { Team = EntityTeam.Friendly });
             _ammo = _maxAmmo;
+
+            _projectile = Entity.Scene.Content.LoadNson<SerializedEntity>(ContentPath.Serializables.Entities.Bullet_nson);
         }
 
         public void Update()
@@ -334,17 +339,19 @@ namespace RoguelikeFNA
             _ammo -= 1;
             _isAttacking = true;
             _sfxManager.Play(_shootSfx);
-            var entity = Entity.Scene.AddEntity(new())
+            var entity = _projectile.AddToScene(Entity.Scene)
                 .SetPosition(Transform.Position + offset * AimDirection)
                 .SetLocalScale(Transform.LocalScale)
                 .SetParent(Entity.Parent);
-            var anim = entity.AddComponent(new SpriteAnimator().AddAnimationsFromAtlas(Entity.Scene.Content.LoadSpriteAtlas(
-                ContentPath.Atlases.Projectiles.Projectiles_atlas
-            )));
-            var proj = entity.AddComponent(new Projectile()
-                { Velocity = AimDirection * _projectileVelocity, Damage = _stats.Damage, Lifetime = 5 });
+            //var anim = entity.AddComponent(new SpriteAnimator().AddAnimationsFromAtlas(Entity.Scene.Content.LoadSpriteAtlas(
+            //    ContentPath.Atlases.Projectiles.Projectiles_atlas
+            //)));
+            //var proj = entity.AddComponent(new Projectile()
+            //    { Velocity = AimDirection * _projectileVelocity, Damage = _stats.Damage, Lifetime = 5 });
+            var proj = entity.GetComponent<Projectile>();
+            proj.Velocity = AimDirection * _projectileVelocity;
             proj.SetValuesFromEntityStats(_stats);
-            anim.Play(anim.Animations.Keys.First());
+            //anim.Play(anim.Animations.Keys.First());
             FireEvent<IProjectileShootListener, Projectile>(proj);
         }
 

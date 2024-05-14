@@ -1,0 +1,34 @@
+RoguelikeFNA.Utils.SerializedEntity(
+	Name: "bullet",
+	Enabled: true,
+	Tag: 0,
+	TypeName: "",
+	Offset: Microsoft.Xna.Framework.Vector2(
+		X: 0,
+		Y: 0
+	),
+	Scale: Microsoft.Xna.Framework.Vector2(
+		X: 1,
+		Y: 1
+	),
+	Rotation: 0,
+	Components: [
+		Nez.Sprites.SpriteAnimator(
+			Speed: 1,
+			AtlasPath: ".\\Content\\Atlases\\projectiles\\projectiles.atlas",
+			SpriteEffects: "None",
+			Color: #FFFFFFFF,
+			DebugRenderEnabled: true
+		),
+		RoguelikeFNA.Projectile(
+			Lifetime: 5,
+			Damage: 5,
+			FaceVelocity: true,
+			ContactDamage: true,
+			GroundHitBehaviour: "Destroy"
+		)
+	],
+	Children: [
+
+	]
+)

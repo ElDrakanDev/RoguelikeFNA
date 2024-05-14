@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System;
+using Nez.Persistence;
+using Nez.Sprites;
 
 namespace RoguelikeFNA
 {
@@ -9,19 +11,20 @@ namespace RoguelikeFNA
     {
         Destroy, Bounce, Ignore
     }
+    [Serializable]
     public class Projectile : Component, IUpdatable, ITriggerListener
     {
         HashSet<Collider> _collisions = new HashSet<Collider>();
-        public ProjectileMover Mover { get; private set; }
+        [NsonExclude] public ProjectileMover Mover { get; private set; }
         public float Lifetime;
         public float Damage;
-        public Vector2 Velocity;
+        [NsonExclude] public Vector2 Velocity;
         public bool FaceVelocity = true;
         public bool ContactDamage = true;
-        public EntityTeam Team;
-        public int TargetTeams;
+        [NsonExclude] public EntityTeam Team;
+        [NsonExclude] public int TargetTeams;
         public GroundHitBehaviour GroundHitBehaviour = GroundHitBehaviour.Destroy;
-        public Entity Owner;
+        [NsonExclude] public Entity Owner;
 
         public override void OnAddedToEntity()
         {
@@ -51,7 +54,7 @@ namespace RoguelikeFNA
                 Entity.Destroy();
             }
 
-            Mover.Move(Velocity);
+            Mover.Move(Velocity * Time.DeltaTime);
         }
 
         public void OnTriggerEnter(Collider other, Collider local)

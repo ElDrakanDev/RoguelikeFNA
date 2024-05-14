@@ -92,6 +92,13 @@ namespace Nez
 		{
 			public const string Directory = @".\Content\Serializables";
 		
+			public static class Entities
+			{
+				public const string Directory = @".\Content\Serializables\Entities";
+			
+				public const string Bullet_nson = @".\Content\Serializables\Entities\bullet.nson";
+			}
+
 			public static class Hitboxes
 			{
 				public const string Directory = @".\Content\Serializables\Hitboxes";
