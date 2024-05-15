@@ -5,6 +5,7 @@ using System.IO;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
 using Nez;
+using Nez.ImGuiTools;
 using Nez.ImGuiTools.ObjectInspectors;
 using Nez.Persistence;
 
@@ -101,6 +102,38 @@ namespace RoguelikeFNA.Utils
                 ImGui.CloseCurrentPopup();
             }
         }
+
+        [InspectorEntityListExtension]
+        static void AddSerializedEntityToScene()
+        {
+            var popupName = "create-from-serialized-entity";
+            if (NezImGui.CenteredButton("Create from Serialized Entity", 0.8f))
+                ImGui.OpenPopup(popupName);
+            if (ImGui.BeginPopup(popupName))
+            {
+                var picker = FilePicker.GetFilePicker(popupName, Path.Combine(Environment.CurrentDirectory, "Content"), ".nson");
+                picker.DontAllowTraverselBeyondRootFolder = true;
+
+                if (picker.Draw())
+                {
+                    try
+                    {
+                        var serialized = Core.Scene.Content.LoadNson<SerializedEntity>(picker.SelectedFile);
+                        serialized.AddToScene(Core.Scene)
+                            .SetPosition(Core.Scene.Camera.Position);
+                        ImGui.CloseCurrentPopup();
+                    }
+                    catch (Exception ex)
+                    {
+                        Nez.Debug.Error($"Couldn't create entity from serialized ({picker.SelectedFile}). Error: \n{ex}");
+                    }
+                }
+                else if (picker.WasCanceled)
+                    ImGui.CloseCurrentPopup();
+                ImGui.EndPopup();
+            }
+        }
+
 
         public static SerializedEntity ConvertToSerialized(Entity entity)
         {

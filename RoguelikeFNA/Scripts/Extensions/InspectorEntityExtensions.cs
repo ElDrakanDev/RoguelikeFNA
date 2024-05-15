@@ -79,6 +79,7 @@ namespace RoguelikeFNA.Scripts.Extensions
                 }
 
                 ImGui.PopStyleColor();
+                ImGui.EndPopup();
             }
         }
     }
