@@ -5,17 +5,20 @@ using System.Linq;
 
 namespace RoguelikeFNA.Items
 {
-    public class ItemRepository : GlobalManager, IRNGDependent
+    public class ItemRepository : GlobalManager
     {
         public Item[] Items { get; private set; }
-        public RNG RNG { get; set; }
+        public RNG RNG => _rngManager.GetRNG(RNGManager.GeneratorTypes.Item);
 
         public List<Item> AvailableItems;
+
+        RNGManager _rngManager;
 
         public override void OnEnabled()
         {
             base.OnEnabled();
             ReloadAllItems();
+            _rngManager = Core.GetGlobalManager<RNGManager>();
         }
 
         /// <summary>

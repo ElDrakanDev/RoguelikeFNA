@@ -136,6 +136,24 @@ namespace Nez
 			public const string Nezlogoblack_png = @".\Content\Sprites\nez-logo-black.png";
 		}
 
+		public static class Test
+		{
+			public const string Directory = @".\Content\Test";
+		
+			public static class Generator
+			{
+				public const string Directory = @".\Content\Test\generator";
+			
+				public const string Boss1Boss_tmx = @".\Content\Test\generator\Boss;1;Boss.tmx";
+				public const string Common10Normal_tmx = @".\Content\Test\generator\Common;10;Normal.tmx";
+				public const string Rare3Normal_tmx = @".\Content\Test\generator\Rare;3;Normal.tmx";
+				public const string Shop1Shop_tmx = @".\Content\Test\generator\Shop;1;Shop.tmx";
+				public const string SuperRare1Normal_tmx = @".\Content\Test\generator\SuperRare;1;Normal.tmx";
+				public const string Treasure1Treasure_tmx = @".\Content\Test\generator\Treasure;1;Treasure.tmx";
+			}
+
+		}
+
 		public static class Textures
 		{
 			public const string Directory = @".\Content\Textures";

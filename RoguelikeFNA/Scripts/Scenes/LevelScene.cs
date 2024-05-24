@@ -1,8 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Nez;
-using Nez.Persistence;
+using RoguelikeFNA.Generation;
 using RoguelikeFNA.Items;
-using RoguelikeFNA.Utils;
 
 namespace RoguelikeFNA
 {
@@ -37,6 +36,8 @@ namespace RoguelikeFNA
                 .AddComponent(Core.GetGlobalManager<ItemRepository>().GetRandomItemFromPool(ItemPool.Normal).Clone());
 
             //CreateEntity("test-serializable").AddComponent(new SerializableComponent());
+            CreateEntity("test-levelgenerator")
+                .AddComponent(new TestGeneratorComponent());
         }
 
         void AddPlayer(PlayerInput input)

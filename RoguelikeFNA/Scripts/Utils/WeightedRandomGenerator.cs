@@ -10,9 +10,9 @@ namespace RoguelikeFNA.Utils
     public class WeightedItem<T>
     {
         public readonly T Value;
-        public readonly float Weight;
+        public readonly int Weight;
 
-        public WeightedItem(T item, float weight)
+        public WeightedItem(T item, int weight)
         {
             Value = item;
             Weight = weight;
@@ -21,15 +21,15 @@ namespace RoguelikeFNA.Utils
 
     public class WeightedRandomGenerator<T>
     {
-        private readonly Random Random;
+        private readonly RNG _rng;
         public List<WeightedItem<T>> WeightedItems = new List<WeightedItem<T>>();
 
         float _totalWeight;
 
         public WeightedRandomGenerator() { }
-        public WeightedRandomGenerator(Random Random) => this.Random = Random;
+        public WeightedRandomGenerator(RNG rng) => this._rng = rng;
 
-        public void AddItem(T item, float weight)
+        public void AddItem(T item, int weight)
         {
             WeightedItems.Add(new WeightedItem<T>(item, weight));
             _totalWeight += weight;
@@ -49,8 +49,8 @@ namespace RoguelikeFNA.Utils
         public WeightedItem<T> GetRandomItem()
         {
             float randomNum;
-            if(Random != null)
-                randomNum = Random.Next() * _totalWeight;
+            if(_rng != null)
+                randomNum = _rng.FRange(0, _totalWeight);
             else
                 randomNum = Nez.Random.NextFloat(_totalWeight);
 
@@ -72,8 +72,8 @@ namespace RoguelikeFNA.Utils
             var items = WeightedItems.Where(predicate).ToArray();
             var total = items.Sum(x => x.Weight);
 
-            if (Random != null)
-                randomNum = Random.Next() * total;
+            if (_rng != null)
+                randomNum = _rng.FRange(0, total);
             else
                 randomNum = Nez.Random.NextFloat(total);
 
