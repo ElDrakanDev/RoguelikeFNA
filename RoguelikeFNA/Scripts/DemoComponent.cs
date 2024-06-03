@@ -64,14 +64,16 @@ namespace RoguelikeFNA
 
         SerializedEntity _projectile;
 
-        public DemoComponent(TiledMapRenderer tmxmap, PlayerInput input)
+        public DemoComponent(PlayerInput input)
         {
-            _mover = new TiledMapMover(tmxmap.CollisionLayer);
             _input = input;
         }
 
         public override void OnAddedToEntity()
         {
+            Entity.Scene.GetSceneComponent<LevelNavigator>().OnRoomChanged += SetMover;
+            SetMover(Entity.Scene.GetSceneComponent<LevelNavigator>().ActiveTiledMap);
+
             _fDir = Entity.AddComponent(new FaceDirection());
             _sfxManager = Core.GetGlobalManager<SoundEffectManager>();
             _slashSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.SaberSlash_WAV);
@@ -103,7 +105,7 @@ namespace RoguelikeFNA
 
             _hitboxHandler = child.AddComponent(new HitboxHandler());
             _hitboxHandler.PhysicsLayer = (int)CollisionLayer.None;
-            _hitboxHandler.CollidesWithLayers = (int)(CollisionLayer.Entity | CollisionLayer.Interactable);
+            _hitboxHandler.HitboxLayers = (int)(CollisionLayer.Entity | CollisionLayer.Interactable);
             _hitboxHandler.AnimationsHitboxes = Entity.Scene.Content.LoadJson<Dictionary<string, List<HitboxGroup>>>(
                 ContentPath.Serializables.Hitboxes.Zero_hitboxes_json);
             _hitboxHandler.OnCollisionEnter += OnHitOther;
@@ -120,6 +122,12 @@ namespace RoguelikeFNA
         {
             HandleStates();
             HandleInteractables();
+        }
+
+        void SetMover(Entity tilemap)
+        {
+            Entity.RemoveComponent<TiledMapMover>();
+            _mover = Entity.AddComponent(new TiledMapMover(tilemap.GetComponent<TiledMapRenderer>().CollisionLayer));
         }
 
         void HandleInteractables()

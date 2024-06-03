@@ -9,5 +9,6 @@ namespace RoguelikeFNA
         Entity = 1,
         Ground = 2,
         Interactable = 4,
+        Projectile = 8,
     }
 }

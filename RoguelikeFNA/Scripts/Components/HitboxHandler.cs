@@ -15,7 +15,7 @@ namespace RoguelikeFNA
         [InspectorSerializable] public Dictionary<string, List<HitboxGroup>> AnimationsHitboxes;
         public string AnimationName => Animator.CurrentAnimationName;
         public int SpriteIndex => Animator.CurrentFrame;
-        public int CollidesWithLayers { get => _collider.CollidesWithLayers; set => _collider.CollidesWithLayers = value; }
+        public int HitboxLayers { get; set; }
         public int PhysicsLayer { get => _collider.PhysicsLayer; set => _collider.PhysicsLayer = value; }
         public event Action<Entity> OnCollisionEnter;
         
@@ -28,7 +28,7 @@ namespace RoguelikeFNA
         public HitboxHandler(Dictionary<string, List<HitboxGroup>> hitboxes)
         {
             AnimationsHitboxes = hitboxes;
-            _collider = new BoxCollider(0, 0) { IsTrigger = true};
+            _collider = new BoxCollider(0, 0) { IsTrigger = true, CollidesWithLayers = 0, PhysicsLayer = 0};
         }
 
         public override void OnAddedToEntity()
@@ -62,7 +62,7 @@ namespace RoguelikeFNA
             _collider.SetSize(rect.Width, rect.Height);
 
             rect = rect.Transformed(Transform);
-            var neighbors = Physics.BoxcastBroadphaseExcludingSelf(_collider, ref rect, CollidesWithLayers);
+            var neighbors = Physics.BoxcastBroadphaseExcludingSelf(_collider, ref rect, HitboxLayers);
             Debug.DrawHollowRect(rect, Color.Yellow);
 
             foreach (var hitbox in hitboxGroup.Hitboxes)

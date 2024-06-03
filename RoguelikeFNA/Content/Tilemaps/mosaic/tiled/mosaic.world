@@ -1,4 +1,10 @@
 {
-	"maps": [ { "fileName": "0001_Mosaic_demo.tmx", "x": 0, "y": 0 }, { "fileName": "0002_World_Level_1.tmx", "x": 816, "y": 0 } ],
+	"maps": [
+		{ "fileName": "0001_Example_3_Normal.tmx", "x": 0, "y": 0 },
+		{ "fileName": "0002_Small_1_Normal.tmx", "x": 816, "y": 0 },
+		{ "fileName": "0003_Shop_1_Shop.tmx", "x": 1120, "y": 0 },
+		{ "fileName": "0004_Item_1_Treasure.tmx", "x": 1504, "y": 0 },
+		{ "fileName": "0005_Boss_1_Boss.tmx", "x": 1808, "y": 0 }
+	],
 	"type": "world"
 }

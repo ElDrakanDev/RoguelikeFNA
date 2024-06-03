@@ -100,7 +100,7 @@ namespace RoguelikeFNA.Prefabs
             Entity.AddComponent(new EntityStats(Damage) { Team = Team });
             Entity.AddComponent(new TiledMapMover(Entity.Scene.FindComponentOfType<TiledMapRenderer>().CollisionLayer));
             Entity.AddComponent(new FaceDirection());
-            Entity.AddComponent(new HitboxHandler() { CollidesWithLayers = (int)CollisionLayer.Entity, AnimationsHitboxes = hitboxes });
+            Entity.AddComponent(new HitboxHandler() { HitboxLayers = (int)CollisionLayer.Entity, AnimationsHitboxes = hitboxes });
         }
 
         public override void Update()

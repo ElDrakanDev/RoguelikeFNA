@@ -14,7 +14,7 @@ namespace RoguelikeFNA
     [Serializable]
     public class Projectile : Component, IUpdatable, ITriggerListener
     {
-        HashSet<Collider> _collisions = new HashSet<Collider>();
+        HashSet<Collider> _collisions;
         [NsonExclude] public ProjectileMover Mover { get; private set; }
         public float Lifetime;
         public float Damage;
@@ -28,8 +28,11 @@ namespace RoguelikeFNA
 
         public override void OnAddedToEntity()
         {
+            _collisions = new HashSet<Collider>();
             Mover = Entity.AddComponent(new ProjectileMover());
-            var collider = Entity.AddComponent(new BoxCollider());
+            var collider = Entity.AddComponent(new BoxCollider()
+                { CollidesWithLayers = (int)(CollisionLayer.Entity | CollisionLayer.Ground), PhysicsLayer = (int)CollisionLayer.Projectile }
+            );
             if (
                 GroundHitBehaviour != GroundHitBehaviour.Ignore &&
                 Physics.BoxcastBroadphaseExcludingSelf(collider, (int)CollisionLayer.Ground).Count > 0
