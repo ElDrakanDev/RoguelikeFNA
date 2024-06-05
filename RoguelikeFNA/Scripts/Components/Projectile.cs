@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System;
 using Nez.Persistence;
-using Nez.Sprites;
 
 namespace RoguelikeFNA
 {
@@ -30,17 +29,10 @@ namespace RoguelikeFNA
         {
             _collisions = new HashSet<Collider>();
             Mover = Entity.AddComponent(new ProjectileMover());
-            var collider = Entity.AddComponent(new BoxCollider()
+            Entity.AddComponent(new BoxCollider()
                 { CollidesWithLayers = (int)(CollisionLayer.Entity | CollisionLayer.Ground), PhysicsLayer = (int)CollisionLayer.Projectile }
             );
-            if (
-                GroundHitBehaviour != GroundHitBehaviour.Ignore &&
-                Physics.BoxcastBroadphaseExcludingSelf(collider, (int)CollisionLayer.Ground).Count > 0
-            )
-            {
-                Entity.Enabled = false;
-                Entity.Destroy();
-            }
+            Mover.Move(Vector2.Zero);
         }
 
         public void Update()

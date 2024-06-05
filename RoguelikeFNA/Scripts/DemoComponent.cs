@@ -37,7 +37,7 @@ namespace RoguelikeFNA
         [Inspectable] Vector2 _velocity;
         [Inspectable] int _maxAmmo = 3;
         [Inspectable] int _ammo;
-        [Inspectable] float _projectileVelocity = 5;
+        [Inspectable] float _projectileVelocity = 150;
         Vector2 _prevVel;
 
         const string ATTACK_ANIM1 = "zero_attack1";
