@@ -11,6 +11,8 @@ namespace RoguelikeFNA
 {
     public class DemoComponent : Component, IUpdatable
     {
+        public bool UpdateOnPause { get; set; }
+
         SoundEffectManager _sfxManager;
         SoundEffect _slashSfx;
         SoundEffect _dashSfx;

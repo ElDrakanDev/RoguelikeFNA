@@ -18,6 +18,8 @@ namespace RoguelikeFNA
 
     public class Item : Component, IInteractListener, IUpdatable
     {
+        public bool UpdateOnPause { get; set; }
+
         public string ItemId;
         public Texture2D Texture;
         public List<ItemEffect> Effects = new List<ItemEffect>();

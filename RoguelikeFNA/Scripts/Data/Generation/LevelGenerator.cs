@@ -161,6 +161,8 @@ namespace RoguelikeFNA.Generation
 
     public class TestGeneratorComponent : Component, IUpdatable
     {
+        public bool UpdateOnPause { get; set; }
+
         Dictionary<RoomTypes, Color> _colors = new Dictionary<RoomTypes, Color>()
         {
             {RoomTypes.Normal, Color.White }, {RoomTypes.Shop, Color.DarkGreen }, {RoomTypes.Treasure, Color.Yellow}, {RoomTypes.Boss, Color.Red}
