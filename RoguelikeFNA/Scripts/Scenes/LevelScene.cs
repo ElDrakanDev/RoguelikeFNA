@@ -55,7 +55,10 @@ namespace RoguelikeFNA
 
         void AddPlayer(PlayerInput input)
         {
-            AddEntity(new Entity()).SetLocalPosition(new Vector2(200, 200)).AddComponent(new DemoComponent(input));
+            AddEntity(new Entity())
+                .SetLocalPosition(new Vector2(200, 200))
+                .AddComponent(new DemoComponent(input))
+                .AddComponent(new CharacterController());
         }
 
         Dictionary<Keys, Point> _directions = new Dictionary<Keys, Point>()

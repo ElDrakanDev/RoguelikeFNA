@@ -11,7 +11,7 @@ namespace RoguelikeFNA
 {
     public class DemoComponent : Component, IUpdatable
     {
-        public bool UpdateOnPause { get; set; }
+        public bool UpdateOnPause { get; set; } 
 
         SoundEffectManager _sfxManager;
         SoundEffect _slashSfx;
@@ -22,7 +22,7 @@ namespace RoguelikeFNA
         HitboxHandler _hitboxHandler;
         SpriteAnimator _animator;
         bool _isAttacking = false;
-        bool _isDashing => (_collisionState.Below && _dashState && _dashTime > 0) || (!_collisionState.Below && _dashState);
+        bool _isDashing => (_characterController.IsGrounded && _dashState && _dashTime > 0) || (!_characterController.IsGrounded && _dashState);
         bool _dashState = false;
         float _dashTime;
         float _groundedBufferTime;
@@ -55,7 +55,7 @@ namespace RoguelikeFNA
         const string SHOOT_AIR_ANIM = "zero_buster_air";
 
         TiledMapMover _mover;
-        TiledMapMover.CollisionState _collisionState = new TiledMapMover.CollisionState();
+        //TiledMapMover.CollisionState _collisionState = new TiledMapMover.CollisionState();
         BoxCollider _collider;
         SpriteTrail _spriteTrail;
         FaceDirection _fDir;
@@ -65,6 +65,9 @@ namespace RoguelikeFNA
         Vector2 AimDirection => _fDir.FacingRight ? Vector2.UnitX : -Vector2.UnitX;
 
         SerializedEntity _projectile;
+
+        CharacterController _characterController;
+        CharacterController.CharacterCollisionState _collisionState => _characterController.collisionState;
 
         public DemoComponent(PlayerInput input)
         {
@@ -89,6 +92,7 @@ namespace RoguelikeFNA
             _collider = Entity.AddComponent(new BoxCollider(new Rectangle(-12, -20, 33, 40)){
                 PhysicsLayer = (int)CollisionLayer.Entity,
                 CollidesWithLayers = (int)CollisionLayer.Ground });
+            _characterController = Entity.GetComponent<CharacterController>();
 
             var child = new Entity();
             child.SetParent(Entity);
@@ -166,7 +170,13 @@ namespace RoguelikeFNA
             if (_input.Jump.IsPressed)
                 _jumpInputBufferTime = _jumpBufferMax;
 
-            if(_collisionState.Below && _input.Dash.IsPressed)
+            if (_isDashing && _collisionState.BecameGroundedThisFrame || _characterController.IsGrounded && _dashTime <= 0)
+            {
+                _dashTime = 0;
+                _dashState = false;
+                _spriteTrail.DisableSpriteTrail();
+            }
+            if(_characterController.IsGrounded && _input.Dash.IsPressed)
             {
                 _dashTime = _dashDuration;
                 _dashState = true;
@@ -176,21 +186,15 @@ namespace RoguelikeFNA
             }
             if (_input.Dash.IsReleased)
                 _dashTime = 0;
-            if (_isDashing && _collisionState.BecameGroundedThisFrame || _collisionState.Below && _dashTime <= 0)
-            {
-                _dashTime = 0;
-                _dashState = false;
-                _spriteTrail.DisableSpriteTrail();
-            }
 
             if (_collisionState.Above is true && _velocity.Y < 0)
                 _velocity.Y = 0;
 
-            if (_collisionState.Below is false)
+            if (_characterController.IsGrounded is false)
                 _velocity.Y += _gravity * Time.DeltaTime;
             else
             {
-                _velocity.Y = 0;
+                _velocity.Y = 0.02f;
                 _groundedBufferTime = _jumpBufferMax;
             }
             
@@ -199,16 +203,16 @@ namespace RoguelikeFNA
                 _jumpInputBufferTime = 0;
                 _groundedBufferTime = 0;
                 _velocity.Y = -_jumpForce;
-                _collisionState.Below = false;
+                _characterController.LeaveGround();
                 _sfxManager.Play(_jumpSfx);
+                _animator.Play(JUMP_START_ANIM, SpriteAnimator.LoopMode.Once);
             }
 
-            if (_collisionState.Below is false && _velocity.Y < 0 && _input.Jump.IsReleased)
+            if (_characterController.IsGrounded is false && _velocity.Y < 0 && _input.Jump.IsReleased)
                 _velocity.Y *= 0.5f;
 
-
             // Attack cancelling
-            if((_animator.IsAnimationActive(ATTACK_AIR_ANIM) || _animator.IsAnimationActive(SHOOT_AIR_ANIM)) && _collisionState.Below)
+            if((_animator.IsAnimationActive(ATTACK_AIR_ANIM) || _animator.IsAnimationActive(SHOOT_AIR_ANIM)) && _characterController.IsGrounded)
             {
                 _isAttacking = false;
                 _hitboxHandler.ClearCollisions();
@@ -217,7 +221,7 @@ namespace RoguelikeFNA
             float speed = _isDashing ? _dashSpeed : _speed;
 
             // Attack1
-            if (_input.Attack.IsPressed && _isAttacking is false && _collisionState.Below)
+            if (_input.Attack.IsPressed && _isAttacking is false && _characterController.IsGrounded)
             {
                 _hitboxHandler.ClearCollisions();
                 _animator.Play(ATTACK_ANIM1, SpriteAnimator.LoopMode.ClampForever);
@@ -228,8 +232,8 @@ namespace RoguelikeFNA
             }
             // Air attack
             else if(
-                (_input.Attack.IsPressed && _isAttacking is false && _collisionState.Below is false)
-                || (_isAttacking is true && _collisionState.Below is false)
+                (_input.Attack.IsPressed && _isAttacking is false && _characterController.IsGrounded is false)
+                || (_isAttacking is true && _characterController.IsGrounded is false)
             )
             {
                 // If just started
@@ -245,7 +249,7 @@ namespace RoguelikeFNA
                 _fDir.CheckFacingSide(xInput);
             }
             // Shoot
-            else if(_input.Special.IsPressed && _isAttacking is false && _collisionState.Below && _ammo > 0)
+            else if(_input.Special.IsPressed && _isAttacking is false && _characterController.IsGrounded && _ammo > 0)
             {
                 _animator.Play(SHOOT_ANIM, SpriteAnimator.LoopMode.ClampForever);
                 _dashState = false;
@@ -254,8 +258,8 @@ namespace RoguelikeFNA
             }
             // Air shoot
             else if (
-                (_input.Special.IsPressed && _isAttacking is false && _collisionState.Below is false)
-                || (_isAttacking is true && _collisionState.Below is false)
+                (_input.Special.IsPressed && _isAttacking is false && _characterController.IsGrounded is false)
+                || (_isAttacking is true && _characterController.IsGrounded is false)
             )
             {
                 if(_isAttacking == false && _ammo > 0)
@@ -274,25 +278,26 @@ namespace RoguelikeFNA
                 _fDir.CheckFacingSide(xInput);
                 _animator.Speed = 2;
 
-                if (_prevVel.Y >= 0 && _animator.IsAnimationActive(JUMP_START_ANIM) is false)
-                    _animator.Play(JUMP_START_ANIM, SpriteAnimator.LoopMode.ClampForever);
-                else if (_animator.IsAnimationActive(JUMP_START_ANIM) is true && _animator.IsRunning is false)
+                if (_animator.IsAnimationActive(JUMP_START_ANIM) is true && _animator.IsRunning is false)
                     _animator.Play(JUMP_LOOP_ANIM);
             }
             // Fall
-            else if (_isAttacking is false && _velocity.Y > 0 && _collisionState.Below is false)
+            else if (_velocity.Y > 0 && _characterController.IsGrounded is false)
             {
                 _velocity.X = speed * xInput * Time.DeltaTime;
                 _fDir.CheckFacingSide(xInput);
                 _animator.Speed = 2;
 
-                if (_prevVel.Y <= 0 && _animator.IsAnimationActive(FALL_START_ANIM) is false)
-                    _animator.Play(FALL_START_ANIM, SpriteAnimator.LoopMode.ClampForever);
+                if (
+                    _animator.IsAnimationActive(FALL_START_ANIM) is false
+                    && _animator.IsAnimationActive(FALL_LOOP_ANIM) is false
+                )
+                    _animator.Play(FALL_START_ANIM, SpriteAnimator.LoopMode.Once);
                 else if (_animator.IsRunning is false) // if other animation is done
                     _animator.Play(FALL_LOOP_ANIM);
             }
             // Dash
-            else if(_isDashing && _collisionState.Below)
+            else if(_isDashing && _characterController.IsGrounded)
             {
                 if (_animator.IsAnimationActive(DASH_ANIM) is false)
                     _animator.Play(DASH_ANIM);
@@ -304,14 +309,14 @@ namespace RoguelikeFNA
             // Idle
             else if (
                 _isAttacking is false && _isDashing is false
-                && xInput == 0 && _animator.IsAnimationActive(IDLE_ANIM) is false && _collisionState.Below
+                && xInput == 0 && _animator.IsAnimationActive(IDLE_ANIM) is false && _characterController.IsGrounded
             )
             {
                 _animator.Play(IDLE_ANIM);
                 _animator.Speed = 0.5f;
             }
             // Walk
-            else if (_isAttacking is false && xInput != 0 && _collisionState.Below)
+            else if (_isAttacking is false && xInput != 0 && _characterController.IsGrounded)
             {
                 _animator.Speed = 1;
                 if (_animator.IsAnimationActive(WALK_ANIM) is false)
@@ -321,7 +326,8 @@ namespace RoguelikeFNA
                 _fDir.CheckFacingSide(xInput);
             }
 
-            _mover.Move(_velocity, _collider, _collisionState);
+            //_mover.Move(_velocity, _collider, _collisionState);
+            _velocity = _characterController.Move(_velocity);
         }
 
         void OnAnimationComplete(string anim)
