@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Audio;
 using Nez;
 using Nez.Sprites;
-using Nez.Tiled;
 using RoguelikeFNA.Utils;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,8 +53,6 @@ namespace RoguelikeFNA
         const string SHOOT_ANIM = "zero_buster";
         const string SHOOT_AIR_ANIM = "zero_buster_air";
 
-        TiledMapMover _mover;
-        //TiledMapMover.CollisionState _collisionState = new TiledMapMover.CollisionState();
         BoxCollider _collider;
         SpriteTrail _spriteTrail;
         FaceDirection _fDir;
@@ -76,9 +73,6 @@ namespace RoguelikeFNA
 
         public override void OnAddedToEntity()
         {
-            Entity.Scene.GetSceneComponent<LevelNavigator>().OnRoomChanged += SetMover;
-            SetMover(Entity.Scene.GetSceneComponent<LevelNavigator>().ActiveTiledMap);
-
             _fDir = Entity.AddComponent(new FaceDirection());
             _sfxManager = Core.GetGlobalManager<SoundEffectManager>();
             _slashSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.SaberSlash_WAV);
@@ -88,7 +82,6 @@ namespace RoguelikeFNA
 
             var atlas = Entity.Scene.Content.LoadSpriteAtlas(ContentPath.Atlases.Zero.Zero_atlas);
 
-            Entity.AddComponent(_mover);
             _collider = Entity.AddComponent(new BoxCollider(new Rectangle(-12, -20, 33, 40)){
                 PhysicsLayer = (int)CollisionLayer.Entity,
                 CollidesWithLayers = (int)CollisionLayer.Ground });
@@ -128,12 +121,6 @@ namespace RoguelikeFNA
         {
             HandleStates();
             HandleInteractables();
-        }
-
-        void SetMover(Entity tilemap)
-        {
-            Entity.RemoveComponent<TiledMapMover>();
-            _mover = Entity.AddComponent(new TiledMapMover(tilemap.GetComponent<TiledMapRenderer>().CollisionLayer));
         }
 
         void HandleInteractables()
@@ -326,7 +313,6 @@ namespace RoguelikeFNA
                 _fDir.CheckFacingSide(xInput);
             }
 
-            //_mover.Move(_velocity, _collider, _collisionState);
             _velocity = _characterController.Move(_velocity);
         }
 
