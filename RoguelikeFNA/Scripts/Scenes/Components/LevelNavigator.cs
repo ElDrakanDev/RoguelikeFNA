@@ -38,14 +38,26 @@ namespace RoguelikeFNA
             {
                 var room = _level.Rooms[point];
                 var entity = Scene.CreateEntity(room.Name);
-                entity.AddComponent(new TiledMapRenderer(Scene.Content.LoadTiledMap(room.TiledMapPath), "Walls_1")
-                    { RenderLayer = 1, PhysicsLayer = (int)CollisionLayer.Ground }
-                ).CreateObjects();
+                var renderer = entity.AddComponent(new TiledMapRenderer(Scene.Content.LoadTiledMap(room.TiledMapPath), "Walls_1")
+                { RenderLayer = 1, PhysicsLayer = (int)CollisionLayer.Ground }
+                 );
+                renderer.CreateObjects();
+                SetLayersToRender(renderer);
                 entity.Enabled = false;
                 _tiledmapEntities.Add(point, entity);
             }
             SetPosition(Point.Zero);
             return this;
+        }
+
+        void SetLayersToRender(TiledMapRenderer renderer)
+        {
+            string[] layerNames = renderer.TiledMap.Layers
+                .Where(l => l.Name.Contains("_values") is false)
+                .Select(l => l.Name)
+                .ToArray();
+
+            renderer.SetLayersToRender(layerNames.ToArray());
         }
 
         public bool MoveDirection(Point direction)
