@@ -38,7 +38,7 @@ namespace RoguelikeFNA
             {
                 var room = _level.Rooms[point];
                 var entity = Scene.CreateEntity(room.Name);
-                var renderer = entity.AddComponent(new TiledMapRenderer(Scene.Content.LoadTiledMap(room.TiledMapPath), "Walls_1")
+                var renderer = entity.AddComponent(new TiledMapRenderer(Scene.Content.LoadTiledMap(room.TiledMapPath), "ground")
                 { RenderLayer = 1, PhysicsLayer = (int)CollisionLayer.Ground }
                  );
                 renderer.CreateObjects();

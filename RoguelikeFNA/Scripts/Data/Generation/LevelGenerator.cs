@@ -55,11 +55,17 @@ namespace RoguelikeFNA.Generation
         {
             Dictionary<RoomTypes, List<Room>> rooms = new Dictionary<RoomTypes, List<Room>>();
 
-            foreach (var type in Enum.GetValues(typeof(RoomTypes)).Cast<RoomTypes>())
-                rooms[type] = new List<Room>();
+            var roomFiles = new List<string>();
+            var types = Enum.GetValues(typeof(RoomTypes)).Cast<RoomTypes>();
 
-            var roomFiles = Directory.GetFiles(roomFilesDir, "*.tmx")
-                .Where(Room.IsValidFilename);
+            foreach (var type in types) {
+                rooms[type] = new List<Room>();
+                var subdirectory = Path.Combine(roomFilesDir, Enum.GetName(typeof(RoomTypes), type));
+                if (Directory.Exists(subdirectory))
+                {
+                    roomFiles.AddRange(Directory.GetFiles(subdirectory, "*.tmx").Where(Room.IsValidFilename));
+                }
+            }
 
             foreach (var roomFile in roomFiles)
             {

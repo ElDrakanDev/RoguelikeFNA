@@ -13,18 +13,21 @@ namespace RoguelikeFNA
         
         public static void CreateObjects(this TiledMapRenderer map)
         {
-            var objs = map.TiledMap.GetObjectGroup("Entities").Objects;
-            foreach ( var obj in objs )
+            var entities = map.TiledMap.GetObjectGroup("Entities");
+            if (entities == null)
+                return;
+
+            foreach (var obj in entities.Objects)
             {
                 var typeName = obj.Properties["InternalType"];
-                if(_typeDict.TryGetValue(typeName, out Type type) is false)
+                if (_typeDict.TryGetValue(typeName, out Type type) is false)
                 {
                     try
                     {
                         type = Type.GetType(typeName, true);
                         _typeDict[typeName] = type;
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Debug.Error(ex.ToString());
                     }
@@ -37,7 +40,7 @@ namespace RoguelikeFNA
                     BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance
                 );
 
-                foreach ( var field in fields )
+                foreach (var field in fields)
                 {
                     if (obj.Properties.TryGetValue(field.Name, out string value))
                     {

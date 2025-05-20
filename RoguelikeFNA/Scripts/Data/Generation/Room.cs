@@ -13,7 +13,7 @@ namespace RoguelikeFNA.Generation
     public class Room
     {
         const char SEPARATOR = '_';
-        const int EXPECTED_FILENAME_PARTS = 4;
+        const int EXPECTED_FILENAME_PARTS = 2;
 
         public readonly string TiledMapPath;
 
@@ -37,15 +37,18 @@ namespace RoguelikeFNA.Generation
             if(parts.Length != EXPECTED_FILENAME_PARTS)
                 throw new ArgumentException($"Expected {EXPECTED_FILENAME_PARTS} parts in filename, separated by '{SEPARATOR}'");
 
-            var name = parts[1];
-            var weight = int.Parse(parts[2], CultureInfo.InvariantCulture);
-            var type = (RoomTypes)Enum.Parse(typeof(RoomTypes), parts[3]);
+            var name = parts[0];
+            var weight = int.Parse(parts[1], CultureInfo.InvariantCulture);
+            var type = (RoomTypes)Enum.Parse(typeof(RoomTypes), Directory.GetParent(path).Name);
             return new Room(path, name, weight, type);
         }
 
         public static bool IsValidFilename(string path)
         {
             var name = Path.GetFileNameWithoutExtension(path);
+
+            if (!Enum.GetNames(typeof(RoomTypes)).Contains(Directory.GetParent(path).Name))
+                return false;
 
             int amount = 0;
             foreach(var c in name)

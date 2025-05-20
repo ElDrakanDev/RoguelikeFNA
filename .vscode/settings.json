@@ -10,12 +10,12 @@
         "MonoGameContent.targets": true,
         "**/obj": true,
         "**/bin": true,
-        ".gitignore": true,
+        // ".gitignore": true,
         "README.md": true,
         "fnalibs": true,
         "RoguelikeFNA/CompiledContent/.mgstats": true,
         "**/*.csproj*": true,
-        "**/*.sln": true,
+        // "**/*.sln": true,
         "FNA/[^src]*": true, // hide everything but the src folder
         "Nez/{[^DN]*}": true, // hide everything except what begins with D or N
         "Nez/Nez.*.*": true, // hide the files in the root of the repo

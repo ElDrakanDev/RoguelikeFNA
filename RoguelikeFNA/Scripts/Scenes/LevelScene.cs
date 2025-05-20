@@ -32,7 +32,7 @@ namespace RoguelikeFNA
                 .SetLevel(new LevelGenerator().GenerateLevel(new LevelGenerationConfig() {
                     Name = "Mosaic",
                     NormalRoomVariance = 3,
-                    RoomFilesDirectory = ContentPath.Tilemaps.Mosaic.Tiled.Directory,
+                    RoomFilesDirectory = ContentPath.Tilemaps.Mosaic.Directory,
                     RoomAmounts = new() {
                         { RoomTypes.Normal, 5 }, { RoomTypes.Shop, 1 }, { RoomTypes.Treasure, 1 }, { RoomTypes.Boss, 1 }
                     }
