@@ -11,4 +11,4 @@ RoguelikeFNA/data
 .mgstats
 imgui.ini
 imgui_log.txt
-
+*.tiled-session
