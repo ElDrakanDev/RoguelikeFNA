@@ -18,7 +18,15 @@ namespace RoguelikeFNA
 
             foreach (var obj in entities.Objects)
             {
-                var typeName = obj.Properties["InternalType"];
+                var entity = new TiledEntity(obj.Name, obj.Id);
+                map.Entity.Scene.AddEntity(entity)
+                    .SetLocalPosition(new Vector2(obj.X, obj.Y))
+                    .SetLocalRotation(Mathf.Deg2Rad * obj.Rotation)
+                    .Transform.SetParent(map.Transform);
+
+                if (obj.Properties is null || !obj.Properties.TryGetValue("InternalType", out string typeName))
+                    continue;
+
                 if (_typeDict.TryGetValue(typeName, out Type type) is false)
                 {
                     try
@@ -29,10 +37,9 @@ namespace RoguelikeFNA
                     catch (Exception ex)
                     {
                         Debug.Error(ex.ToString());
+                        continue;
                     }
                 }
-                var entity = new Entity(obj.Name);
-                map.Entity.Scene.AddEntity(entity);
                 var prefabComponent = Activator.CreateInstance(type) as IPrefab;
                 entity.AddComponent((Component)prefabComponent);
                 var fields = prefabComponent.GetType().GetFields(
@@ -48,8 +55,7 @@ namespace RoguelikeFNA
                 }
 
                 prefabComponent.AddComponents();
-                entity.Transform.SetParent(map.Transform);
-                entity.SetLocalPosition(new Vector2(obj.X, obj.Y));
+                
             }
         }
 

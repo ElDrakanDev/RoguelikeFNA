@@ -4,26 +4,24 @@ using RoguelikeFNA.Generation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RoguelikeFNA
 {
     public class LevelNavigator : SceneComponent
     {
         Level _level;
-        Point _currentPosition;
-        Room _currentRoom;
-        Dictionary<Point, Entity> _tiledmapEntities = new Dictionary<Point, Entity>();
+        int _currentIdx;
+        Room _currentRoom => _level.Rooms[_currentIdx];
+        Dictionary<int, Entity> _tiledmapEntities = new Dictionary<int, Entity>();
 
-        public Entity ActiveTiledMap => _tiledmapEntities[_currentPosition];
+        public Entity ActiveTiledMap => _tiledmapEntities[_currentIdx];
         public event Action<Entity> OnRoomChanged;
 
         #region Public API
 
         public Entity GetActiveRoomEntity()
         {
-            if(_tiledmapEntities.TryGetValue(_currentPosition, out var entity))
+            if(_tiledmapEntities.TryGetValue(_currentIdx, out var entity))
                 return entity;
             return null;
         }
@@ -34,9 +32,10 @@ namespace RoguelikeFNA
                 entity.Destroy();
             _tiledmapEntities.Clear();
             _level = level;
-            foreach(var point in _level.Rooms.Keys)
+            
+            for(int i = 0; i < _level.Rooms.Count; i++)
             {
-                var room = _level.Rooms[point];
+                var room = _level.Rooms[i];
                 var entity = Scene.CreateEntity(room.Name);
                 var renderer = entity.AddComponent(new TiledMapRenderer(Scene.Content.LoadTiledMap(room.TiledMapPath), "ground")
                 { RenderLayer = 1, PhysicsLayer = (int)CollisionLayer.Ground }
@@ -44,9 +43,9 @@ namespace RoguelikeFNA
                 renderer.CreateObjects();
                 SetLayersToRender(renderer);
                 entity.Enabled = false;
-                _tiledmapEntities.Add(point, entity);
+                _tiledmapEntities.Add(i, entity);
             }
-            SetPosition(Point.Zero);
+            SetIndex(0);
             return this;
         }
 
@@ -60,29 +59,12 @@ namespace RoguelikeFNA
             renderer.SetLayersToRender(layerNames.ToArray());
         }
 
-        public bool MoveDirection(Point direction)
+        public bool Move(int places)
         {
-            var pos = _currentPosition + direction;
-            if(IsValidDirection(direction) && _level.Rooms.ContainsKey(pos))
+            var idx = _currentIdx + places;
+            if(IsValidIndex(idx))
             {
-                SetPosition(pos);
-                return true;
-            }
-            return false;
-        }
-
-        public bool MoveDirection(Vector2 direction)
-        {
-            direction = Vector2.Normalize(direction);
-            var directionPoint = new Point(Mathf.RoundToInt(direction.X), Mathf.RoundToInt(direction.Y));
-            return MoveDirection(directionPoint);
-        }
-
-        public bool MovePosition(Point position)
-        {
-            if (_level.Rooms.TryGetValue(position, out var room))
-            {
-                SetPosition(position);
+                SetIndex(idx);
                 return true;
             }
             return false;
@@ -90,24 +72,23 @@ namespace RoguelikeFNA
 
         #endregion
 
-        void SetPosition(Point point)
+        void SetIndex(int idx)
         {
             if (
-                _tiledmapEntities.TryGetValue(_currentPosition, out var entityFrom)
-                && _tiledmapEntities.TryGetValue(point, out var entityTo)
+                _tiledmapEntities.TryGetValue(_currentIdx, out var entityFrom)
+                && _tiledmapEntities.TryGetValue(idx, out var entityTo)
             )
             {
                 entityFrom.Enabled = false;
                 entityTo.Enabled = true;
-                _currentPosition = point;
-                _currentRoom = _level.Rooms[point];
-                OnRoomChanged?.Invoke(_tiledmapEntities[_currentPosition]);
+                _currentIdx = idx;
+                OnRoomChanged?.Invoke(_tiledmapEntities[_currentIdx]);
             }
         }
 
-        bool IsValidDirection(Point direction)
+        bool IsValidIndex(int index)
         {
-            return Math.Abs(direction.X) + Math.Abs(direction.Y) == 1;
+            return index > 0 && index < _level.Rooms.Count;
         }
     }
 }

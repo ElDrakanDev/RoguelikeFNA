@@ -34,7 +34,7 @@ namespace RoguelikeFNA
                     NormalRoomVariance = 3,
                     RoomFilesDirectory = ContentPath.Tilemaps.Mosaic.Directory,
                     RoomAmounts = new() {
-                        { RoomTypes.Normal, 5 }, { RoomTypes.Shop, 1 }, { RoomTypes.Treasure, 1 }, { RoomTypes.Boss, 1 }
+                        { RoomType.Normal, 5 }, { RoomType.Shop, 1 }, { RoomType.Treasure, 1 }, { RoomType.Boss, 1 }
                     }
                 })
             );
@@ -61,9 +61,9 @@ namespace RoguelikeFNA
                 .AddComponent(new CharacterController());
         }
 
-        Dictionary<Keys, Point> _directions = new Dictionary<Keys, Point>()
+        Dictionary<Keys, int> _directions = new ()
         {
-            { Keys.Left, new Point(-1, 0) }, { Keys.Up, new Point(0, -1)}, { Keys.Right, new Point(1, 0) }, { Keys.Down, new Point(0, 1)}
+            { Keys.Left, -1 }, { Keys.Right, 1 }
         };
         public override void Update()
         {
@@ -71,7 +71,7 @@ namespace RoguelikeFNA
             var navigator = GetSceneComponent<LevelNavigator>();
             foreach(var key in _directions.Keys)
                 if (Input.IsKeyPressed(key))
-                    navigator.MoveDirection(_directions[key]);
+                    navigator.Move(_directions[key]);
         }
     }
 }

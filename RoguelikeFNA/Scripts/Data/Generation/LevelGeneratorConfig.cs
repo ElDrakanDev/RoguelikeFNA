@@ -6,8 +6,9 @@ namespace RoguelikeFNA.Generation
     public class LevelGenerationConfig
     {
         public string Name;
-        public Dictionary<RoomTypes, int> RoomAmounts;
+        public Dictionary<RoomType, int> RoomAmounts;
         public int NormalRoomVariance;
         public string RoomFilesDirectory;
+        public List<RoomType> RoomsBeforeBoss = new List<RoomType>();
     }
 }

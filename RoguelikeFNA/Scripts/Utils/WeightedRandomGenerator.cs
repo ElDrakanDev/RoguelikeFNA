@@ -46,7 +46,7 @@ namespace RoguelikeFNA.Utils
             return (item.Weight / _totalWeight) * 100;
         }
 
-        public WeightedItem<T> GetRandomItem()
+        public WeightedItem<T> GetRandom()
         {
             float randomNum;
             if(_rng != null)
@@ -66,7 +66,7 @@ namespace RoguelikeFNA.Utils
             return null;
         }
 
-        public WeightedItem<T> GetRandomItem(Func<WeightedItem<T>, bool> predicate)
+        public WeightedItem<T> GetRandom(Func<WeightedItem<T>, bool> predicate)
         {
             float randomNum;
             var items = WeightedItems.Where(predicate).ToArray();

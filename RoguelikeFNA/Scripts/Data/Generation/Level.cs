@@ -10,6 +10,6 @@ namespace RoguelikeFNA.Generation
     {
         public string Name;
         public LevelGenerationConfig GenerationConfig;
-        [NonSerialized] public Dictionary<Point, Room> Rooms = new Dictionary<Point, Room>();
+        [NonSerialized] public List<Room> Rooms = new();
     }
 }

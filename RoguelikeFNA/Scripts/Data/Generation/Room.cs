@@ -1,10 +1,7 @@
 ﻿using Nez;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Globalization;
 
 namespace RoguelikeFNA.Generation
@@ -19,9 +16,9 @@ namespace RoguelikeFNA.Generation
 
         public readonly string Name;
         public readonly int Weight;
-        public readonly RoomTypes RoomType;
+        public readonly RoomType RoomType;
 
-        public Room(string tiledMapPath, string name, int weight, RoomTypes roomType)
+        public Room(string tiledMapPath, string name, int weight, RoomType roomType)
         {
             TiledMapPath = tiledMapPath;
             Name = name;
@@ -39,7 +36,7 @@ namespace RoguelikeFNA.Generation
 
             var name = parts[0];
             var weight = int.Parse(parts[1], CultureInfo.InvariantCulture);
-            var type = (RoomTypes)Enum.Parse(typeof(RoomTypes), Directory.GetParent(path).Name);
+            var type = (RoomType)Enum.Parse(typeof(RoomType), Directory.GetParent(path).Name);
             return new Room(path, name, weight, type);
         }
 
@@ -47,7 +44,7 @@ namespace RoguelikeFNA.Generation
         {
             var name = Path.GetFileNameWithoutExtension(path);
 
-            if (!Enum.GetNames(typeof(RoomTypes)).Contains(Directory.GetParent(path).Name))
+            if (!Enum.GetNames(typeof(RoomType)).Contains(Directory.GetParent(path).Name))
                 return false;
 
             int amount = 0;

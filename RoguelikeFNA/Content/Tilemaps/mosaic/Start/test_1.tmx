@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="11">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="2" nextobjectid="1">
  <tileset firstgid="1" name="Inca_front_by_Kronbits-extended" tilewidth="16" tileheight="16" tilecount="280" columns="20">
   <image source="../assets/tiles/Inca_front_by_Kronbits-extended.png" width="320" height="224"/>
  </tileset>
@@ -27,15 +27,4 @@
 32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32
 </data>
  </layer>
- <objectgroup id="2" name="Entities">
-  <object id="1" name="DemoEnemy" x="243" y="255">
-   <properties>
-    <property name="Health" type="int" value="50"/>
-    <property name="InternalType" value="RoguelikeFNA.Prefabs.DemoEnemy"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="3" name="Entrance" x="96" y="256" width="32" height="32"/>
-  <object id="5" name="Exit" x="384" y="256" width="32" height="32"/>
- </objectgroup>
 </map>

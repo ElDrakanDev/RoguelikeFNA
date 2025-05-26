@@ -11,27 +11,28 @@ namespace RoguelikeFNA.Generation
 {
     public class LevelGenerator
     {
-        class RoomSpot
-        {
-            public Point Position;
-            public int Neighbors;
-            public float DistanceToCenter;
+        // class RoomSpot
+        // {
+        //     public Point Position;
+        //     public int Neighbors;
+        //     public float DistanceToCenter;
 
-            public static RoomSpot GetSpotInLevel(Point position, Level level)
-            {
-                var distance = Vector2.Distance(new Vector2(position.X, position.Y), Vector2.Zero);
-                int neighbors = 0;
-                foreach(var dir in _directions)
-                    if(level.Rooms.ContainsKey(position + dir))
-                        neighbors++;
-                return new RoomSpot() { DistanceToCenter = distance, Neighbors = neighbors, Position = position };
-            }
-        }
-
+        //     public static RoomSpot GetSpotInLevel(Point position, Level level)
+        //     {
+        //         var distance = Vector2.Distance(new Vector2(position.X, position.Y), Vector2.Zero);
+        //         int neighbors = 0;
+        //         foreach (var dir in _directions)
+        //             if (level.Rooms.ContainsKey(position + dir))
+        //                 neighbors++;
+        //         return new RoomSpot() { DistanceToCenter = distance, Neighbors = neighbors, Position = position };
+        //     }
+        // }
+        Dictionary<RoomType, WeightedRandomGenerator<Room>> _roomGenerators = new();
+        List<Room> Rooms = new();
         RNG rng;
-        Point _currentPos;
-        static Point[] _directions = new Point[] {new(-1, 0), new(1, 0), new(0, -1), new(0, 1)};
-        RoomTypes[] _specialTypes = new RoomTypes[] { RoomTypes.Boss, RoomTypes.Treasure, RoomTypes.Shop };
+        // Point _currentPos;
+        // static Point[] _directions = new Point[] { new(-1, 0), new(1, 0), new(0, -1), new(0, 1) };
+        RoomType[] _specialTypes = new RoomType[] { RoomType.Boss, RoomType.Treasure, RoomType.Shop };
 
         public LevelGenerator()
         {
@@ -43,24 +44,25 @@ namespace RoguelikeFNA.Generation
             var level = new Level();
             level.GenerationConfig = config;
             level.Name = config.Name;
-            config.RoomAmounts.TryGetValue(RoomTypes.Normal, out int normalRooms);
-            normalRooms += rng.Range(0, config.NormalRoomVariance);
+            config.RoomAmounts.TryGetValue(RoomType.Normal, out int normalRooms);
             var availableRooms = GetAvailableRooms(config.RoomFilesDirectory);
-            CreateNormalRooms(level, availableRooms, normalRooms);
-            CreateSpecialRooms(level, availableRooms, config);
+            CreateRoom(level, availableRooms, RoomType.Start);
+            CreateMinimumNormalRooms(level, availableRooms, normalRooms);
+            CreateAdditionalRooms(level, availableRooms, config);
             return level;
         }
 
-        Dictionary<RoomTypes, List<Room>> GetAvailableRooms(string roomFilesDir)
+        Dictionary<RoomType, List<Room>> GetAvailableRooms(string roomFilesDir)
         {
-            Dictionary<RoomTypes, List<Room>> rooms = new Dictionary<RoomTypes, List<Room>>();
+            Dictionary<RoomType, List<Room>> rooms = new Dictionary<RoomType, List<Room>>();
 
             var roomFiles = new List<string>();
-            var types = Enum.GetValues(typeof(RoomTypes)).Cast<RoomTypes>();
+            var types = Enum.GetValues(typeof(RoomType)).Cast<RoomType>();
 
-            foreach (var type in types) {
+            foreach (var type in types)
+            {
                 rooms[type] = new List<Room>();
-                var subdirectory = Path.Combine(roomFilesDir, Enum.GetName(typeof(RoomTypes), type));
+                var subdirectory = Path.Combine(roomFilesDir, Enum.GetName(typeof(RoomType), type));
                 if (Directory.Exists(subdirectory))
                 {
                     roomFiles.AddRange(Directory.GetFiles(subdirectory, "*.tmx").Where(Room.IsValidFilename));
@@ -75,92 +77,40 @@ namespace RoguelikeFNA.Generation
             return rooms;
         }
 
-        void CreateNormalRooms(Level level, Dictionary<RoomTypes, List<Room>> availableRooms, int amount)
+        void CreateMinimumNormalRooms(Level level, Dictionary<RoomType, List<Room>> availableRooms, int amount)
         {
-            WeightedRandomGenerator<Room> generator = new WeightedRandomGenerator<Room>(rng);
-            foreach (var room in availableRooms[RoomTypes.Normal])
-                generator.AddItem(room, room.Weight);
-
-            var item = generator.GetRandomItem();
-            level.Rooms[_currentPos] = item.Value;
-
-            while (amount - 1 > 0)
+            for (int i = 0; i < amount; i++)
             {
-                _currentPos += _directions[rng.Range(0, _directions.Length)];
-                if (level.Rooms.ContainsKey(_currentPos))
-                    continue;
-                item = generator.GetRandomItem();
-                level.Rooms[_currentPos] = item.Value;
-                amount--;
+                CreateRoom(level, availableRooms, RoomType.Normal);
             }
         }
 
-        List<RoomSpot> GetAvailableSpots(Level level)
+        void CreateRoom(Level level, Dictionary<RoomType, List<Room>> availableRooms, RoomType type)
         {
-            var spots = new List<RoomSpot>();
-            HashSet<Point> points = new HashSet<Point>();
-
-            foreach (var point in level.Rooms.Keys)
+            if (!_roomGenerators.TryGetValue(type, out var generator))
             {
-                foreach(var direction in _directions)
-                {
-                    var neighbor = point + direction;
-                    if (level.Rooms.ContainsKey(neighbor) || points.Contains(neighbor)) continue;
-                    spots.Add(RoomSpot.GetSpotInLevel(neighbor, level));
-                    points.Add(neighbor);
-                }
+                generator = new WeightedRandomGenerator<Room>(rng);
+                foreach (var room in availableRooms[type])
+                    generator.AddItem(room, room.Weight);
+                _roomGenerators.Add(type, generator);
             }
-
-            return spots;
+            level.Rooms.Add(generator.GetRandom().Value);
         }
 
-        bool HasNeighborOfType(Level level, Point point, RoomTypes type)
-        {
-            foreach( var direction in _directions)
-                if (level.Rooms.TryGetValue(point + direction, out var room) && room.RoomType == type)
-                    return true;
-            return false;
-        }
-
-        /// <summary>
-        /// Gets roomspot index in list without the requested neighbor type. If none exists, returns defaultIdx
-        /// </summary>
-        /// <param name="level"></param>
-        /// <param name=""></param>
-        /// <returns></returns>
-        int SpotIndexWithoutNeighborType(Level level, IList<RoomSpot> spots, RoomTypes withoutType, int defaultIdx = -1)
-        {
-            for(var i = 0; i < spots.Count; i++)
-                if (HasNeighborOfType(level, spots[i].Position, withoutType) is false)
-                    return i;
-            return defaultIdx;
-        }
-
-        void CreateSpecialRooms(
-            Level level, Dictionary<RoomTypes, List<Room>> availableRooms, LevelGenerationConfig config
+        void CreateAdditionalRooms(
+            Level level, Dictionary<RoomType, List<Room>> availableRooms, LevelGenerationConfig config
         )
         {
-            var spots = GetAvailableSpots(level);
-            spots.Sort((a, b) => b.DistanceToCenter.CompareTo(a.DistanceToCenter));
+            var types = new List<RoomType>();
+            for (int i = 0; i < rng.Range(0, config.NormalRoomVariance); i++)
+                types.Add(RoomType.Normal);
 
-            foreach(var type in _specialTypes)
+            types.AddRange(config.RoomsBeforeBoss);
+
+            for (int i = 0; i < types.Count; i++)
             {
-                if (config.RoomAmounts.TryGetValue(type, out var amount) is false)
-                    continue;
-                    WeightedRandomGenerator<Room> generator = new WeightedRandomGenerator<Room>(rng);
-                    foreach (var room in availableRooms[type])
-                        generator.AddItem(room, room.Weight);
-
-                for (var i = 0; i < amount; i++)
-                {
-                    var spotIndex = SpotIndexWithoutNeighborType(level, spots, type, 0);
-
-                    var spot = spots[spotIndex];
-                    spots.RemoveAt(spotIndex);
-                
-                    var item = generator.GetRandomItem();
-                    level.Rooms[spot.Position] = item.Value;
-                }
+                CreateRoom(level, availableRooms, types[0]);
+                types.RemoveAt(rng.Range(0, types.Count - i));
             }
         }
     }
@@ -169,16 +119,16 @@ namespace RoguelikeFNA.Generation
     {
         public bool UpdateOnPause { get; set; }
 
-        Dictionary<RoomTypes, Color> _colors = new Dictionary<RoomTypes, Color>()
+        Dictionary<RoomType, Color> _colors = new Dictionary<RoomType, Color>()
         {
-            {RoomTypes.Normal, Color.White }, {RoomTypes.Shop, Color.DarkGreen }, {RoomTypes.Treasure, Color.Yellow}, {RoomTypes.Boss, Color.Red}
+            {RoomType.Normal, Color.White }, {RoomType.Shop, Color.DarkGreen }, {RoomType.Treasure, Color.Yellow}, {RoomType.Boss, Color.Red}
         };
 
         [Inspectable] Level _level;
         [Inspectable] string _name = "Test";
         [Inspectable] int _normalRoomVariance = 2;
-        [Inspectable] Dictionary<RoomTypes, int> _roomAmounts = new Dictionary<RoomTypes, int>() {
-            { RoomTypes.Normal, 10 }, { RoomTypes.Shop, 1 }, { RoomTypes.Treasure, 1 }, { RoomTypes.Boss, 1 }
+        [Inspectable] Dictionary<RoomType, int> _roomAmounts = new Dictionary<RoomType, int>() {
+            { RoomType.Normal, 10 }, { RoomType.Shop, 1 }, { RoomType.Treasure, 1 }, { RoomType.Boss, 1 }
         };
 
         public override void Initialize()
@@ -208,9 +158,12 @@ namespace RoguelikeFNA.Generation
         {
             Transform.Position = Entity.Scene.Camera.Position;
             Debug.DrawCircle(Transform.Position, Color.White, 10);
-            foreach(var point in _level.Rooms.Keys)
+            int offset = 30;
+            int count = _level.Rooms.Count;
+            int boxSize = 20;
+            for (int i = 0; i < _level.Rooms.Count; i++)
                 Debug.DrawHollowBox(
-                    new Vector2(point.X * 30, point.Y * 30) + Transform.Position, 20, _colors[_level.Rooms[point].RoomType]
+                    new Vector2(i * offset - count * offset / 2, 0) + Transform.Position, boxSize, _colors[_level.Rooms[i].RoomType]
                 );
         }
     }
