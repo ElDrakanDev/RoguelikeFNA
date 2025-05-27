@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Nez;
+﻿using Nez;
 using RoguelikeFNA.Generation;
 using System;
 using System.Collections.Generic;
@@ -11,7 +10,8 @@ namespace RoguelikeFNA
     {
         Level _level;
         int _currentIdx;
-        Room _currentRoom => _level.Rooms[_currentIdx];
+        public Room CurrentRoom => _level.Rooms[_currentIdx];
+        public Entity CurrentTilemap => _tiledmapEntities[_currentIdx];
         Dictionary<int, Entity> _tiledmapEntities = new Dictionary<int, Entity>();
 
         public Entity ActiveTiledMap => _tiledmapEntities[_currentIdx];
@@ -45,7 +45,9 @@ namespace RoguelikeFNA
                 entity.Enabled = false;
                 _tiledmapEntities.Add(i, entity);
             }
-            SetIndex(0);
+            _currentIdx = 0;
+            CurrentTilemap.Enabled = true;
+            OnRoomChanged?.Invoke(_tiledmapEntities[_currentIdx]);
             return this;
         }
 
@@ -88,7 +90,7 @@ namespace RoguelikeFNA
 
         bool IsValidIndex(int index)
         {
-            return index > 0 && index < _level.Rooms.Count;
+            return index >= 0 && index < _level.Rooms.Count;
         }
     }
 }

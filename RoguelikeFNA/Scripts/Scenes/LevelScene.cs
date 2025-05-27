@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Input;
 using Nez;
 using RoguelikeFNA.Generation;
 using RoguelikeFNA.Items;
+using RoguelikeFNA.Rendering;
 using System.Collections.Generic;
 
 namespace RoguelikeFNA
@@ -28,7 +29,7 @@ namespace RoguelikeFNA
 
             _inputManager.OnPlayerJoined += AddPlayer;
 
-            AddSceneComponent(new LevelNavigator())
+            var nav = AddSceneComponent(new LevelNavigator())
                 .SetLevel(new LevelGenerator().GenerateLevel(new LevelGenerationConfig() {
                     Name = "Mosaic",
                     NormalRoomVariance = 3,
@@ -41,7 +42,7 @@ namespace RoguelikeFNA
 
             var cam = FindEntity("camera");
             cam.GetComponent<Camera>().SetZoom(1);
-            cam.AddComponent(new FollowCamera(FindComponentsOfType<DemoComponent>()[0].Entity));
+            cam.AddComponent(new TiledCamera(FindComponentsOfType<DemoComponent>()[0].Entity));
 
             CreateEntity("random-normal-item")
                 .SetLocalPosition(Vector2.One * 220)

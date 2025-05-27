@@ -49,6 +49,7 @@ namespace RoguelikeFNA.Generation
             CreateRoom(level, availableRooms, RoomType.Start);
             CreateMinimumNormalRooms(level, availableRooms, normalRooms);
             CreateAdditionalRooms(level, availableRooms, config);
+            CreateRoom(level, availableRooms, RoomType.Boss);
             return level;
         }
 

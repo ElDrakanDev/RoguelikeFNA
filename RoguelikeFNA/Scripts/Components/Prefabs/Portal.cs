@@ -11,7 +11,6 @@ namespace RoguelikeFNA.Prefabs
 {
     public class Portal : Component, IInteractListener, IPrefab
     {
-        public bool IsEntrance;
         SpriteAnimator _anim;
 
         public void AddComponents()
@@ -19,8 +18,7 @@ namespace RoguelikeFNA.Prefabs
             _anim = Entity.AddComponent(new SpriteAnimator())
                 .AddAnimationsFromAtlas(Entity.Scene.Content.LoadSpriteAtlas(ContentPath.Atlases.Portal.Portal_atlas));
             _anim.Play(_anim.Animations.Keys.First());
-            if (IsEntrance is false)
-                Entity.AddComponent(new InteractableOutline());
+            Entity.AddComponent(new InteractableOutline());
         }
 
         public void OnHover(Entity source)
@@ -30,7 +28,7 @@ namespace RoguelikeFNA.Prefabs
 
         public void OnInteract(Entity source)
         {
-
+            Entity.Scene.GetSceneComponent<LevelNavigator>().Move(1);
         }
     }
 }
