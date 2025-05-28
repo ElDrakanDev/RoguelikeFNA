@@ -11,7 +11,7 @@ namespace RoguelikeFNA
         Destroy, Bounce, Ignore
     }
     [Serializable]
-    public class Projectile : Component, IUpdatable, ITriggerListener
+    public class Projectile : Component, IUpdatable, ITriggerListener, IPerishable
     {
         public bool UpdateOnPause { get; set; }
 

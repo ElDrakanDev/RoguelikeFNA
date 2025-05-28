@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Nez;
+using Nez.Tiled;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -9,7 +10,7 @@ namespace RoguelikeFNA
     public static class TiledMapRendererExt
     {
         static Dictionary<string, Type> _typeDict = new Dictionary<string, Type>();
-        
+
         public static void CreateObjects(this TiledMapRenderer map)
         {
             var entities = map.TiledMap.GetObjectGroup("Entities");
@@ -24,7 +25,12 @@ namespace RoguelikeFNA
                     .SetLocalRotation(Mathf.Deg2Rad * obj.Rotation)
                     .Transform.SetParent(map.Transform);
 
-                if (obj.Properties is null || !obj.Properties.TryGetValue("InternalType", out string typeName))
+                if (obj.Properties is null)
+                    continue;
+
+                SetEntityFields(obj, entity);
+
+                if (!obj.Properties.TryGetValue("InternalType", out string typeName))
                     continue;
 
                 if (_typeDict.TryGetValue(typeName, out Type type) is false)
@@ -55,7 +61,7 @@ namespace RoguelikeFNA
                 }
 
                 prefabComponent.AddComponents();
-                
+
             }
         }
 
@@ -73,6 +79,12 @@ namespace RoguelikeFNA
                 field.SetValue(obj, Enum.Parse(field.FieldType, value));
             else
                 throw new NotImplementedException();
+        }
+
+        static void SetEntityFields(TmxObject obj, TiledEntity entity)
+        {
+            if (obj.Properties.TryGetValue("Tag", out var tag))
+                entity.Tag = (int)Enum.Parse(typeof(Tag), tag);
         }
     }
 }

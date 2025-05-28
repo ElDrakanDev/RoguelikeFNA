@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Nez;
 using Microsoft.Xna.Framework;
+using System.Linq;
 
 namespace RoguelikeFNA
 {
@@ -11,10 +12,10 @@ namespace RoguelikeFNA
             Entity closest = null;
             float closestDistance = float.MaxValue;
 
-            foreach(var entity in list)
+            foreach (var entity in list)
             {
                 float distance = Vector2.Distance(position, entity.Position);
-                if(distance < closestDistance)
+                if (distance < closestDistance)
                 {
                     closest = entity;
                     closestDistance = distance;
@@ -34,6 +35,17 @@ namespace RoguelikeFNA
         {
             float res = Vector2.Distance(from, entity.Position);
             return res <= range;
+        }
+
+        public static IEnumerable<Entity> Enabled(this IList<Entity> entities)
+        {
+            return entities.Where(e => e.Enabled);
+        }
+
+        public static void Destroy(this IEnumerable<Entity> entities)
+        {
+            foreach (var entity in entities)
+                entity.Destroy();
         }
     }
 }

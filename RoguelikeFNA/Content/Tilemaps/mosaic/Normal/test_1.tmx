@@ -35,7 +35,7 @@
    </properties>
    <point/>
   </object>
-  <object id="3" name="Entrance" x="96" y="256" width="32" height="32"/>
+  <object id="3" template="../assets/templates/Entrance.tx" x="96" y="256"/>
   <object id="5" template="../assets/templates/Exit.tx" x="384" y="256"/>
  </objectgroup>
 </map>

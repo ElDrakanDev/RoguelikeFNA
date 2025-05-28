@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="3">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="4">
  <tileset firstgid="1" name="Inca_front_by_Kronbits-extended" tilewidth="16" tileheight="16" tilecount="280" columns="20">
   <image source="../assets/tiles/Inca_front_by_Kronbits-extended.png" width="320" height="224"/>
  </tileset>
@@ -29,5 +29,6 @@
  </layer>
  <objectgroup id="3" name="Entities">
   <object id="1" template="../assets/templates/Exit.tx" x="352" y="256"/>
+  <object id="3" template="../assets/templates/Entrance.tx" x="64" y="256"/>
  </objectgroup>
 </map>

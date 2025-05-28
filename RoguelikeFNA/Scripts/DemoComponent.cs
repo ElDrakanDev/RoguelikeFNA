@@ -74,6 +74,7 @@ namespace RoguelikeFNA
         public override void OnAddedToEntity()
         {
             _fDir = Entity.AddComponent(new FaceDirection());
+            Entity.AddComponent<EntranceTeleport>();
             _sfxManager = Core.GetGlobalManager<SoundEffectManager>();
             _slashSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.SaberSlash_WAV);
             _dashSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.ZeroDash_WAV);

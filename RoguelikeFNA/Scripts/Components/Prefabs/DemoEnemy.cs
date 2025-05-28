@@ -84,6 +84,7 @@ namespace RoguelikeFNA.Prefabs
             var deathSound = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.EnemyExplode_WAV);
             Core.GetGlobalManager<SoundEffectManager>().Play(deathSound);
             Entity.Scene.CreateEntity("DeathEffect", Transform.Position)
+                .AddComponent(new Perishable())
                 .AddComponent(new ParticleEmitter(Entity.Scene.Content.LoadParticleEmitterConfig(ContentPath.Particles.Explosion_pex)))
                 .OnAllParticlesExpired += (particle) => particle.Entity.Destroy();
             Entity.Destroy();

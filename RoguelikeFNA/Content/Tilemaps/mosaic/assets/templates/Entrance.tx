@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <template>
- <object name="Exit" width="32" height="32">
+ <object name="Entrance" width="32" height="32">
   <properties>
    <property name="InternalType" value="RoguelikeFNA.Prefabs.Portal"/>
-   <property name="IsExit" type="bool" value="true"/>
+   <property name="IsExit" type="bool" value="false"/>
+   <property name="Tag" value="Entrance"/>
   </properties>
  </object>
 </template>

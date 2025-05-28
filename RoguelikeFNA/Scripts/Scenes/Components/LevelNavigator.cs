@@ -17,11 +17,16 @@ namespace RoguelikeFNA
         public Entity ActiveTiledMap => _tiledmapEntities[_currentIdx];
         public event Action<Entity> OnRoomChanged;
 
+        public LevelNavigator()
+        {
+            OnRoomChanged += PerishableCleanup;
+        }
+
         #region Public API
 
         public Entity GetActiveRoomEntity()
         {
-            if(_tiledmapEntities.TryGetValue(_currentIdx, out var entity))
+            if (_tiledmapEntities.TryGetValue(_currentIdx, out var entity))
                 return entity;
             return null;
         }
@@ -32,8 +37,8 @@ namespace RoguelikeFNA
                 entity.Destroy();
             _tiledmapEntities.Clear();
             _level = level;
-            
-            for(int i = 0; i < _level.Rooms.Count; i++)
+
+            for (int i = 0; i < _level.Rooms.Count; i++)
             {
                 var room = _level.Rooms[i];
                 var entity = Scene.CreateEntity(room.Name);
@@ -64,7 +69,7 @@ namespace RoguelikeFNA
         public bool Move(int places)
         {
             var idx = _currentIdx + places;
-            if(IsValidIndex(idx))
+            if (IsValidIndex(idx))
             {
                 SetIndex(idx);
                 return true;
@@ -91,6 +96,11 @@ namespace RoguelikeFNA
         bool IsValidIndex(int index)
         {
             return index >= 0 && index < _level.Rooms.Count;
+        }
+
+        void PerishableCleanup(Entity _)
+        {
+            Scene.FindComponentsOfType<IPerishable>().Cast<Component>().Select(c => c.Entity).Destroy();
         }
     }
 }
