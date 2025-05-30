@@ -58,7 +58,7 @@ namespace RoguelikeFNA.Items
         public Item GetRandomItemFromPool(ItemPool pool)
         {
             var itemsFromPool = AvailableItems.Where(item => Flags.IsFlagSet((int)item.ItemPoolMask, (int)pool)).ToArray();
-            return itemsFromPool[RNG.Range(0, itemsFromPool.Length)];
+            return (Item)itemsFromPool[RNG.Range(0, itemsFromPool.Length)].Clone();
         }
 
         public Item PopRandomItemFromPool(ItemPool pool)
@@ -67,7 +67,7 @@ namespace RoguelikeFNA.Items
             var index = RNG.Range(0, itemsFromPool.Length);
             var item = AvailableItems[index];
             AvailableItems.RemoveAt(index);
-            return item;
+            return (Item)item.Clone();
         }
     }
 }

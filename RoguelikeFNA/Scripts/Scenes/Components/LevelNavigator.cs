@@ -16,6 +16,7 @@ namespace RoguelikeFNA
 
         public Entity ActiveTiledMap => _tiledmapEntities[_currentIdx];
         public event Action<Entity> OnRoomChanged;
+        public Room[] Rooms => _level.Rooms.ToArray();
 
         public LevelNavigator()
         {

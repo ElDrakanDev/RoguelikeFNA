@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Nez;
 using RoguelikeFNA.Utils;
 using System;
@@ -103,15 +104,24 @@ namespace RoguelikeFNA.Generation
         )
         {
             var types = new List<RoomType>();
-            for (int i = 0; i < rng.Range(0, config.NormalRoomVariance); i++)
+            var normalRooms = rng.Range(0, config.NormalRoomVariance);
+            for (int i = 0; i < normalRooms; i++)
                 types.Add(RoomType.Normal);
 
-            types.AddRange(config.RoomsBeforeBoss);
+            var specialRooms = new Dictionary<RoomType, int>(config.RoomAmounts);
+            specialRooms.Remove(RoomType.Normal);
+            specialRooms.Remove(RoomType.Boss);
+
+            foreach (var key in specialRooms.Keys)
+                for (int i = 0; i < specialRooms[key]; i++)
+                    types.Add(key);
+
+            types.Sort((t1, t2) => rng.Range(0, types.Count));
 
             for (int i = 0; i < types.Count; i++)
             {
-                CreateRoom(level, availableRooms, types[0]);
-                types.RemoveAt(rng.Range(0, types.Count - i));
+                var type = types[i];
+                CreateRoom(level, availableRooms, type);
             }
         }
     }

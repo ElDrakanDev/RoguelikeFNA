@@ -35,7 +35,7 @@ namespace RoguelikeFNA
                     NormalRoomVariance = 3,
                     RoomFilesDirectory = ContentPath.Tilemaps.Mosaic.Directory,
                     RoomAmounts = new() {
-                        { RoomType.Normal, 5 }, { RoomType.Shop, 1 }, { RoomType.Treasure, 1 }, { RoomType.Boss, 1 }
+                        { RoomType.Normal, 5 }, { RoomType.Shop, 1 }, { RoomType.Treasure, 3 }
                     }
                 })
             );
@@ -44,10 +44,9 @@ namespace RoguelikeFNA
             cam.GetComponent<Camera>().SetZoom(1);
             cam.AddComponent(new TiledCamera(FindComponentsOfType<DemoComponent>()[0].Entity));
 
-            CreateEntity("random-normal-item")
-                .SetLocalPosition(Vector2.One * 220)
-                .AddComponent(Core.GetGlobalManager<ItemRepository>().GetRandomItemFromPool(ItemPool.Normal).Clone());
-
+            // CreateEntity("random-normal-item")
+            //     .SetLocalPosition(Vector2.One * 220)
+            //     .AddComponent(Core.GetGlobalManager<ItemRepository>().GetRandomItemFromPool(ItemPool.Normal).Clone());
 
             //CreateEntity("test-serializable").AddComponent(new SerializableComponent());
             //CreateEntity("test-levelgenerator")

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object name="RandomItem">
+  <properties>
+   <property name="InternalType" value="RoguelikeFNA.Prefabs.RandomItemPrefab"/>
+   <property name="ItemPools" value="Normal"/>
+  </properties>
+ </object>
+</template>

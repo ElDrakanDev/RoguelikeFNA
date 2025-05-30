@@ -9,6 +9,5 @@ namespace RoguelikeFNA.Generation
         public Dictionary<RoomType, int> RoomAmounts;
         public int NormalRoomVariance;
         public string RoomFilesDirectory;
-        public List<RoomType> RoomsBeforeBoss = new List<RoomType>();
     }
 }
