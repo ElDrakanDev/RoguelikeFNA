@@ -9,7 +9,7 @@ namespace RoguelikeFNA
         public Game1() : base()
         {
 			// uncomment this line for scaled pixel art games
-			// System.Environment.SetEnvironmentVariable("FNA_OPENGL_BACKBUFFER_SCALE_NEAREST", "1");
+			System.Environment.SetEnvironmentVariable("FNA_OPENGL_BACKBUFFER_SCALE_NEAREST", "1");
         }
 
         void RegisterAllGlobalManagers()
@@ -20,8 +20,9 @@ namespace RoguelikeFNA
             Core.RegisterGlobalManager(new InputManager());
             Core.RegisterGlobalManager(new RNGManager());
             Core.RegisterGlobalManager(new ItemRepository());
+            Core.RegisterGlobalManager(new EssenceManager());
 #if DEBUG
-            DebugRenderEnabled = true;
+            // DebugRenderEnabled = true;
             System.Diagnostics.Debug.Listeners.Add(new System.Diagnostics.TextWriterTraceListener(System.Console.Out));
 
             // optionally render Nez in an ImGui window

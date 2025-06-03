@@ -13,12 +13,15 @@ Set-Location ..\RoguelikeFNA
 if ((Test-Path("T4Templates\Output")) -eq 0) { New-Item  -ItemType "directory" -Path "T4Templates\Output" }
 
 $files = Get-ChildItem ".\T4Templates\*" -Include *.tt
+$t4Path = "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/TextTransform.exe"
 
 foreach ($file in $files)
 {
     $fileName = $file.BaseName
+    Write-Output "Building ${fileName}.cs from ${fileName}.tt"
+
     # Build the template
-    t4 -r System.dll -r mscorlib.dll -r netstandard.dll -r System.IO.FileSystem.dll -r System.Linq.dll -r System.Text.RegularExpressions -o "T4Templates\Output\${fileName}.cs" "T4Templates\${fileName}.tt"
+    & $t4Path -r System.dll -r mscorlib.dll -r netstandard.dll -r System.IO.FileSystem.dll -r System.Linq.dll -r System.Text.RegularExpressions -out "T4Templates\Output\${fileName}.cs" "T4Templates\${fileName}.tt"
     
     Write-Output "Built ${fileName}.cs from ${fileName}.tt"
 }

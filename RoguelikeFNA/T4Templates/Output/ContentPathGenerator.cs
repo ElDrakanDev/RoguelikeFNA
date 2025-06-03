@@ -131,27 +131,18 @@ namespace Nez
 		{
 			public const string Directory = @".\Content\Sprites";
 		
+			public static class Essence
+			{
+				public const string Directory = @".\Content\Sprites\Essence";
+			
+				public const string Large_png = @".\Content\Sprites\Essence\large.png";
+				public const string Medium_png = @".\Content\Sprites\Essence\medium.png";
+				public const string Small_png = @".\Content\Sprites\Essence\small.png";
+			}
+
 			public const string Apple_png = @".\Content\Sprites\Apple.png";
 			public const string ExampleSword_png = @".\Content\Sprites\ExampleSword.png";
 			public const string Nezlogoblack_png = @".\Content\Sprites\nez-logo-black.png";
-		}
-
-		public static class Test
-		{
-			public const string Directory = @".\Content\Test";
-		
-			public static class Generator
-			{
-				public const string Directory = @".\Content\Test\generator";
-			
-				public const string Boss1Boss_tmx = @".\Content\Test\generator\Boss;1;Boss.tmx";
-				public const string Common10Normal_tmx = @".\Content\Test\generator\Common;10;Normal.tmx";
-				public const string Rare3Normal_tmx = @".\Content\Test\generator\Rare;3;Normal.tmx";
-				public const string Shop1Shop_tmx = @".\Content\Test\generator\Shop;1;Shop.tmx";
-				public const string SuperRare1Normal_tmx = @".\Content\Test\generator\SuperRare;1;Normal.tmx";
-				public const string Treasure1Treasure_tmx = @".\Content\Test\generator\Treasure;1;Treasure.tmx";
-			}
-
 		}
 
 		public static class Textures
@@ -170,51 +161,78 @@ namespace Nez
 			{
 				public const string Directory = @".\Content\Tilemaps\mosaic";
 			
-				public static class Tiled
+				public static class Assets
 				{
-					public const string Directory = @".\Content\Tilemaps\mosaic\tiled";
+					public const string Directory = @".\Content\Tilemaps\mosaic\assets";
 				
-					public const string _0001_Mosaic_demo_tmx = @".\Content\Tilemaps\mosaic\tiled\0001_Mosaic_demo.tmx";
-					public const string _0002_World_Level_1_tmx = @".\Content\Tilemaps\mosaic\tiled\0002_World_Level_1.tmx";
-					public const string Mosaic_world = @".\Content\Tilemaps\mosaic\tiled\mosaic.world";
-					public const string Wallsintgrid_png = @".\Content\Tilemaps\mosaic\tiled\Walls.intgrid.png";
+					public static class Rules
+					{
+						public const string Directory = @".\Content\Tilemaps\mosaic\assets\rules";
+					
+						public const string Rules_tmx = @".\Content\Tilemaps\mosaic\assets\rules\rules.tmx";
+					}
+
+					public static class Templates
+					{
+						public const string Directory = @".\Content\Tilemaps\mosaic\assets\templates";
+					
+						public const string Entrance_tx = @".\Content\Tilemaps\mosaic\assets\templates\Entrance.tx";
+						public const string Exit_tx = @".\Content\Tilemaps\mosaic\assets\templates\Exit.tx";
+						public const string RandomItem_tx = @".\Content\Tilemaps\mosaic\assets\templates\RandomItem.tx";
+					}
+
+					public static class Tiles
+					{
+						public const string Directory = @".\Content\Tilemaps\mosaic\assets\tiles";
+					
+						public const string Inca_back2_by_Kronbits_png = @".\Content\Tilemaps\mosaic\assets\tiles\Inca_back2_by_Kronbits.png";
+						public const string Inca_back2_by_Kronbits_tsx = @".\Content\Tilemaps\mosaic\assets\tiles\Inca_back2_by_Kronbits.tsx";
+						public const string Inca_front_by_Kronbitsextended_png = @".\Content\Tilemaps\mosaic\assets\tiles\Inca_front_by_Kronbits-extended.png";
+						public const string Inca_front_by_Kronbitsextended_tsx = @".\Content\Tilemaps\mosaic\assets\tiles\Inca_front_by_Kronbits-extended.tsx";
+					}
+
 				}
 
-			}
-
-			public static class Test
-			{
-				public const string Directory = @".\Content\Tilemaps\test";
-			
-				public static class Atlas
+				public static class Boss
 				{
-					public const string Directory = @".\Content\Tilemaps\test\atlas";
+					public const string Directory = @".\Content\Tilemaps\mosaic\Boss";
 				
-					public const string Cavernas_by_Adam_Saltsman_png = @".\Content\Tilemaps\test\atlas\Cavernas_by_Adam_Saltsman.png";
+					public const string Test_1_tmx = @".\Content\Tilemaps\mosaic\Boss\test_1.tmx";
 				}
 
-				public static class Tiled
+				public static class Normal
 				{
-					public const string Directory = @".\Content\Tilemaps\test\tiled";
+					public const string Directory = @".\Content\Tilemaps\mosaic\Normal";
 				
-					public const string AutoLayer_tmx = @".\Content\Tilemaps\test\tiled\AutoLayer.tmx";
-					public const string IntGrid_layerintgrid_png = @".\Content\Tilemaps\test\tiled\IntGrid_layer.intgrid.png";
-					public const string Test_world = @".\Content\Tilemaps\test\tiled\test.world";
+					public const string Test_1_tmx = @".\Content\Tilemaps\mosaic\Normal\test_1.tmx";
 				}
 
+				public static class Shop
+				{
+					public const string Directory = @".\Content\Tilemaps\mosaic\Shop";
+				
+					public const string Test_1_tmx = @".\Content\Tilemaps\mosaic\Shop\test_1.tmx";
+				}
+
+				public static class Start
+				{
+					public const string Directory = @".\Content\Tilemaps\mosaic\Start";
+				
+					public const string Test_1_tmx = @".\Content\Tilemaps\mosaic\Start\test_1.tmx";
+				}
+
+				public static class Treasure
+				{
+					public const string Directory = @".\Content\Tilemaps\mosaic\Treasure";
+				
+					public const string Test_1_tmx = @".\Content\Tilemaps\mosaic\Treasure\test_1.tmx";
+				}
+
+				// Ignored file 'mosaic.tiled-project';
+				// Ignored file 'mosaic.tiled-session';
+				public const string Rules_txt = @".\Content\Tilemaps\mosaic\rules.txt";
 			}
 
-			public static class Tiles
-			{
-				public const string Directory = @".\Content\Tilemaps\Tiles";
-			
-				public const string Inca_back2_by_Kronbits_png = @".\Content\Tilemaps\Tiles\Inca_back2_by_Kronbits.png";
-				public const string Inca_front_by_Kronbitsextended_png = @".\Content\Tilemaps\Tiles\Inca_front_by_Kronbits-extended.png";
-			}
-
-			// Ignored file '.keep';
-			public const string Mosaic_ldtk = @".\Content\Tilemaps\mosaic.ldtk";
-			public const string Test_ldtk = @".\Content\Tilemaps\test.ldtk";
 		}
 
 		public const string Translations_xlsx = @".\Content\translations.xlsx";

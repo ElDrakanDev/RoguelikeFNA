@@ -73,6 +73,7 @@ namespace RoguelikeFNA
 
         public override void OnAddedToEntity()
         {
+            Entity.Tag = (int)Tag.Player;
             _fDir = Entity.AddComponent(new FaceDirection());
             Entity.AddComponent<EntranceTeleport>();
             _sfxManager = Core.GetGlobalManager<SoundEffectManager>();
@@ -126,7 +127,7 @@ namespace RoguelikeFNA
 
         void HandleInteractables()
         {
-            var entities = Entity.Scene.Entities.EntitiesOfType<Entity>();
+            var entities = Entity.Scene.Entities.EntitiesOfType<Entity>().Enabled().ToArray();
             entities = entities.Where(e =>
             {
                 var collider = e.GetComponent<Collider>();
@@ -135,8 +136,8 @@ namespace RoguelikeFNA
                 return collider.PhysicsLayer.IsFlagSet((int)CollisionLayer.Interactable) &&
                     collider.CollidesWith(_collider, out var _)
                     && e.HasComponent<IInteractListener>();
-            }).ToList();
-            if(entities.Count > 0)
+            }).ToArray();
+            if(entities.Length > 0)
             {
                 var entity = entities.Closest(Transform.Position);
                 entity.GetComponents<IInteractListener>().ForEach(i => i.OnHover(Entity));

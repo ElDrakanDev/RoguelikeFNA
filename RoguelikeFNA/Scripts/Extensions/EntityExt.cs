@@ -7,7 +7,7 @@ namespace RoguelikeFNA
 {
     public static class EntityExt
     {
-        public static Entity Closest(this IList<Entity> list, Vector2 position)
+        public static Entity Closest(this IEnumerable<Entity> list, Vector2 position)
         {
             Entity closest = null;
             float closestDistance = float.MaxValue;

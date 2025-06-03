@@ -149,18 +149,18 @@
             "problemMatcher": "$msCompile"
         },
 
-        {
-            "label": "Open Pipeline Tool",
-            "type": "shell",
-            "group": "build",
-            "osx": {
-                "command": "export MONOGAME_PIPELINE_PROJECT=${workspaceFolder}/RoguelikeFNA/CompiledContent/Content.mgcb && /Applications/Pipeline.app/Contents/MacOS/Pipeline"
-            },
-            "windows": {
-                "command": "${workspaceFolder}/RoguelikeFNA/CompiledContent/Content.mgcb"
-            },
-            "problemMatcher": "$msCompile"
-        },
+        // {
+        //     "label": "Open Pipeline Tool",
+        //     "type": "shell",
+        //     "group": "build",
+        //     "osx": {
+        //         "command": "export MONOGAME_PIPELINE_PROJECT=${workspaceFolder}/RoguelikeFNA/CompiledContent/Content.mgcb && /Applications/Pipeline.app/Contents/MacOS/Pipeline"
+        //     },
+        //     "windows": {
+        //         "command": "${workspaceFolder}/RoguelikeFNA/CompiledContent/Content.mgcb"
+        //     },
+        //     "problemMatcher": "$msCompile"
+        // },
 		
         {
             "label": "Process T4 Templates",

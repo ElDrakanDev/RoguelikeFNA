@@ -4,6 +4,6 @@ namespace RoguelikeFNA
     {
         None = 0,
         Entrance,
-        
+        Player,
     }
 }

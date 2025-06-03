@@ -26,6 +26,7 @@ namespace RoguelikeFNA.Prefabs
 
         int Health = 10;
         int Damage = 5;
+        int Essence = 25;
         EntityTeam Team = EntityTeam.Enemy;
         HealthManager _healthManager;
         EntityStats _stats;
@@ -102,6 +103,7 @@ namespace RoguelikeFNA.Prefabs
             Entity.AddComponent(new TiledMapMover(Entity.Scene.FindComponentOfType<TiledMapRenderer>().CollisionLayer));
             Entity.AddComponent(new FaceDirection());
             Entity.AddComponent(new HitboxHandler() { HitboxLayers = (int)CollisionLayer.Entity, AnimationsHitboxes = hitboxes });
+            Entity.AddComponent(new EssenceOnDeath(Essence));
         }
 
         public override void Update()

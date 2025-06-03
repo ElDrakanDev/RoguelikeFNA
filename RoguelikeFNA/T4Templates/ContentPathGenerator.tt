@@ -91,6 +91,9 @@ namespace Nez
 	void PrintContentFiles( string dir, int depth, string sourceFolder )
 	{
 		var firstIndent = new string( '\t', depth );
+		var ignoredExtensions = new HashSet<string>(){
+			".tiled-session", ".tiled-project"
+		};
 		
 		foreach(var file in Directory.GetFiles( dir ).OrderBy(s => s))
 		{
@@ -100,7 +103,7 @@ namespace Nez
 			// clear out all of the path up to the sourceFolder so we get just the relative path to the Content folder
 			var finalPath = file.Substring( file.IndexOf( sourceFolder ) );
 			var fileInfo = new FileInfo( file );
-			if(fileInfo.Name.StartsWith(".")){
+			if(fileInfo.Name.StartsWith(".") || ignoredExtensions.Contains(Path.GetExtension(fileInfo.Name))){
 				WriteLine("{0}// Ignored file '{1}';", firstIndent, fileInfo.Name);
 				continue;
 			}

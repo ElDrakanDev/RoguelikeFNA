@@ -16,15 +16,9 @@ namespace RoguelikeFNA
         {
             base.Begin();
 
-            //activeTiledMap = CreateEntity("test-tilemap")
-            //    .AddComponent(new TiledMapRenderer(
-            //        Content.LoadTiledMap(ContentPath.Tilemaps.Mosaic.Tiled._0001_Mosaic_demo_tmx), "Walls_1", true)
-            //    { RenderLayer = 1, PhysicsLayer = (int)CollisionLayer.Ground}
-            //    );
-            //activeTiledMap.CreateObjects();
-
             _inputManager = Core.GetGlobalManager<InputManager>();
-            foreach(var input in _inputManager.AvailablePlayers)
+            Core.GetGlobalManager<EssenceManager>().Reset();
+            foreach (var input in _inputManager.AvailablePlayers)
                 AddPlayer(input);
 
             _inputManager.OnPlayerJoined += AddPlayer;
@@ -43,14 +37,6 @@ namespace RoguelikeFNA
             var cam = FindEntity("camera");
             cam.GetComponent<Camera>().SetZoom(1);
             cam.AddComponent(new TiledCamera(FindComponentsOfType<DemoComponent>()[0].Entity));
-
-            // CreateEntity("random-normal-item")
-            //     .SetLocalPosition(Vector2.One * 220)
-            //     .AddComponent(Core.GetGlobalManager<ItemRepository>().GetRandomItemFromPool(ItemPool.Normal).Clone());
-
-            //CreateEntity("test-serializable").AddComponent(new SerializableComponent());
-            //CreateEntity("test-levelgenerator")
-            //    .AddComponent(new TestGeneratorComponent());
         }
 
         void AddPlayer(PlayerInput input)

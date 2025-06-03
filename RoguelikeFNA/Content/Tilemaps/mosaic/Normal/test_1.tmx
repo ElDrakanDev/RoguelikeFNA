@@ -30,6 +30,7 @@
  <objectgroup id="2" name="Entities">
   <object id="1" name="DemoEnemy" x="243" y="255">
    <properties>
+    <property name="Essence" type="int" value="145"/>
     <property name="Health" type="int" value="50"/>
     <property name="InternalType" value="RoguelikeFNA.Prefabs.DemoEnemy"/>
    </properties>
