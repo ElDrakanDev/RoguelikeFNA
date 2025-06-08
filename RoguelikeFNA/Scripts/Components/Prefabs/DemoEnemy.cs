@@ -91,7 +91,7 @@ namespace RoguelikeFNA.Prefabs
             Entity.Destroy();
         }
 
-        public void AddComponents()
+        public void LoadPrefab()
         {
             var atlas = Entity.Scene.Content.LoadSpriteAtlas(ContentPath.Atlases.Enemy.Enemy_atlas);
             var hitboxes = Entity.Scene.Content.LoadJson<Dictionary<string, List<HitboxGroup>>>(

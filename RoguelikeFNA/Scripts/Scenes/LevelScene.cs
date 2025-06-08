@@ -29,7 +29,7 @@ namespace RoguelikeFNA
                     NormalRoomVariance = 3,
                     RoomFilesDirectory = ContentPath.Tilemaps.Mosaic.Directory,
                     RoomAmounts = new() {
-                        { RoomType.Normal, 5 }, { RoomType.Shop, 1 }, { RoomType.Treasure, 3 }
+                        { RoomType.Normal, 5 }, { RoomType.Shop, 1 }, { RoomType.Treasure, 1 }
                     }
                 })
             );

@@ -14,7 +14,7 @@ namespace RoguelikeFNA
 
         public bool TrySpendEssence(int amount)
         {
-            if (Essence - amount < 0)
+            if (!CanAfford(amount))
                 return false;
             SpendEssence(amount);
             return true;
@@ -22,9 +22,12 @@ namespace RoguelikeFNA
 
         public void SpendEssence(int amount)
         {
-            if (Essence - amount < 0)
+            if (!CanAfford(amount))
                 throw new ArgumentException("Essence can't be negative");
+            Essence -= amount;
         }
+
+        public bool CanAfford(int amount) => Essence - amount > 0;
 
         public void Reset()
         {

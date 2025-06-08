@@ -1,1 +1,1 @@
-RoguelikeFNA.Items.SerializedItem(ItemPoolMask:"Normal",ItemId:"regen_item",TexturePath:"Content\\Sprites\\Apple.png",Effects:[RoguelikeFNA.Scripts.Components.Items.HealthRegenEffect(RegenRate:5,RegenAmount:1)])
+RoguelikeFNA.Items.SerializedItem(ItemPoolMask:"Normal",ItemId:"regen_item",TexturePath:"Content\\Sprites\\Apple.png",Effects:[RoguelikeFNA.Scripts.Components.Items.HealthRegenEffect(RegenRate:5,RegenAmount:1)],EssenceCost:125)

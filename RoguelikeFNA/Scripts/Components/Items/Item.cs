@@ -27,7 +27,7 @@ namespace RoguelikeFNA
         public ItemPool ItemPoolMask;
         public string Description => TranslationManager.GetTranslation($"{ItemId}_desc");
         bool _hasBeenPickedUp = false;
-
+        public int EssenceCost;
 
         #region test
         public override void OnAddedToEntity()
@@ -37,8 +37,7 @@ namespace RoguelikeFNA
             Insist.IsNotNull(Texture);
             Entity.AddComponent(new SpriteRenderer(Texture));
             Entity.AddComponent(new InteractableOutline());
-            Entity.AddComponent(new BoxCollider() { PhysicsLayer = (int)CollisionLayer.Interactable });
-        }
+            Entity.AddComponent(new BoxCollider() { PhysicsLayer = (int)CollisionLayer.Interactable });        }
 
         bool _logged = false;
         public void OnHover(Entity source)
@@ -58,7 +57,8 @@ namespace RoguelikeFNA
             //itemClone.Effects = Effects.Select(e => (ItemEffect)e.Clone()).ToList();
             foreach (var effect in itemClone.Effects)
                 effect.OnPickup(source, itemClone);
-            Entity.Destroy();
+            if(Entity != null)
+                Entity.Destroy();
         }
 
         public void RemoveItem()

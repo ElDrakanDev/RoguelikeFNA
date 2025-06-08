@@ -11,6 +11,7 @@ namespace RoguelikeFNA.Items
         public string TexturePath = string.Empty;
         public List<ItemEffect> Effects = new List<ItemEffect>();
         public ItemPool ItemPoolMask;
+        public int EssenceCost;
         
         public SerializedItem() { }
     }

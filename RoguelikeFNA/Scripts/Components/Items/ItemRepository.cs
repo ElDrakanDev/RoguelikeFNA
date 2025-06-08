@@ -35,11 +35,14 @@ namespace RoguelikeFNA.Items
         {
             var serializedItem = Core.Content.LoadNson<SerializedItem>(path);
             var texture = Core.Content.LoadTexture(serializedItem.TexturePath);
-            var item = new Item(){
+            var item = new Item()
+            {
                 ItemId = serializedItem.ItemId,
                 Texture = texture,
                 Effects = serializedItem.Effects,
-                ItemPoolMask = serializedItem.ItemPoolMask };
+                ItemPoolMask = serializedItem.ItemPoolMask,
+                EssenceCost = serializedItem.EssenceCost
+            };
             return item;
         }
 

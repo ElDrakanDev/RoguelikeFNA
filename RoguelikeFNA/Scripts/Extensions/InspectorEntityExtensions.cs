@@ -73,7 +73,7 @@ namespace RoguelikeFNA.Scripts.Extensions
                     var newEntity = new Entity(entityName);
                     newEntity.AddComponent(newPrefab as Component);
                     Core.Scene.AddEntity(newEntity);
-                    newPrefab.AddComponents();
+                    newPrefab.LoadPrefab();
                     ImGui.CloseCurrentPopup();
                     _activePrefabType = null;
                 }

@@ -7,7 +7,7 @@ namespace RoguelikeFNA.Prefabs
     {
         public ItemPool ItemPools;
 
-        void IPrefab.AddComponents()
+        void IPrefab.LoadPrefab()
         {
             var item = Core.GetGlobalManager<ItemRepository>().GetRandomItemFromPool(ItemPools);
             this.AddComponent(item);

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="3">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="5">
  <tileset firstgid="1" name="Inca_front_by_Kronbits-extended" tilewidth="16" tileheight="16" tilecount="280" columns="20">
   <image source="../assets/tiles/Inca_front_by_Kronbits-extended.png" width="320" height="224"/>
  </tileset>
@@ -30,5 +30,10 @@
  <objectgroup id="2" name="Entities">
   <object id="1" template="../assets/templates/Exit.tx" x="368" y="256"/>
   <object id="2" template="../assets/templates/Entrance.tx" x="80" y="256"/>
+  <object id="3" x="248" y="279.818">
+   <properties>
+    <property name="InternalType" value="RoguelikeFNA.Prefabs.ShopItemPrefab"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

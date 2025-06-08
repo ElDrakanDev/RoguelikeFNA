@@ -28,7 +28,7 @@ namespace RoguelikeFNA.Prefabs
             }
         }
 
-        public void AddComponents()
+        public void LoadPrefab()
         {
             _anim = Entity.AddComponent(new SpriteAnimator())
                 .AddAnimationsFromAtlas(Entity.Scene.Content.LoadSpriteAtlas(ContentPath.Atlases.Portal.Portal_atlas));

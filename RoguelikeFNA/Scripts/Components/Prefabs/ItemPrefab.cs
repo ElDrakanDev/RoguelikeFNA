@@ -7,7 +7,7 @@ namespace RoguelikeFNA.Prefabs
     {
         public string ItemPath;
 
-        void IPrefab.AddComponents()
+        void IPrefab.LoadPrefab()
         {
             var item = Core.GetGlobalManager<ItemRepository>().LoadItem(ItemPath);
             this.AddComponent(item);

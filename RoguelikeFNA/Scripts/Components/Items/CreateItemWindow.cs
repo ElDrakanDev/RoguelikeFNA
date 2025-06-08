@@ -51,6 +51,7 @@ namespace RoguelikeFNA
         {
             _removeIndex = -1;
             ImGui.InputText("Item ID", ref _item.ItemId, 200);
+            ImGui.InputInt("Essence Cost", ref _item.EssenceCost);
 
             _bitmaskInspector.Draw();
             _texInspector.Draw();

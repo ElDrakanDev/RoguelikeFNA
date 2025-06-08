@@ -60,7 +60,7 @@ namespace RoguelikeFNA
                     }
                 }
 
-                prefabComponent.AddComponents();
+                prefabComponent.LoadPrefab();
 
             }
         }
