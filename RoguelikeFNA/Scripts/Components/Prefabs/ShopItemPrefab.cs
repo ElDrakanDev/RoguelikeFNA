@@ -43,7 +43,7 @@ namespace RoguelikeFNA.Prefabs
 
         void IInteractListener.OnHover(Entity source)
         {
-
+            _item.OnHover(source);
         }
 
         void IInteractListener.OnInteract(Entity source)

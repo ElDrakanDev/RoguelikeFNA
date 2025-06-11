@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nez.Particles;
 
-namespace RoguelikeFNA
+namespace RoguelikeFNA.UI
 {
     public class MainMenu : UICanvas
     {

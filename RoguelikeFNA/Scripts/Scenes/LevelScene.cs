@@ -4,6 +4,7 @@ using Nez;
 using RoguelikeFNA.Generation;
 using RoguelikeFNA.Items;
 using RoguelikeFNA.Rendering;
+using RoguelikeFNA.UI;
 using System.Collections.Generic;
 
 namespace RoguelikeFNA
@@ -16,6 +17,7 @@ namespace RoguelikeFNA
         {
             base.Begin();
 
+            CreateEntity("item-ui").AddComponent(new ItemTooltip());
             _inputManager = Core.GetGlobalManager<InputManager>();
             Core.GetGlobalManager<EssenceManager>().Reset();
             foreach (var input in _inputManager.AvailablePlayers)

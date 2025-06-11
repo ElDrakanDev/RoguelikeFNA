@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nez;
 using Nez.Sprites;
+using RoguelikeFNA.UI;
 
 namespace RoguelikeFNA
 {

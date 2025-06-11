@@ -3,7 +3,7 @@ using Nez.UI;
 using Microsoft.Xna.Framework;
 using System;
 
-namespace RoguelikeFNA
+namespace RoguelikeFNA.UI
 {
     public class SettingsMenu : UICanvas
     {
