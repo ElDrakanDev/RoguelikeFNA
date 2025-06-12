@@ -79,11 +79,11 @@ namespace RoguelikeFNA
             throw new Exception($"Dialogue unset for ID {textId}");
         }
 
-        public static string TryGetTranslation(string textId)
+        public static string TryGetTranslation(string textId, string _default = "")
         {
             if (_instance._translations.TryGetValue(textId, out string value))
                 return value;
-            return string.Empty;
+            return _default;
         }
     }
 }

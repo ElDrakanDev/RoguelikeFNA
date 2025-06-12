@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Nez;
 using Nez.Sprites;
+using Nez.Tweens;
 
 namespace RoguelikeFNA
 {
@@ -13,10 +14,12 @@ namespace RoguelikeFNA
             // TODO: Polish and add essence pickup events
             public int Value;
             Vector2 _velocity;
+            bool _startedChase = false;
             public bool UpdateOnPause { get => false; set { } }
-            const float VEL_VARIANCE = 50f;
-            const float SPEED = 20f;
-            const float MAX_SPEED = 800f;
+            const float VEL_VARIANCE = 5f;
+            const float SPEED = 30f;
+            const float CHASE_THRESHOLD = 0.2f;
+            const float DECELERATION = 0.02f;
             Entity _target;
             Mover _mover;
             TrailRibbon _trail;
@@ -49,10 +52,16 @@ namespace RoguelikeFNA
                 }
                 else
                 {
-                    _velocity += (_target.Position - Entity.Position).Normalized() * SPEED;
-                    if (_velocity.Magnitude() > MAX_SPEED)
-                        _velocity = _velocity.Normalized() * MAX_SPEED * Time.DeltaTime;
-                    _mover.Move(_velocity * Time.DeltaTime, out var _);
+                    if (!_startedChase && _velocity.Magnitude() > CHASE_THRESHOLD)
+                    {
+                        _velocity *= Mathf.Pow(DECELERATION, Time.DeltaTime);
+                    }
+                    else
+                    {
+                        _startedChase = true;
+                        _velocity = (_target.Position - Entity.Position).Normalized() * (_velocity.Magnitude() + SPEED * Time.DeltaTime);
+                    }
+                    _mover.Move(_velocity, out var _);
                 }
             }
 
