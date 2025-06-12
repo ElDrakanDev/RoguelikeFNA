@@ -2,12 +2,15 @@
 using Nez.UI;
 using Microsoft.Xna.Framework;
 using System;
+using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace RoguelikeFNA.UI
 {
     public class SettingsMenu : UICanvas
     {
         ConfigManager _configManager;
+        TranslationManager _translationMgr;
 
         Table _container;
         Table _mainSection;
@@ -27,6 +30,7 @@ namespace RoguelikeFNA.UI
             base.OnAddedToEntity();
 
             _configManager = Core.GetGlobalManager<ConfigManager>();
+            _translationMgr = Core.GetGlobalManager<TranslationManager>();
 
             _container = Stage.AddElement(new Table())
                 .SetFillParent(true);
@@ -115,6 +119,7 @@ namespace RoguelikeFNA.UI
                 _configManager.Config.Fullscreen = !_configManager.Config.Fullscreen;
                 _configManager.ApplyChanges();
             };
+            
             var resolutionSelection = new SelectBox<ScreenResolution>(_selectBoxStyle);
             var resolutions = ScreenResolution.GetAvailableResolutions();
             resolutionSelection.SetItems(resolutions);
@@ -126,6 +131,20 @@ namespace RoguelikeFNA.UI
             };
             _videoSection.Add(GroupElementWithLabel(TranslationManager.GetTranslation("resolution"), resolutionSelection));
             _videoSection.Row();
+
+            // TODO: Add font with non-ascii support
+            var langSelection = new SelectBox<string>(_selectBoxStyle);
+            var languages = _translationMgr.AvailableLanguages.Select(l => l.Replace("ñ", "n")).ToList();
+            langSelection.SetItems(languages);
+            langSelection.SetSelected(languages.Find(l => l == _translationMgr.ActiveLanguage.Replace("ñ", "n")));
+            langSelection.OnChanged += language =>
+            {
+                var nonNormalized = _translationMgr.AvailableLanguages.Find(l => l.Replace("ñ", "n") == language);
+                _translationMgr.ChangeLanguage(nonNormalized);
+            };
+            _videoSection.Add(GroupElementWithLabel(TranslationManager.GetTranslation("language"), langSelection));
+            _videoSection.Row();
+
             AddButton(_videoSection, TranslationManager.GetTranslation("back"))
                 .OnClicked += evt => SwitchToSection(_mainSection);
         }

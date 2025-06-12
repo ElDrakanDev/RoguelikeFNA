@@ -11,12 +11,27 @@ namespace RoguelikeFNA
         ConfigManager _configManager;
         FileInfo _translationsPath = new FileInfo(ContentPath.Translations_xlsx);
         public static Action OnLanguageChanged;
-        public string ActiveLanguage { get => _configManager.Config.Language; set => _configManager.Config.Language = value; }
+        public string ActiveLanguage { get => _configManager.Config.Language; private set => _configManager.Config.Language = value; }
         Dictionary<string, string> _translations = new Dictionary<string, string>();
         List<string> _headers = new List<string>();
         public List<string> AvailableLanguages => _headers.Except(new string[] { "id" }).ToList();
 
         static TranslationManager _instance;
+
+        public void ChangeLanguage(string to, bool reapplyTranslations = true)
+        {
+            if (_headers.Contains(to))
+            {
+                ActiveLanguage = to;
+                _configManager.ApplyChanges();
+                if (reapplyTranslations)
+                    ReadTranslations();
+            }
+            else
+            {
+                Debug.Warn("Trying to change to language {0} but it doesnt exist", to);
+            }
+        }
 
         public override void OnEnabled()
         {
@@ -28,6 +43,7 @@ namespace RoguelikeFNA
         void ReadTranslations()
         {
             _headers.Clear();
+            _translations.Clear();
 
             using (FastExcel.FastExcel excel = new FastExcel.FastExcel(_translationsPath, true))
             {
@@ -38,6 +54,12 @@ namespace RoguelikeFNA
                     _headers.Add((string)cell.Value);
 
                 int idIndex = _headers.IndexOf("id");
+                if (!_headers.Contains(ActiveLanguage))
+                {
+                    // Language doesn't exist in sheet, return to default_language
+                    ChangeLanguage(ConfigManager.DEFAULT_LANG, false);
+                }
+
                 int languageIndex = _headers.IndexOf(ActiveLanguage);
 
                 foreach (var row in rows.Skip(1))

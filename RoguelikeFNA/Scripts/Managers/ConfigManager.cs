@@ -11,6 +11,7 @@ namespace RoguelikeFNA
     public class ConfigManager : GlobalManager
     {
         const string CONFIG_PATH = "./data/config.data";
+        public const string DEFAULT_LANG = "English";
 
         public GameConfig Config { get; private set; }
         public override void OnEnabled()
@@ -72,7 +73,7 @@ namespace RoguelikeFNA
             Config.BackgroundMusicVolume = 1;
             Config.SoundEffectVolume = 1;
             Config.ScreenResolution = ScreenResolution.Current();
-            Config.Language = "English";
+            Config.Language = DEFAULT_LANG;
 
             ApplyChanges();
         }
