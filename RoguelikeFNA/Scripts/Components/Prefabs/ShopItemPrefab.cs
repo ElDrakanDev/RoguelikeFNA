@@ -16,7 +16,7 @@ namespace RoguelikeFNA.Prefabs
         public int EssenceCost => _item.EssenceCost;
         public Texture2D Texture => _item.Texture;
         TextComponent _text;
-        EssenceManager _essenceManager;
+        EssenceSceneComponent _essenceManager;
         bool IUpdatable.UpdateOnPause { get => false; set{} }
 
         void IPrefab.LoadPrefab()
@@ -38,7 +38,7 @@ namespace RoguelikeFNA.Prefabs
 
         public override void OnAddedToEntity()
         {
-            _essenceManager = Core.GetGlobalManager<EssenceManager>();
+            _essenceManager = Entity.Scene.GetSceneComponent<EssenceSceneComponent>();
         }
 
         void IInteractListener.OnHover(Entity source)

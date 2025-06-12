@@ -3,9 +3,9 @@ using Nez;
 
 namespace RoguelikeFNA
 {
-    public class EssenceManager : GlobalManager
+    public class EssenceSceneComponent : SceneComponent
     {
-        public int Essence { get; private set; }
+        public int Essence;
 
         public void AddEssence(int essence)
         {

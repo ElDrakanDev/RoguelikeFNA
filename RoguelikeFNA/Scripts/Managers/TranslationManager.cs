@@ -34,17 +34,17 @@ namespace RoguelikeFNA
                 var worksheet = excel.Read(1);
                 var rows = worksheet.Rows.ToArray();
 
-                foreach(var cell in rows[0].Cells)
+                foreach (var cell in rows[0].Cells)
                     _headers.Add((string)cell.Value);
 
                 int idIndex = _headers.IndexOf("id");
                 int languageIndex = _headers.IndexOf(ActiveLanguage);
 
-                foreach ( var row in rows.Skip(1))
+                foreach (var row in rows.Skip(1))
                 {
                     var cells = row.Cells.ToArray();
                     // If row doesnt have at least ID and translation it is an empty / invalid row
-                    if (cells.Length < 2) continue; 
+                    if (cells.Length < 2) continue;
                     _translations.Add((string)cells[idIndex].Value, (string)cells[languageIndex].Value);
                 }
             }
@@ -55,6 +55,13 @@ namespace RoguelikeFNA
             if (_instance._translations.TryGetValue(textId, out string value))
                 return value;
             throw new Exception($"Dialogue unset for ID {textId}");
+        }
+
+        public static string TryGetTranslation(string textId)
+        {
+            if (_instance._translations.TryGetValue(textId, out string value))
+                return value;
+            return string.Empty;
         }
     }
 }

@@ -101,7 +101,12 @@ namespace RoguelikeFNA
 
         void PerishableCleanup(Entity _)
         {
-            Scene.FindComponentsOfType<IPerishable>().Cast<Component>().Select(c => c.Entity).Destroy();
+            Scene.FindComponentsOfType<IPerishable>()
+                .Cast<Component>()
+                .Select(c => c.Entity)
+                .Where(e => !e.IsDestroyed)
+                .ToHashSet()
+                .Destroy();
         }
     }
 }

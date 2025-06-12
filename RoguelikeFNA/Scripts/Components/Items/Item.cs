@@ -26,11 +26,20 @@ namespace RoguelikeFNA
         public List<ItemEffect> Effects = new List<ItemEffect>();
         public string Name => TranslationManager.GetTranslation($"{ItemId}_name");
         public ItemPool ItemPoolMask;
-        public string Description => TranslationManager.GetTranslation($"{ItemId}_desc");
+        public string Description => GetDescription();
         bool _hasBeenPickedUp = false;
         public int EssenceCost;
 
         public static event Action<Item, Entity> OnHoverAction;
+
+        string GetDescription()
+        {
+            var itemDesc = TranslationManager.TryGetTranslation($"{ItemId}_desc");
+            var effects = string.Join("\n", Effects.Select(e => e.GetDescription()).ToList());
+            if (string.IsNullOrEmpty(itemDesc))
+                return effects;
+            return $"{itemDesc}\n{effects}";
+        }
 
         public override void OnAddedToEntity()
         {

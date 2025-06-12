@@ -48,7 +48,7 @@ namespace RoguelikeFNA.UI
 
             // _focusTween.Start();
             _titleLabel.SetText(_focused.Name);
-            _descriptionLabel.SetText(string.Join("\n", _focused.Effects.Select(e => e.GetDescription()).ToList()));
+            _descriptionLabel.SetText(_focused.Description);
         }
 
         void OutAnimation()

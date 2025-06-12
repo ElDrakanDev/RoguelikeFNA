@@ -30,7 +30,8 @@ namespace RoguelikeFNA
             public override void OnAddedToEntity()
             {
                 base.OnAddedToEntity();
-                Entity.AddComponent(new BoxCollider(){ IsTrigger = true });
+                Entity.AddComponent(new BoxCollider() { IsTrigger = true });
+                Entity.Scene.GetSceneComponent<LevelNavigator>().OnRoomChanged += AddEssence;
                 _mover = Entity.AddComponent(new Mover());
                 _trail = Entity.Scene.AddEntity(new()).SetParent(Entity).AddComponent(new TrailRibbon());
                 _trail.StartColor = new Color(250, 214, 255, 0.75f);
@@ -41,8 +42,9 @@ namespace RoguelikeFNA
 
             public void Update()
             {
-                if (_target is null || !_target.Enabled) {
-                    Core.GetGlobalManager<EssenceManager>().AddEssence(Value);
+                if (_target is null || !_target.Enabled)
+                {
+                    Entity.Scene.GetSceneComponent<EssenceSceneComponent>().AddEssence(Value);
                     Entity.Destroy();
                 }
                 else
@@ -59,13 +61,24 @@ namespace RoguelikeFNA
                 // TODO: change
                 if (other.Entity.HasComponent<DemoComponent>())
                 {
-                    _trail.Enabled = false;
-                    Core.GetGlobalManager<EssenceManager>().AddEssence(Value);
-                    Entity.Destroy();
+                    AddEssence(null);
                 }
             }
 
             public void OnTriggerExit(Collider other, Collider local) { }
+
+            public override void OnRemovedFromEntity()
+            {
+                base.OnRemovedFromEntity();
+                Entity.Scene.GetSceneComponent<LevelNavigator>().OnRoomChanged -= AddEssence;
+            }
+
+            void AddEssence(Entity _)
+            {
+                _trail.Enabled = false;
+                Entity.Scene.GetSceneComponent<EssenceSceneComponent>().AddEssence(Value);
+                Entity.Destroy();
+            }
         }
 
         public int TotalValue;

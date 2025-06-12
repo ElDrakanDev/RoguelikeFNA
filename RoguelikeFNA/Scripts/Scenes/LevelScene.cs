@@ -17,9 +17,12 @@ namespace RoguelikeFNA
         {
             base.Begin();
 
+            AddSceneComponent(new EssenceSceneComponent());
+
             CreateEntity("item-ui").AddComponent(new ItemTooltip());
+            CreateEntity("essence-ui").AddComponent(new EssenceLabel());
+
             _inputManager = Core.GetGlobalManager<InputManager>();
-            Core.GetGlobalManager<EssenceManager>().Reset();
             foreach (var input in _inputManager.AvailablePlayers)
                 AddPlayer(input);
 
