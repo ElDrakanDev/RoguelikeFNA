@@ -603,63 +603,63 @@ namespace RoguelikeFNA
         /// <param name="deltaMovement">Delta movement.</param>
         private void HandleVerticalSlope(ref Vector2 deltaMovement)
         {
-            //var anchor = (_raycastOrigins.topLeft + _raycastOrigins.bottomRight) * 0.5f;
-            var rayDirection = Vector2.UnitY;
-            //var leastDistanceFromCenter = float.MaxValue;
-            //var translation = 0f;
-            //var rayDistance = boxCollider.Height * .5f - skinWidth;
-            var padding = checkPadding.Y;
-            var rayDistance = Math.Abs(deltaMovement.Y) + padding + EXTRA_SLOPE_RAY_DISTANCE + Math.Abs(deltaMovement.X) - SkinWidth;
-            var rayOrigin = new Vector2((_raycastOrigins.bottomLeft.X + _raycastOrigins.bottomRight.X) / 2, _raycastOrigins.bottomLeft.Y - padding);
+            // //var anchor = (_raycastOrigins.topLeft + _raycastOrigins.bottomRight) * 0.5f;
+            // var rayDirection = Vector2.UnitY;
+            // //var leastDistanceFromCenter = float.MaxValue;
+            // //var translation = 0f;
+            // //var rayDistance = boxCollider.Height * .5f - skinWidth;
+            // var padding = checkPadding.Y;
+            // var rayDistance = Math.Abs(deltaMovement.Y) + padding + EXTRA_SLOPE_RAY_DISTANCE + Math.Abs(deltaMovement.X) - SkinWidth;
+            // var rayOrigin = new Vector2((_raycastOrigins.bottomLeft.X + _raycastOrigins.bottomRight.X) / 2, _raycastOrigins.bottomLeft.Y - padding);
 
-            DrawRay(rayOrigin, rayOrigin + rayDirection * rayDistance, Color.Yellow);
-            _raycastHit = Physics.Linecast(rayOrigin, rayOrigin + rayDirection * rayDistance, (int)platformMask);
+            // DrawRay(rayOrigin, rayOrigin + rayDirection * rayDistance, Color.Yellow);
+            // _raycastHit = Physics.Linecast(rayOrigin, rayOrigin + rayDirection * rayDistance, (int)platformMask);
 
-            if (_raycastHit.Collider == null)
-                return;
+            // if (_raycastHit.Collider == null)
+            //     return;
 
-            // bail out if we have no slope
-            var angle = Math.Abs(Nez.Vector2Ext.Angle(_raycastHit.Normal, -Vector2.UnitY));
-            if (angle == 0)
-                return;
+            // // bail out if we have no slope
+            // var angle = Math.Abs(Nez.Vector2Ext.Angle(_raycastHit.Normal, -Vector2.UnitY));
+            // if (angle == 0)
+            //     return;
 
-            _slopeHighestPoint = _raycastHit.Collider.Bounds.Top;
+            // _slopeHighestPoint = _raycastHit.Collider.Bounds.Top;
 
-            deltaMovement.Y = _raycastHit.Point.Y - rayOrigin.Y - SkinWidth - padding;
-            collisionState.Below = true;
-            collisionState.SlopeAngle = angle;
+            // deltaMovement.Y = _raycastHit.Point.Y - rayOrigin.Y - SkinWidth - padding;
+            // collisionState.Below = true;
+            // collisionState.SlopeAngle = angle;
 
-            //for (int i = 0; i < totalVerticalRays; i++)
-            //{
-            //    var rayOrigin = new Vector2(_raycastOrigins.bottomLeft.X + i * _horizontalDistanceBetweenRays, anchor.Y);
-            //    var distanceFromCenterX = Math.Abs(rayOrigin.X - anchor.X);
-            //    float xDistancePercent = 1 - distanceFromCenterX * 0.5f / Math.Abs(_raycastOrigins.topLeft.X - anchor.X);
-            //    var currentRayDistance = rayDistance * xDistancePercent;
-            //    DrawRay(rayOrigin, rayOrigin + rayDirection * currentRayDistance, Color.Yellow);
-            //    _raycastHit = Physics.Linecast(rayOrigin, rayOrigin + rayDirection * currentRayDistance, (int)platformMask);
+            // //for (int i = 0; i < totalVerticalRays; i++)
+            // //{
+            // //    var rayOrigin = new Vector2(_raycastOrigins.bottomLeft.X + i * _horizontalDistanceBetweenRays, anchor.Y);
+            // //    var distanceFromCenterX = Math.Abs(rayOrigin.X - anchor.X);
+            // //    float xDistancePercent = 1 - distanceFromCenterX * 0.5f / Math.Abs(_raycastOrigins.topLeft.X - anchor.X);
+            // //    var currentRayDistance = rayDistance * xDistancePercent;
+            // //    DrawRay(rayOrigin, rayOrigin + rayDirection * currentRayDistance, Color.Yellow);
+            // //    _raycastHit = Physics.Linecast(rayOrigin, rayOrigin + rayDirection * currentRayDistance, (int)platformMask);
 
-            //    if (_raycastHit.Collider == null)
-            //        continue;
+            // //    if (_raycastHit.Collider == null)
+            // //        continue;
 
-            //    // bail out if we have no slope
-            //    var angle = Math.Abs(Nez.Vector2Ext.Angle(_raycastHit.Normal, -Vector2.UnitY));
-            //    if (angle == 0)
-            //        continue;
+            // //    // bail out if we have no slope
+            // //    var angle = Math.Abs(Nez.Vector2Ext.Angle(_raycastHit.Normal, -Vector2.UnitY));
+            // //    if (angle == 0)
+            // //        continue;
 
 
-            //    // We prioritize checking the center position so that we "sink" slightly into the slope
-            //    if (distanceFromCenterX >= leastDistanceFromCenter)
-            //        continue;
+            // //    // We prioritize checking the center position so that we "sink" slightly into the slope
+            // //    if (distanceFromCenterX >= leastDistanceFromCenter)
+            // //        continue;
 
-            //    leastDistanceFromCenter = distanceFromCenterX;
-            //    translation = _raycastHit.Point.Y - rayOrigin.Y - currentRayDistance + skinWidth;
-            //    collisionState.BecameGroundedThisFrame = true;
-            //    collisionState.Below = true;
-            //    collisionState.SlopeAngle = angle;
-            //}
+            // //    leastDistanceFromCenter = distanceFromCenterX;
+            // //    translation = _raycastHit.Point.Y - rayOrigin.Y - currentRayDistance + skinWidth;
+            // //    collisionState.BecameGroundedThisFrame = true;
+            // //    collisionState.Below = true;
+            // //    collisionState.SlopeAngle = angle;
+            // //}
 
-            //Entity.Transform.Position += Vector2.UnitY * translation;
-            //deltaMovement.Y += translation;
+            // //Entity.Transform.Position += Vector2.UnitY * translation;
+            // //deltaMovement.Y += translation;
         }
 
         #endregion

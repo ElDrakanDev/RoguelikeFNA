@@ -28,14 +28,7 @@
 </data>
  </layer>
  <objectgroup id="2" name="Entities">
-  <object id="1" name="DemoEnemy" x="243" y="255">
-   <properties>
-    <property name="Essence" type="int" value="145"/>
-    <property name="Health" type="int" value="25"/>
-    <property name="InternalType" value="RoguelikeFNA.Prefabs.DemoEnemy"/>
-   </properties>
-   <point/>
-  </object>
+  <object id="1" template="../assets/templates/DemoEnemy.tx" x="249.667" y="280.333"/>
   <object id="3" template="../assets/templates/Entrance.tx" x="96" y="256"/>
   <object id="5" template="../assets/templates/Exit.tx" x="384" y="256"/>
  </objectgroup>

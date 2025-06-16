@@ -4,7 +4,7 @@
   <sourcePositionVariance x="0" y="0" />
   <speed value="100.21" />
   <speedVariance value="175.00" />
-  <particleLifeSpan value="0.0000" />
+  <particleLifeSpan value="0.5000" />
   <particleLifespanVariance value="1.1184" />
   <angle value="191" />
   <angleVariance value="360" />

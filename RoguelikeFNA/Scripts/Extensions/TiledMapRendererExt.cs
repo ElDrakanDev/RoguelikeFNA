@@ -83,6 +83,7 @@ namespace RoguelikeFNA
 
         static void SetEntityFields(TmxObject obj, TiledEntity entity)
         {
+            entity.Name = obj.Name;
             if (obj.Properties.TryGetValue("Tag", out var tag))
                 entity.Tag = (int)Enum.Parse(typeof(Tag), tag);
         }

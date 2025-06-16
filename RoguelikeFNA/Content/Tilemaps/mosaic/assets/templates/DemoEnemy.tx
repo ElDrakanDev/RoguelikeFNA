@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object name="DemoEnemy">
+  <properties>
+   <property name="Essence" type="int" value="20"/>
+   <property name="Health" type="int" value="25"/>
+   <property name="InternalType" value="RoguelikeFNA.Prefabs.DemoEnemy"/>
+  </properties>
+  <point/>
+ </object>
+</template>

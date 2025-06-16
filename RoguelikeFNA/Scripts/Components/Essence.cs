@@ -3,7 +3,6 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Nez;
 using Nez.Sprites;
-using Nez.Tweens;
 
 namespace RoguelikeFNA
 {
@@ -67,8 +66,7 @@ namespace RoguelikeFNA
 
             public void OnTriggerEnter(Collider other, Collider local)
             {
-                // TODO: change
-                if (other.Entity.HasComponent<DemoComponent>())
+                if (other.Entity.Tag.IsFlagSet((int)Tag.Player))
                 {
                     AddEssence(null);
                 }

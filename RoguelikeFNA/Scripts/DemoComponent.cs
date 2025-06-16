@@ -73,7 +73,6 @@ namespace RoguelikeFNA
 
         public override void OnAddedToEntity()
         {
-            Entity.Tag = (int)Tag.Player;
             _fDir = Entity.AddComponent(new FaceDirection());
             Entity.AddComponent<EntranceTeleport>();
             _sfxManager = Core.GetGlobalManager<SoundEffectManager>();
