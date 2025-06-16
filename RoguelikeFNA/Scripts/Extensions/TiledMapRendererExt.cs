@@ -11,11 +11,25 @@ namespace RoguelikeFNA
     {
         static Dictionary<string, Type> _typeDict = new Dictionary<string, Type>();
 
+        public static TiledEntity GetTiledEntity(this TiledMapRenderer map, int id) {
+            foreach (var child in map.Entity.Children())
+            {
+                var tiledEnt = child as TiledEntity;
+                if (tiledEnt is not null && tiledEnt.TiledId == id)
+                    return tiledEnt;
+            }
+            Debug.Warn("No entities found with id {0} on map {1}.", id, map.Entity.Name);
+            return null;
+        }
+
         public static void CreateObjects(this TiledMapRenderer map)
         {
             var entities = map.TiledMap.GetObjectGroup("Entities");
             if (entities == null)
                 return;
+
+            List<Tuple<FieldInfo, object, int>> tiledEntityFields = new();
+            List<IPrefab> prefabs = new();
 
             foreach (var obj in entities.Objects)
             {
@@ -56,16 +70,24 @@ namespace RoguelikeFNA
                 {
                     if (obj.Properties.TryGetValue(field.Name, out string value))
                     {
-                        SetFieldValue(prefabComponent, field, value);
+                        SetFieldValue(prefabComponent, field, value, tiledEntityFields);
                     }
                 }
 
-                prefabComponent.LoadPrefab();
-
+                prefabs.Add(prefabComponent);
             }
+
+            foreach (var item in tiledEntityFields)
+            {
+                item.Deconstruct(out var field, out var obj, out var id);
+                field.SetValue(obj, map.GetTiledEntity(id));
+            }
+
+            foreach (var prefab in prefabs)
+                prefab.LoadPrefab();
         }
 
-        static void SetFieldValue(object obj, FieldInfo field, string value)
+        static void SetFieldValue(object obj, FieldInfo field, string value, List<Tuple<FieldInfo, object, int>> tiledEntityFields)
         {
             if (field.FieldType == typeof(int))
                 field.SetValue(obj, Convert.ToInt32(value));
@@ -77,6 +99,9 @@ namespace RoguelikeFNA
                 field.SetValue(obj, bool.Parse(value));
             else if (field.FieldType.IsEnum)
                 field.SetValue(obj, Enum.Parse(field.FieldType, value));
+            else if (field.FieldType == typeof(TiledEntity))
+                // Register entity if to fill
+                tiledEntityFields.Add(new(field, obj, Convert.ToInt32(value)));
             else
                 throw new NotImplementedException();
         }

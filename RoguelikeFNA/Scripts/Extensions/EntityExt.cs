@@ -47,5 +47,13 @@ namespace RoguelikeFNA
             foreach (var entity in entities)
                 entity.Destroy();
         }
+
+        public static IEnumerable<Entity> Children(this Entity entity)
+        {
+            for (int i = 0; i < entity.Transform.ChildCount; i++)
+            {
+                yield return entity.Transform.GetChild(i).Entity;
+            }
+        }
     }
 }
