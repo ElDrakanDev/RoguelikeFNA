@@ -1,1 +1,13 @@
-RoguelikeFNA.Items.SerializedItem(ItemId:"example_item",TexturePath:"Content\\Sprites\\ExampleSword.png",Effects:[RoguelikeFNA.Items.ProjectileHomingEffect(HomingRange:100,HomingSpeed:10)],ItemPoolMask:"Normal, Shop",EssenceCost:125)
+{
+	"ItemPoolMask": "Normal, Shop",
+	"ItemId": "example_item",
+	"TexturePath": "Content\\Sprites\\ExampleSword.png",
+	"Effects": [
+		{
+            "@type": "RoguelikeFNA.Items.ProjectileHomingEffect",
+			"HomingRange": 100,
+			"HomingSpeed": 10
+		}
+	],
+	"EssenceCost": 175
+}

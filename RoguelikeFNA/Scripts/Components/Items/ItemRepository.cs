@@ -33,7 +33,7 @@ namespace RoguelikeFNA.Items
 
         public Item LoadItem(string path)
         {
-            var serializedItem = Core.Content.LoadNson<SerializedItem>(path);
+            var serializedItem = Core.Content.LoadJson<SerializedItem>(path);
             var texture = Core.Content.LoadTexture(serializedItem.TexturePath);
             var item = new Item()
             {

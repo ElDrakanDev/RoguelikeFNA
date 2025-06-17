@@ -127,7 +127,7 @@ namespace RoguelikeFNA
                     );
 
                     Directory.CreateDirectory(Directory.GetParent(savePath).FullName);
-                    File.WriteAllText(savePath, NsonEncoder.ToNson(_item, new NsonSettings(){PrettyPrint = true}));
+                    File.WriteAllText(savePath, JsonEncoder.ToJson(_item, new JsonSettings(){PrettyPrint = true, TypeNameHandling = TypeNameHandling.All}));
                     System.Diagnostics.Process.Start(Directory.GetParent(savePath).FullName);
                 }
             }

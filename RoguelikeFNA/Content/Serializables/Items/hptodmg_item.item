@@ -1,14 +1,15 @@
-RoguelikeFNA.Items.SerializedItem(
-	ItemPoolMask: "Normal, Shop",
-	ItemId: "hptodmg_item",
-	TexturePath: "Content\\Sprites\\giant.png",
-	Effects: [
-		RoguelikeFNA.Items.RefStatEffect(
-			RefStatID: "Health",
-			StatID: "Damage",
-			Ratio: 0.08,
-			Type: "Flat"
-		)
+{
+	"ItemPoolMask": "Normal, Shop",
+	"ItemId": "hptodmg_item",
+	"TexturePath": "Content\\Sprites\\giant.png",
+	"Effects": [
+		{
+			"@type": "RoguelikeFNA.Items.RefStatEffect",
+			"RefStatID": "Health",
+			"StatID": "Damage",
+			"Ratio": 0.08,
+			"Type": "Flat"
+		}
 	],
-	EssenceCost: 150
-)
+	"EssenceCost": 150
+}

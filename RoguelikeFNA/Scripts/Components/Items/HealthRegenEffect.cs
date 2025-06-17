@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RoguelikeFNA.Scripts.Components.Items
+namespace RoguelikeFNA.Items
 {
     public class HealthRegenEffect : ItemEffect
     {
