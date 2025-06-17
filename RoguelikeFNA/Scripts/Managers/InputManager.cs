@@ -15,13 +15,15 @@ namespace RoguelikeFNA
         List<int> _availableGamepads = new List<int>();
         Dictionary<int, PlayerInput> _gamepadPlayers = new Dictionary<int, PlayerInput>();
         const string INPUT_PATH = "./data/input.data";
+
         public event Action<PlayerInput> OnPlayerJoined;
+        public event Action<PlayerInput> OnPlayerLeft;
 
         public override void OnEnabled()
         {
             base.OnEnabled();
 
-            _availableGamepads = new List<int>() {0, 1, 2, 3};
+            _availableGamepads = new List<int>() { 0, 1, 2, 3 };
             _availableGamepads = _availableGamepads.Where(idx => idx < Input.GamePads.Length && Input.GamePads[idx].IsConnected()).ToList();
 
             XmlSerializer serializer = new XmlSerializer(typeof(PlayerInput[]));
@@ -98,23 +100,26 @@ namespace RoguelikeFNA
             {
                 if(input.Start.IsPressed && AvailablePlayers.Contains(input) is false)
                 {
+                    input.IsGamepad = false;
                     AvailablePlayers.Add(input);
                     OnPlayerJoined?.Invoke(input);
                 }
                 else if (input.StartPressedOnGamepads(_availableGamepads, out int idx) && AvailablePlayers.Contains(input) is false)
                 {
                     // TODO: Check code
+                    input.IsGamepad = true;
                     input.SetGamepadIndex(idx);
                     AvailablePlayers.Add(input);
-                    OnPlayerJoined.Invoke(input);
+                    OnPlayerJoined?.Invoke(input);
                 }
             }
 
             foreach(PlayerInput player in AvailablePlayers)
             {
-                if(player.GamePad?.IsConnected() is false)
+                if (player.GamePad?.IsConnected() is false)
                 {
-                    Debug.Log($"Player disconnected");
+                    AvailablePlayers.Remove(player);
+                    OnPlayerLeft?.Invoke(player);
                 }
             }
         }

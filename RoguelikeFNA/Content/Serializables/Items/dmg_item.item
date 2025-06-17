@@ -1,0 +1,13 @@
+RoguelikeFNA.Items.SerializedItem(
+	ItemId: "dmg_item",
+	TexturePath: "Content\\Sprites\\strength.png",
+	Effects: [
+		RoguelikeFNA.Items.StatEffect(
+			Type: "Flat",
+			Value: 10,
+			StatID: "Damage"
+		)
+	],
+	ItemPoolMask: "Normal, Shop, Boss",
+	EssenceCost: 100
+)

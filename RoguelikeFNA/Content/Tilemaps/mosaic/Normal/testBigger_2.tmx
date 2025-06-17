@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="42" height="35" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="14">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="42" height="35" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="15">
  <tileset firstgid="1" name="Inca_front_by_Kronbits-extended" tilewidth="16" tileheight="16" tilecount="280" columns="20">
   <image source="../assets/tiles/Inca_front_by_Kronbits-extended.png" width="320" height="224"/>
  </tileset>

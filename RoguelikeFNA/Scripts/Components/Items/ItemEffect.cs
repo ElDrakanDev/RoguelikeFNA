@@ -18,7 +18,7 @@ namespace RoguelikeFNA.Items
         /// <returns></returns>
         public virtual string GetDescription()
         {
-            return TranslationManager.GetTranslation(DescriptionId);
+            return TranslationManager.TryGetTranslation(DescriptionId);
         }
 
         /// <summary>

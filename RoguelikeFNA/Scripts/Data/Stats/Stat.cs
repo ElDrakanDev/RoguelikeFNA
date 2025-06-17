@@ -1,25 +1,27 @@
 ﻿using Nez;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RoguelikeFNA
 {
     [Serializable]
     public class Stat
     {
-        #region Variables and constructor
         /// <summary>
         /// Forces the stat to update the value on the next value get
         /// </summary>
-        public bool NeedUpdate = true;
         public readonly float Min;
         public readonly float Max;
         public Entity Owner;
+        private float _value;
+        [Inspectable] readonly List<IStatModifier> _stats = new List<IStatModifier>();
+
         public float Value
         {
             get
             {
-                if (!NeedUpdate)
+                if (!NeedsUpdate())
                 {
                     if (_value < Min) return Min;
                     else if (_value > Max) return Max;
@@ -35,53 +37,54 @@ namespace RoguelikeFNA
                 else _value = value;
             }
         }
-        private float _value;
-        [Inspectable] readonly List<StatModifier> _stats = new List<StatModifier>();
+
         public Stat(float baseValue, Entity owner, float min = 1, float max = float.MaxValue)
         {
-            _stats.Add(new StatModifier(baseValue, this, this, StatType.Flat));
+            _stats.Add(new StatModifier(baseValue, this, StatType.Flat));
             Min = min;
             Max = max;
             Owner = owner;
         }
-        #endregion
-        #region Modifiers Management
+
         private float UpdateValue()
         {
             float flatStats = 0;
             float multStats = 1;
 
-            for (int i = 0; i < _stats.Count; i++)
+            foreach(var stat in _stats)
             {
-                if (_stats[i].Type == StatType.Flat)
-                    flatStats += _stats[i].Value;
-                else if (_stats[i].Type == StatType.Mult)
-                    multStats += _stats[i].Value;
+                if (stat.Type == StatType.Flat)
+                    flatStats += stat.Value;
+                else if (stat.Type == StatType.Mult)
+                    multStats += stat.Value;
+                stat.IsDirty = false;
             }
 
-            NeedUpdate = false;
             _value = (float)Math.Round(flatStats * multStats, 2);
             return _value;
         }
-        public void Add(StatModifier modifier)
+
+        public void Add(IStatModifier modifier)
         {
             _stats.Add(modifier);
-            NeedUpdate = true;
         }
-        public bool RemoveModifier(StatModifier modifier)
+
+        public bool RemoveModifier(IStatModifier modifier)
         {
-            NeedUpdate = true;
             return _stats.Remove(modifier);
         }
+        
         public void RemoveFromSource(object source)
         {
-            _stats.RemoveAll((stat) => {
+            _stats.RemoveAll((stat) =>
+            {
                 bool remove = stat.Source == source;
                 return remove;
             });
-            NeedUpdate = true;
         }
-        #endregion
+
+        public bool NeedsUpdate() => _stats.Any(s => s.IsDirty);
+
         public static implicit operator float(Stat stat) => stat.Value;
     }
 }

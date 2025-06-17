@@ -127,7 +127,7 @@ namespace RoguelikeFNA.Prefabs
                 && other.TryGetComponent(out EntityStats stats)
                 && _stats.TargetTeams.IsFlagSet((int)stats.Team))
             {
-                stats.HealthManager.Hit(new DamageInfo(_stats.Damage, Entity));
+                stats.HealthManager.Hit(new DamageInfo(_stats[StatID.Damage], Entity));
             }
         }
 
