@@ -7,8 +7,6 @@ namespace RoguelikeFNA
 {
     public class InteractableOutline : Component, IUpdatable, IInteractListener
     {
-        public bool UpdateOnPause { get; set; }
-
         public static Color InteractColor = Color.White;
         SpriteRenderer _renderer;
         OutlineEffect _outlineEffect;

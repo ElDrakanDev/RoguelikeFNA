@@ -38,7 +38,8 @@
             "request": "launch",
             "program": "${workspaceFolder}/RoguelikeFNA/bin/Debug/RoguelikeFNA.exe",
             "cwd": "${workspaceFolder}/RoguelikeFNA",
-            "preLaunchTask": "Build (Debug)"
+            "preLaunchTask": "Build (Debug)",
+            "justMyCode": false
         },
 		
         {

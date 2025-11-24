@@ -12,8 +12,6 @@ namespace RoguelikeFNA
         const float SCALE = 2;
         string _essenceText;
 
-        bool IUpdatable.UpdateOnPause { get => false; set {} }
-
         void IUpdatable.Update()
         {
             _label.SetText($"{_essenceText}: {_essenceMgr.Essence}");

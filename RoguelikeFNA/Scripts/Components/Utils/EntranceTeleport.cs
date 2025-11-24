@@ -22,10 +22,10 @@ namespace RoguelikeFNA
 
         void MoveToEntrance(Entity tilemap)
         {
-            var entrance = Entity.Scene.FindEntitiesWithTag((int)Tag.Entrance).Enabled().FirstOrDefault();
-            if (entrance != null)
+            var entrances = Entity.Scene.FindEntitiesWithTag((int)Tag.Entrance).Enabled();
+            if (entrances.Count() > 0)
             {
-                Entity.Position = entrance.Position;
+                Entity.Position = entrances.First().Position;
             }
         }
     }

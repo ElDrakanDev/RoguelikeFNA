@@ -8,8 +8,6 @@ namespace RoguelikeFNA
 {
     public class ProjecitleHoming : Component, IUpdatable
     {
-        public bool UpdateOnPause { get; set; }
-
         Projectile _proj;
         public float AttractSpeed = 0.1f;
         public float HomingRange = 150f;

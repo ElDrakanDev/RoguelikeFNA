@@ -8,23 +8,11 @@ using System.Xml.Serialization;
 namespace RoguelikeFNA
 {
     [Serializable]
-    public class PlayerInput
+    public class PlayerProfile
     {
-        [XmlIgnore] public int GamePadIndex { get; private set; }
-        public bool IsGamepad;
-        public GamePadData GamePad
-        {
-            get
-            {
-                if(IsGamepad is false)
-                    return null;
-                var gamepad = Input.GamePads.ElementAtOrDefault(GamePadIndex);
-                if(gamepad != null && gamepad.IsConnected() is false)
-                    return null;
-                return gamepad;
-            }
-        }
-
+        public string Name;
+        public bool UseGamepad = false;
+        public bool ReadonlyName = false;
         // Gamepad
         public Buttons GamePadLeftAlt = Buttons.DPadLeft;
         public Buttons GamePadRightAlt = Buttons.DPadRight;
@@ -39,17 +27,41 @@ namespace RoguelikeFNA
         public Buttons GamePadInteract = Buttons.B;
 
         // Keyboard
-        public Keys KeyLeft;
-        public Keys KeyRight;
-        public Keys KeyUp;
-        public Keys KeyDown;
-        public Keys KeyJump;
-        public Keys KeyAttack;
-        public Keys KeyDash;
-        public Keys KeySpecial;
-        public Keys KeyStart;
-        public Keys KeySelect;
-        public Keys KeyInteract;
+        public Keys KeyLeft = Keys.A;
+        public Keys KeyRight = Keys.D;
+        public Keys KeyUp = Keys.W;
+        public Keys KeyDown = Keys.S;
+        public Keys KeyJump = Keys.Space;
+        public Keys KeyAttack = Keys.J;
+        public Keys KeyDash = Keys.L;
+        public Keys KeySpecial = Keys.K;
+        public Keys KeyStart = Keys.Enter;
+        public Keys KeySelect = Keys.Tab;
+        public Keys KeyInteract = Keys.E;
+
+        public event Action onConfigChanged;
+
+        public void OnConfigChanged() => onConfigChanged?.Invoke();
+
+        public PlayerProfile(){}
+    }
+
+    public class PlayerInput
+    {
+        [XmlIgnore] public int GamePadIndex { get; private set; }
+        public PlayerProfile Profile;
+        public GamePadData GamePad
+        {
+            get
+            {
+                if (Profile.UseGamepad is false)
+                    return null;
+                var gamepad = Input.GamePads.ElementAtOrDefault(GamePadIndex);
+                if(gamepad != null && gamepad.IsConnected() is false)
+                    return null;
+                return gamepad;
+            }
+        }
 
         // Virtual Nodes
         [XmlIgnore] public VirtualAxis Horizontal { get; private set; }
@@ -62,21 +74,14 @@ namespace RoguelikeFNA
         [XmlIgnore] public VirtualButton Select { get; private set; }
         [XmlIgnore] public VirtualButton Interact { get; private set; }
 
-        public PlayerInput()
+        public PlayerInput(PlayerProfile profile)
         {
-            IsGamepad = false;
+            Profile = profile;
         }
-        public PlayerInput(int? gamepadIndex)
+
+        public PlayerInput(PlayerProfile profile, int gamepadIndex) : this(profile)
         {
-            if (gamepadIndex.HasValue)
-            {
-                GamePadIndex = gamepadIndex.Value;
-                IsGamepad = true;
-            }
-            else
-            {
-                IsGamepad = false;
-            }
+            GamePadIndex = gamepadIndex;  
         }
 
         public void SetGamepadIndex(int gamepadIndex)
@@ -90,7 +95,7 @@ namespace RoguelikeFNA
             index = -1;
             foreach(var gamepadIdx in gamepads)
             {
-                var btn = new VirtualButton(new VirtualButton.GamePadButton(gamepadIdx, GamePadStart));
+                var btn = new VirtualButton(new VirtualButton.GamePadButton(gamepadIdx, Buttons.Start));
                 if (btn.IsPressed)
                 {
                     index = gamepadIdx;
@@ -102,39 +107,39 @@ namespace RoguelikeFNA
 
         public void ResetVirtualNodes()
         {
-            if(IsGamepad)
+            if(Profile.UseGamepad)
             {
                 Horizontal = new VirtualAxis(
                     new VirtualAxis.GamePadLeftStickX(GamePadIndex),
-                    new VirtualAxis.GamePadButtons(GamePadLeftAlt, GamePadRightAlt, GamePadIndex)
+                    new VirtualAxis.GamePadButtons(Profile.GamePadLeftAlt, Profile.GamePadRightAlt, GamePadIndex)
                 );
                 Vertical = new VirtualAxis(
                     new VirtualAxis.GamePadLeftStickY(GamePadIndex),
-                    new VirtualAxis.GamePadButtons(GamePadLeftAlt, GamePadRightAlt, GamePadIndex, true)
+                    new VirtualAxis.GamePadButtons(Profile.GamePadLeftAlt, Profile.GamePadRightAlt, GamePadIndex, true)
                 );
-                Jump = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, GamePadJump));
-                Attack = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, GamePadAttack));
-                Special = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, GamePadSpecial));
-                Dash = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, GamePadDash));
-                Start = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, GamePadStart));
-                Select = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, GamePadSelect));
-                Interact = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, GamePadInteract));
+                Jump = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, Profile.GamePadJump));
+                Attack = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, Profile.GamePadAttack));
+                Special = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, Profile.GamePadSpecial));
+                Dash = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, Profile.GamePadDash));
+                Start = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, Profile.GamePadStart));
+                Select = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, Profile.GamePadSelect));
+                Interact = new VirtualButton(new VirtualButton.GamePadButton(GamePadIndex, Profile.GamePadInteract));
             }
             else
             {
                 Horizontal = new VirtualAxis(
-                    new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.CancelOut, KeyLeft, KeyRight)
+                    new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.CancelOut, Profile.KeyLeft, Profile.KeyRight)
                 );
                 Vertical = new VirtualAxis(
-                    new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.CancelOut, KeyDown, KeyUp, true)
+                    new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.CancelOut, Profile.KeyDown, Profile.KeyUp, true)
                 );
-                Jump = new VirtualButton(new VirtualButton.KeyboardKey(KeyJump));
-                Attack = new VirtualButton(new VirtualButton.KeyboardKey(KeyAttack));
-                Special = new VirtualButton(new VirtualButton.KeyboardKey(KeySpecial));
-                Dash = new VirtualButton(new VirtualButton.KeyboardKey(KeyDash));
-                Start = new VirtualButton(new VirtualButton.KeyboardKey(KeyStart));
-                Select = new VirtualButton(new VirtualButton.KeyboardKey(KeySelect));
-                Interact = new VirtualButton(new VirtualButton.KeyboardKey(KeyInteract));
+                Jump = new VirtualButton(new VirtualButton.KeyboardKey(Profile.KeyJump));
+                Attack = new VirtualButton(new VirtualButton.KeyboardKey(Profile.KeyAttack));
+                Special = new VirtualButton(new VirtualButton.KeyboardKey(Profile.KeySpecial));
+                Dash = new VirtualButton(new VirtualButton.KeyboardKey(Profile.KeyDash));
+                Start = new VirtualButton(new VirtualButton.KeyboardKey(Profile.KeyStart));
+                Select = new VirtualButton(new VirtualButton.KeyboardKey(Profile.KeySelect));
+                Interact = new VirtualButton(new VirtualButton.KeyboardKey(Profile.KeyInteract));
             }
         }
     }

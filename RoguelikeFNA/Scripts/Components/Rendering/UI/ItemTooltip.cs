@@ -25,7 +25,6 @@ namespace RoguelikeFNA.UI
         // const float TWEEN_DURATION = 0.15f;
         const float SCREEN_FILL_AMOUNT = 0.6f;
         const float SCREEN_PAD_TOP = 50f;
-        bool IUpdatable.UpdateOnPause { get => false; set {} }
 
         float TooltipTargetWidth()
         {

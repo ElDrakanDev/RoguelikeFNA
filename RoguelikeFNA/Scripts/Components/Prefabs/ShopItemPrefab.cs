@@ -17,7 +17,6 @@ namespace RoguelikeFNA.Prefabs
         public Texture2D Texture => _item.Texture;
         TextComponent _text;
         EssenceSceneComponent _essenceManager;
-        bool IUpdatable.UpdateOnPause { get => false; set{} }
 
         void IPrefab.LoadPrefab()
         {

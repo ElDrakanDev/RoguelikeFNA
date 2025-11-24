@@ -14,7 +14,6 @@ namespace RoguelikeFNA
             public int Value;
             Vector2 _velocity;
             bool _startedChase = false;
-            public bool UpdateOnPause { get => false; set { } }
             const float VEL_VARIANCE = 5f;
             const float SPEED = 30f;
             const float CHASE_THRESHOLD = 0.2f;

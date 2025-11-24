@@ -8,8 +8,6 @@ namespace RoguelikeFNA
 {
     public class HitboxHandler : Component, IUpdatable
     {
-        public bool UpdateOnPause { get; set; }
-
         /// <summary>
         /// The animator this handler's hitboxes will be bound to
         /// </summary>

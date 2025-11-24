@@ -13,8 +13,6 @@ namespace RoguelikeFNA
     [Serializable]
     public class Projectile : Component, IUpdatable, ITriggerListener, IPerishable
     {
-        public bool UpdateOnPause { get; set; }
-
         HashSet<Collider> _collisions;
         [NsonExclude] public ProjectileMover Mover { get; private set; }
         public float Lifetime;
