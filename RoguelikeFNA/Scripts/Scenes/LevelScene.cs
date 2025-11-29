@@ -26,6 +26,12 @@ namespace RoguelikeFNA
             foreach (var input in _inputManager.AvailablePlayers)
                 AddPlayer(input);
 
+            var testCollider = CreateEntity("test-collider")
+                .SetPosition(new Vector2(400, 200))
+                .AddComponent(new CompositeCollider());
+            testCollider.AddCollider(new CircleCollider(32));
+            testCollider.AddCollider(new BoxCollider(-20, -10, 64, 16));
+
             _inputManager.OnPlayerJoined += AddPlayer;
 
             var nav = AddSceneComponent(new LevelNavigator())
