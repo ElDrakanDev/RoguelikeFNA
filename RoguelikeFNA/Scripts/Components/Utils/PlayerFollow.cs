@@ -9,7 +9,7 @@ namespace RoguelikeFNA
     {
         float _frequency = 0.05f;
         float _counter;
-        List<Entity> _players;
+        List<Entity> _players = new();
 
         public void Update()
         {

@@ -30,7 +30,9 @@ namespace RoguelikeFNA
                 .SetPosition(new Vector2(400, 200))
                 .AddComponent(new CompositeCollider());
             testCollider.AddCollider(new CircleCollider(32));
-            testCollider.AddCollider(new BoxCollider(-20, -10, 64, 16));
+            testCollider.AddCollider(new BoxCollider(64, 16), Vector2.UnitX*-30);
+            testCollider.PhysicsLayer = (int)CollisionLayer.Projectile;
+            testCollider.CollidesWithLayers = (int)CollisionLayer.Entity;
 
             _inputManager.OnPlayerJoined += AddPlayer;
 
