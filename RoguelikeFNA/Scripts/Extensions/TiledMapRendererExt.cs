@@ -4,6 +4,7 @@ using Nez.Tiled;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Security.Cryptography;
 
 namespace RoguelikeFNA
 {
@@ -29,7 +30,6 @@ namespace RoguelikeFNA
                 return;
 
             List<Tuple<FieldInfo, object, int>> tiledEntityFields = new();
-            List<IPrefab> prefabs = new();
 
             foreach (var obj in entities.Objects)
             {
@@ -61,7 +61,6 @@ namespace RoguelikeFNA
                     }
                 }
                 var prefabComponent = Activator.CreateInstance(type) as IPrefab;
-                entity.AddComponent((Component)prefabComponent);
                 var fields = prefabComponent.GetType().GetFields(
                     BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance
                 );
@@ -74,7 +73,10 @@ namespace RoguelikeFNA
                     }
                 }
 
-                prefabs.Add(prefabComponent);
+                var component = (Component)prefabComponent;
+                component.Entity = entity;
+                prefabComponent.LoadPrefab();
+                entity.AddComponent(component);
             }
 
             foreach (var item in tiledEntityFields)
@@ -82,9 +84,6 @@ namespace RoguelikeFNA
                 item.Deconstruct(out var field, out var obj, out var id);
                 field.SetValue(obj, map.GetTiledEntity(id));
             }
-
-            foreach (var prefab in prefabs)
-                prefab.LoadPrefab();
         }
 
         static void SetFieldValue(object obj, FieldInfo field, string value, List<Tuple<FieldInfo, object, int>> tiledEntityFields)

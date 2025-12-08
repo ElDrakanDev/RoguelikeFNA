@@ -111,7 +111,9 @@ namespace Nez
 			{
 				public const string Directory = @".\Content\Serializables\Items";
 			
+				public const string Dmg_item_item = @".\Content\Serializables\Items\dmg_item.item";
 				public const string Example_item_item = @".\Content\Serializables\Items\example_item.item";
+				public const string Hptodmg_item_item = @".\Content\Serializables\Items\hptodmg_item.item";
 				public const string Regen_item_item = @".\Content\Serializables\Items\regen_item.item";
 			}
 
@@ -141,8 +143,12 @@ namespace Nez
 			}
 
 			public const string Apple_png = @".\Content\Sprites\Apple.png";
+			public const string Bergentruckung_png = @".\Content\Sprites\bergentruckung.png";
 			public const string ExampleSword_png = @".\Content\Sprites\ExampleSword.png";
+			public const string Giant_png = @".\Content\Sprites\giant.png";
 			public const string Nezlogoblack_png = @".\Content\Sprites\nez-logo-black.png";
+			public const string Strength_png = @".\Content\Sprites\strength.png";
+			public const string Test_png = @".\Content\Sprites\test.png";
 		}
 
 		public static class Textures
@@ -176,6 +182,7 @@ namespace Nez
 					{
 						public const string Directory = @".\Content\Tilemaps\mosaic\assets\templates";
 					
+						public const string DemoEnemy_tx = @".\Content\Tilemaps\mosaic\assets\templates\DemoEnemy.tx";
 						public const string Entrance_tx = @".\Content\Tilemaps\mosaic\assets\templates\Entrance.tx";
 						public const string Exit_tx = @".\Content\Tilemaps\mosaic\assets\templates\Exit.tx";
 						public const string RandomItem_tx = @".\Content\Tilemaps\mosaic\assets\templates\RandomItem.tx";
@@ -205,6 +212,7 @@ namespace Nez
 					public const string Directory = @".\Content\Tilemaps\mosaic\Normal";
 				
 					public const string Test_1_tmx = @".\Content\Tilemaps\mosaic\Normal\test_1.tmx";
+					public const string TestBigger_2_tmx = @".\Content\Tilemaps\mosaic\Normal\testBigger_2.tmx";
 				}
 
 				public static class Shop
@@ -212,6 +220,7 @@ namespace Nez
 					public const string Directory = @".\Content\Tilemaps\mosaic\Shop";
 				
 					public const string Test_1_tmx = @".\Content\Tilemaps\mosaic\Shop\test_1.tmx";
+					public const string Triple_2_tmx = @".\Content\Tilemaps\mosaic\Shop\triple_2.tmx";
 				}
 
 				public static class Start

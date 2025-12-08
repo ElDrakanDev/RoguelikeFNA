@@ -46,6 +46,7 @@ namespace RoguelikeFNA
     {
         int _health;
         public readonly Stat MaxHealth;
+        public bool IsAlive => Health > 0;
         public int Health
         {
             get => _health;

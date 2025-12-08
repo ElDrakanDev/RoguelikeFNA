@@ -11,6 +11,7 @@ namespace RoguelikeFNA
     [System.Flags]
     public enum ItemPool
     {
+        None = 0,
         Normal = 1,
         Shop = 2,
         Boss = 4,
