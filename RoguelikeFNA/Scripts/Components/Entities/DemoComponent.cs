@@ -19,7 +19,7 @@ namespace RoguelikeFNA
         HitboxHandler _hitboxHandler;
         SpriteAnimator _animator;
         bool _isAttacking = false;
-        bool _isDashing => (_characterController.IsGrounded && _dashState && _dashTime > 0) || (!_characterController.IsGrounded && _dashState);
+        bool _isDashing => (_platformerMover.IsGrounded && _dashState && _dashTime > 0) || (!_platformerMover.IsGrounded && _dashState);
         bool _dashState = false;
         float _dashTime;
         float _groundedBufferTime;
@@ -31,9 +31,8 @@ namespace RoguelikeFNA
         [Inspectable] float _speed = 150;
         [Inspectable] float _dashSpeed = 250;
         [Inspectable] float _dashDuration = 0.7f;
-        [Inspectable] float _gravity = 20;
-        [Inspectable] float _jumpForce = 8;
-        [Inspectable] Vector2 _velocity;
+        [Inspectable] float _gravity = 900;
+        [Inspectable] float _jumpForce = 450;
         [Inspectable] int _maxAmmo = 3;
         [Inspectable] int _ammo;
         [Inspectable] float _projectileVelocity = 150;
@@ -53,6 +52,7 @@ namespace RoguelikeFNA
         BoxCollider _collider;
         SpriteTrail _spriteTrail;
         FaceDirection _fDir;
+        PhysicsBody _body;
 
         EntityStats _stats;
         PlayerInput _input;
@@ -60,8 +60,7 @@ namespace RoguelikeFNA
 
         SerializedEntity _projectile;
 
-        CharacterController _characterController;
-        CharacterController.CharacterCollisionState _collisionState => _characterController.collisionState;
+        PlatformerMover _platformerMover;
 
         public DemoComponent(PlayerInput input)
         {
@@ -72,6 +71,7 @@ namespace RoguelikeFNA
         {
             _fDir = Entity.AddComponent(new FaceDirection());
             Entity.AddComponent<EntranceTeleport>();
+            _body = Entity.AddComponent(new PhysicsBody());
             _sfxManager = Core.GetGlobalManager<SoundEffectManager>();
             _slashSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.SaberSlash_WAV);
             _dashSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.ZeroDash_WAV);
@@ -83,7 +83,7 @@ namespace RoguelikeFNA
             _collider = Entity.AddComponent(new BoxCollider(new Rectangle(-12, -20, 33, 40)){
                 PhysicsLayer = (int)CollisionLayer.Entity,
                 CollidesWithLayers = (int)CollisionLayer.Ground });
-            _characterController = Entity.GetComponent<CharacterController>();
+            _platformerMover = Entity.GetComponent<PlatformerMover>();
 
             var child = new Entity();
             child.SetParent(Entity);
@@ -145,7 +145,7 @@ namespace RoguelikeFNA
         void HandleStates()
         {
             var xInput = _input.Horizontal;
-            _velocity.X = 0;
+            _body.Velocity.X = 0;
             _dashTime -= Time.DeltaTime;
             _groundedBufferTime -= Time.DeltaTime;
             _jumpInputBufferTime -= Time.DeltaTime;
@@ -154,13 +154,13 @@ namespace RoguelikeFNA
             if (_input.Jump.IsPressed)
                 _jumpInputBufferTime = _jumpBufferMax;
 
-            if (_isDashing && _collisionState.BecameGroundedThisFrame || _characterController.IsGrounded && _dashTime <= 0)
+            if (_isDashing && _platformerMover.BecameGrounded || _platformerMover.IsGrounded && _dashTime <= 0)
             {
                 _dashTime = 0;
                 _dashState = false;
                 _spriteTrail.DisableSpriteTrail();
             }
-            if(_characterController.IsGrounded && _input.Dash.IsPressed)
+            if(_platformerMover.IsGrounded && _input.Dash.IsPressed)
             {
                 _dashTime = _dashDuration;
                 _dashState = true;
@@ -171,14 +171,14 @@ namespace RoguelikeFNA
             if (_input.Dash.IsReleased)
                 _dashTime = 0;
 
-            if (_collisionState.Above is true && _velocity.Y < 0)
-                _velocity.Y = 0;
+            if (_platformerMover.State.Above is true && _body.Velocity.Y < 0)
+                _body.Velocity.Y = 0;
 
-            if (_characterController.IsGrounded is false)
-                _velocity.Y += _gravity * Time.DeltaTime;
+            if (_platformerMover.IsGrounded is false)
+                _body.Velocity.Y += _gravity * Time.DeltaTime;
             else
             {
-                _velocity.Y = 0.02f;
+                _body.Velocity.Y = 0.02f;
                 _groundedBufferTime = _jumpBufferMax;
             }
             
@@ -186,17 +186,17 @@ namespace RoguelikeFNA
             {
                 _jumpInputBufferTime = 0;
                 _groundedBufferTime = 0;
-                _velocity.Y = -_jumpForce;
-                _characterController.LeaveGround();
+                _body.Velocity.Y = -_jumpForce;
+                _platformerMover.SetLeftGround();
                 _sfxManager.Play(_jumpSfx);
                 _animator.Play(JUMP_START_ANIM, SpriteAnimator.LoopMode.Once);
             }
 
-            if (_characterController.IsGrounded is false && _velocity.Y < 0 && _input.Jump.IsReleased)
-                _velocity.Y *= 0.5f;
+            if (_platformerMover.IsGrounded is false && _body.Velocity.Y < 0 && _input.Jump.IsReleased)
+                _body.Velocity.Y *= 0.5f;
 
             // Attack cancelling
-            if((_animator.IsAnimationActive(ATTACK_AIR_ANIM) || _animator.IsAnimationActive(SHOOT_AIR_ANIM)) && _characterController.IsGrounded)
+            if((_animator.IsAnimationActive(ATTACK_AIR_ANIM) || _animator.IsAnimationActive(SHOOT_AIR_ANIM)) && _platformerMover.IsGrounded)
             {
                 _isAttacking = false;
                 _hitboxHandler.ClearCollisions();
@@ -205,7 +205,7 @@ namespace RoguelikeFNA
             float speed = _isDashing ? _dashSpeed : _speed;
 
             // Attack1
-            if (_input.Attack.IsPressed && _isAttacking is false && _characterController.IsGrounded)
+            if (_input.Attack.IsPressed && _isAttacking is false && _platformerMover.IsGrounded)
             {
                 _hitboxHandler.ClearCollisions();
                 _animator.Play(ATTACK_ANIM1, SpriteAnimator.LoopMode.ClampForever);
@@ -216,8 +216,8 @@ namespace RoguelikeFNA
             }
             // Air attack
             else if(
-                (_input.Attack.IsPressed && _isAttacking is false && _characterController.IsGrounded is false)
-                || (_isAttacking is true && _characterController.IsGrounded is false)
+                (_input.Attack.IsPressed && _isAttacking is false && _platformerMover.IsGrounded is false)
+                || (_isAttacking is true && _platformerMover.IsGrounded is false)
             )
             {
                 // If just started
@@ -229,11 +229,11 @@ namespace RoguelikeFNA
                     _animator.Speed = 3;
                     _sfxManager.Play(_slashSfx);
                 }
-                _velocity.X = speed * xInput * Time.DeltaTime;
+                _body.Velocity.X = speed * xInput;
                 _fDir.CheckFacingSide(xInput);
             }
             // Shoot
-            else if(_input.Special.IsPressed && _isAttacking is false && _characterController.IsGrounded && _ammo > 0)
+            else if(_input.Special.IsPressed && _isAttacking is false && _platformerMover.IsGrounded && _ammo > 0)
             {
                 _animator.Play(SHOOT_ANIM, SpriteAnimator.LoopMode.ClampForever);
                 _dashState = false;
@@ -242,8 +242,8 @@ namespace RoguelikeFNA
             }
             // Air shoot
             else if (
-                (_input.Special.IsPressed && _isAttacking is false && _characterController.IsGrounded is false)
-                || (_isAttacking is true && _characterController.IsGrounded is false)
+                (_input.Special.IsPressed && _isAttacking is false && _platformerMover.IsGrounded is false)
+                || (_isAttacking is true && _platformerMover.IsGrounded is false)
             )
             {
                 if(_isAttacking == false && _ammo > 0)
@@ -252,13 +252,13 @@ namespace RoguelikeFNA
                     _animator.Speed = 2;
                     Shoot(_shootOffsetAir);
                 }
-                _velocity.X = speed * xInput * Time.DeltaTime;
+                _body.Velocity.X = speed * xInput;
                 _fDir.CheckFacingSide(xInput);
             }
             // Jump
-            else if(_isAttacking is false && _velocity.Y < 0)
+            else if(_isAttacking is false && _body.Velocity.Y < 0)
             {
-                _velocity.X = speed * xInput * Time.DeltaTime;
+                _body.Velocity.X = speed * xInput;
                 _fDir.CheckFacingSide(xInput);
                 _animator.Speed = 2;
 
@@ -266,9 +266,9 @@ namespace RoguelikeFNA
                     _animator.Play(JUMP_LOOP_ANIM);
             }
             // Fall
-            else if (_velocity.Y > 0 && _characterController.IsGrounded is false)
+            else if (_body.Velocity.Y > 0 && _platformerMover.IsGrounded is false)
             {
-                _velocity.X = speed * xInput * Time.DeltaTime;
+                _body.Velocity.X = speed * xInput;
                 _fDir.CheckFacingSide(xInput);
                 _animator.Speed = 2;
 
@@ -281,36 +281,34 @@ namespace RoguelikeFNA
                     _animator.Play(FALL_LOOP_ANIM);
             }
             // Dash
-            else if(_isDashing && _characterController.IsGrounded)
+            else if(_isDashing && _platformerMover.IsGrounded)
             {
                 if (_animator.IsAnimationActive(DASH_ANIM) is false)
                     _animator.Play(DASH_ANIM);
                 _animator.Speed = 2;
                 _fDir.CheckFacingSide(xInput);
                 int side = _fDir.FacingRight ? 1 : -1;
-                _velocity.X = speed * side * Time.DeltaTime;
+                _body.Velocity.X = speed * side;
             }
             // Idle
             else if (
                 _isAttacking is false && _isDashing is false
-                && xInput == 0 && _animator.IsAnimationActive(IDLE_ANIM) is false && _characterController.IsGrounded
+                && xInput == 0 && _animator.IsAnimationActive(IDLE_ANIM) is false && _platformerMover.IsGrounded
             )
             {
                 _animator.Play(IDLE_ANIM);
                 _animator.Speed = 0.5f;
             }
             // Walk
-            else if (_isAttacking is false && xInput != 0 && _characterController.IsGrounded)
+            else if (_isAttacking is false && xInput != 0 && _platformerMover.IsGrounded)
             {
                 _animator.Speed = 1;
                 if (_animator.IsAnimationActive(WALK_ANIM) is false)
                     _animator.Play(WALK_ANIM);
 
-                _velocity.X = speed * xInput * Time.DeltaTime;
+                _body.Velocity.X = speed * xInput;
                 _fDir.CheckFacingSide(xInput);
             }
-
-            _velocity = _characterController.Move(_velocity);
         }
 
         void OnAnimationComplete(string anim)

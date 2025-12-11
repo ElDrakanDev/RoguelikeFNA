@@ -43,7 +43,7 @@ namespace RoguelikeFNA.UI
             _table.Row();
 
             AddButton(TranslationManager.GetTranslation("new_game"))
-                .OnClicked += evt => Core.Scene = new LevelScene();
+                .OnClicked += evt => Core.StartSceneTransition(new FadeTransition(() => new LevelScene()));
             var continueBtn = AddButton(TranslationManager.GetTranslation("continue"));
             AddButton(TranslationManager.GetTranslation("settings"))
                 .OnClicked += evt => { _settingsMenu.SetEnabled(true); SetEnabled(false); };

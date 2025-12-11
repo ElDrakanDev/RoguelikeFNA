@@ -33,12 +33,9 @@ namespace RoguelikeFNA
 
         public override void OnAddedToEntity()
         {
-            _body = Entity.GetOrCreateComponent<PhysicsBody>();
+            _body = Entity.GetComponent<PhysicsBody>();
             _collisions = new HashSet<Collider>();
-            Mover = Entity.AddComponent(new ProjectileMover());
-            Entity.AddComponent(new BoxCollider()
-                { CollidesWithLayers = (int)(CollisionLayer.Entity | CollisionLayer.Ground), PhysicsLayer = (int)CollisionLayer.Projectile }
-            );
+            Mover = Entity.GetComponent<ProjectileMover>();
             Mover.Move(Vector2.Zero);
         }
 
@@ -55,8 +52,6 @@ namespace RoguelikeFNA
                 Entity.GetComponents<IProjectileListener>().ForEach(x => x.OnLifetimeEnd(this));
                 Entity.Destroy();
             }
-
-            Mover.Move(_body.Velocity * Time.DeltaTime);
         }
 
         public void OnTriggerEnter(Collider other, Collider local)

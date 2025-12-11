@@ -22,20 +22,6 @@ namespace RoguelikeFNA
             CreateEntity("item-ui").AddComponent(new ItemTooltip());
             CreateEntity("essence-ui").AddComponent(new EssenceLabel());
 
-            _inputManager = Core.GetGlobalManager<InputManager>();
-            foreach (var input in _inputManager.AvailablePlayers)
-                AddPlayer(input);
-
-            var testCollider = CreateEntity("test-collider")
-                .SetPosition(new Vector2(400, 200))
-                .AddComponent(new CompositeCollider());
-            testCollider.AddCollider(new CircleCollider(32));
-            testCollider.AddCollider(new BoxCollider(64, 16), Vector2.UnitX*-30);
-            testCollider.PhysicsLayer = (int)CollisionLayer.Projectile;
-            testCollider.CollidesWithLayers = (int)CollisionLayer.Entity;
-
-            _inputManager.OnPlayerJoined += AddPlayer;
-
             var nav = AddSceneComponent(new LevelNavigator())
                 .SetLevel(new LevelGenerator().GenerateLevel(new LevelGenerationConfig() {
                     Name = "Mosaic",
@@ -47,6 +33,10 @@ namespace RoguelikeFNA
                 })
             );
 
+            _inputManager = Core.GetGlobalManager<InputManager>();
+            _inputManager.OnPlayerJoined += AddPlayer;
+            foreach (var input in _inputManager.AvailablePlayers)
+                AddPlayer(input);
             var playerFollow = CreateEntity("PlayerFollow").AddComponent(new PlayerFollow());
             var cam = FindEntity("camera");
             cam.GetComponent<Camera>().SetZoom(1);
@@ -57,9 +47,9 @@ namespace RoguelikeFNA
         {
             AddEntity(new Entity())
                 .SetTag((int)Tag.Player)
-                .SetLocalPosition(new Vector2(200, 200))
+                .SetLocalPosition(FindEntity("camera").Position)
                 .AddComponent(new DemoComponent(input))
-                .AddComponent(new CharacterController());
+                .AddComponent(new PlatformerMover());
         }
 
         Dictionary<Keys, int> _directions = new ()

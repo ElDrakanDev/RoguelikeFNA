@@ -1,7 +1,6 @@
 ﻿using Nez;
 using Nez.Particles;
 using Nez.Sprites;
-using Nez.Tiled;
 using System.Collections.Generic;
 
 namespace RoguelikeFNA.Prefabs
@@ -9,8 +8,6 @@ namespace RoguelikeFNA.Prefabs
     public class DemoEnemy : GameEntity
     {
         [Inspectable] int Essence = 25;
-
-        DemoEnemyAI _ai;
 
         public DemoEnemy()
         {
@@ -22,7 +19,6 @@ namespace RoguelikeFNA.Prefabs
         public override void OnAddedToEntity()
         {
             base.OnAddedToEntity();
-            _ai = Entity.GetComponent<DemoEnemyAI>();
             _healthManager.onDeath += OnDeath;
         }
 

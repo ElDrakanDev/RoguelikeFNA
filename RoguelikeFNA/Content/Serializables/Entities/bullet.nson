@@ -21,6 +21,11 @@ RoguelikeFNA.Utils.SerializedEntity(
     		DebugRenderEnabled: true
     	),
         Nez.PhysicsBody(),
+		Nez.ProjectileMover(),
+		Nez.BoxCollider(
+			PhysicsLayer: 8,
+			CollidesWithLayers: 3
+		),
     	RoguelikeFNA.Projectile(
     		Lifetime: 5,
     		Damage: 5,
