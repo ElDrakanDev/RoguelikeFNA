@@ -37,7 +37,6 @@ namespace RoguelikeFNA
         [Inspectable] int _maxAmmo = 3;
         [Inspectable] int _ammo;
         [Inspectable] float _projectileVelocity = 150;
-        Vector2 _prevVel;
 
         const string ATTACK_ANIM1 = "zero_attack1";
         const string IDLE_ANIM = "zero_idle";
@@ -146,7 +145,6 @@ namespace RoguelikeFNA
         void HandleStates()
         {
             var xInput = _input.Horizontal;
-            _prevVel = _velocity;
             _velocity.X = 0;
             _dashTime -= Time.DeltaTime;
             _groundedBufferTime -= Time.DeltaTime;
@@ -350,7 +348,7 @@ namespace RoguelikeFNA
             //var proj = entity.AddComponent(new Projectile()
             //    { Velocity = AimDirection * _projectileVelocity, Damage = _stats.Damage, Lifetime = 5 });
             var proj = entity.GetComponent<Projectile>();
-            proj.Velocity = AimDirection * _projectileVelocity;
+            entity.GetComponent<PhysicsBody>().Velocity = AimDirection * _projectileVelocity;
             proj.SetValuesFromEntityStats(_stats);
             //anim.Play(anim.Animations.Keys.First());
             FireEvent<IProjectileShootListener, Projectile>(proj);

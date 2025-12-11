@@ -17,7 +17,7 @@ namespace RoguelikeFNA
         [NsonExclude] public ProjectileMover Mover { get; private set; }
         public float Lifetime;
         public float Damage;
-        [NsonExclude] public Vector2 Velocity;
+        protected PhysicsBody _body;
         public bool FaceVelocity = true;
         public bool ContactDamage = true;
         [NsonExclude] public EntityTeam Team;
@@ -25,8 +25,15 @@ namespace RoguelikeFNA
         public GroundHitBehaviour GroundHitBehaviour = GroundHitBehaviour.Destroy;
         [NsonExclude] public Entity Owner;
 
+        public Vector2 Velocity
+        {
+            get => _body.Velocity;
+            set => _body.Velocity = value;
+        }
+
         public override void OnAddedToEntity()
         {
+            _body = Entity.GetOrCreateComponent<PhysicsBody>();
             _collisions = new HashSet<Collider>();
             Mover = Entity.AddComponent(new ProjectileMover());
             Entity.AddComponent(new BoxCollider()
@@ -39,7 +46,7 @@ namespace RoguelikeFNA
         {
             if (FaceVelocity)
             {
-                Transform.Rotation = Mathf.Atan2(Velocity.Y, Velocity.X);
+                Transform.Rotation = Mathf.Atan2(_body.Velocity.Y, _body.Velocity.X);
             }
             Lifetime -= Time.DeltaTime;
 
@@ -49,7 +56,7 @@ namespace RoguelikeFNA
                 Entity.Destroy();
             }
 
-            Mover.Move(Velocity * Time.DeltaTime);
+            Mover.Move(_body.Velocity * Time.DeltaTime);
         }
 
         public void OnTriggerEnter(Collider other, Collider local)
@@ -75,8 +82,8 @@ namespace RoguelikeFNA
                     var translation = result.MinimumTranslationVector;
                     Transform.Position -= translation;
 
-                    if (Math.Sign(translation.X) == Math.Sign(Velocity.X)) Velocity.X *= -1;
-                    if (Math.Sign(translation.Y) == Math.Sign(Velocity.Y)) Velocity.Y *= -1;
+                    if (Math.Sign(translation.X) == Math.Sign(_body.Velocity.X)) _body.Velocity.X *= -1;
+                    if (Math.Sign(translation.Y) == Math.Sign(_body.Velocity.Y)) _body.Velocity.Y *= -1;
                 }
             }
             _collisions.Add(other);

@@ -16,7 +16,6 @@ namespace RoguelikeFNA.Prefabs
     public class DemoEnemyAI : SimpleStateMachine<PatrolStates>
     {
         [Inspectable] float _gravity = 20;
-        [Inspectable] public Vector2 Velocity;
         [Inspectable] float _speed = 40;
         [Inspectable] float _detectRange = 150f;
         [Inspectable] float _stayTime = 2f;
@@ -31,6 +30,7 @@ namespace RoguelikeFNA.Prefabs
         HitboxHandler _hitbox;
         FaceDirection _fDir;
         HealthManager _healthManager;
+        PhysicsBody _body;
 
         const string IDLE_ANIM = "enemy_idle";
         const string HIT_ANIM = "enemy_hit";
@@ -46,6 +46,7 @@ namespace RoguelikeFNA.Prefabs
             _hitbox = Entity.GetComponent<HitboxHandler>();
             _stats = Entity.GetComponent<EntityStats>();
             _healthManager = Entity.GetComponent<HealthManager>();
+            _body = Entity.GetComponent<PhysicsBody>();
             
             _healthManager.onDamageTaken += OnHit;
             _animator.OnAnimationCompletedEvent += OnAnimationComplete;
@@ -76,11 +77,11 @@ namespace RoguelikeFNA.Prefabs
 
         public override void Update()
         {
-            Velocity.Y += _gravity * Time.DeltaTime;
+            _body.Velocity.Y += _gravity * Time.DeltaTime;
             if (_collisionState.Below)
-                Velocity.Y = 0;
-            _mover.Move(Velocity, _collider, _collisionState);
-            _fDir.CheckFacingSide(Velocity.X);
+                _body.Velocity.Y = 0;
+            _mover.Move(_body.Velocity, _collider, _collisionState);
+            _fDir.CheckFacingSide(_body.Velocity.X);
             base.Update();
         }
 
@@ -103,7 +104,7 @@ namespace RoguelikeFNA.Prefabs
         void Stay_Enter()
         {
             _animator.Play(IDLE_ANIM, SpriteAnimator.LoopMode.Loop);
-            Velocity.X = 0;
+            _body.Velocity.X = 0;
         }
 
         void Stay_Tick()
@@ -135,7 +136,7 @@ namespace RoguelikeFNA.Prefabs
 
             var moveInput = Math.Sign(_movingTowards.X - Transform.Position.X);
             _fDir.CheckFacingSide(moveInput);
-            Velocity.X = moveInput * _speed * Time.DeltaTime;
+            _body.Velocity.X = moveInput * _speed * Time.DeltaTime;
 
             var rect = new RectangleF(_movingTowards - _collider.Bounds.Size / 2, _collider.Bounds.Size);
             Debug.DrawHollowRect(rect, Color.Yellow);
@@ -156,19 +157,19 @@ namespace RoguelikeFNA.Prefabs
             }
             var moveInput = Math.Sign(target.Transform.Position.X - Transform.Position.X);
             _fDir.CheckFacingSide(moveInput);
-            Velocity.X = moveInput * _speed * Time.DeltaTime;
+            _body.Velocity.X = moveInput * _speed * Time.DeltaTime;
         }
 
         void Hurt_Enter()
         {
             _animator.Play(HIT_ANIM, SpriteAnimator.LoopMode.Once);
-            Velocity.X = 0;
+            _body.Velocity.X = 0;
         }
 
         void Attack_Enter()
         {
             _animator.Play(ATTACK_ANIM, SpriteAnimator.LoopMode.Once);
-            Velocity.X = 0;
+            _body.Velocity.X = 0;
             _hitbox.ClearCollisions();
             _animator.Speed = 0.8f;
         }

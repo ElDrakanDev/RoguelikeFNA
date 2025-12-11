@@ -13,21 +13,22 @@ RoguelikeFNA.Utils.SerializedEntity(
 	),
 	Rotation: 0,
 	Components: [
-		Nez.Sprites.SpriteAnimator(
-			Speed: 1,
-			AtlasPath: ".\\Content\\Atlases\\projectiles\\projectiles.atlas",
-			SpriteEffects: "None",
-			Color: #FFFFFFFF,
-			DebugRenderEnabled: true
-		),
-		RoguelikeFNA.Projectile(
-			Lifetime: 5,
-			Damage: 5,
-			FaceVelocity: true,
-			ContactDamage: true,
-			GroundHitBehaviour: "Destroy"
-		)
-	],
+    	Nez.Sprites.SpriteAnimator(
+    		Speed: 1,
+    		AtlasPath: ".\\Content\\Atlases\\projectiles\\projectiles.atlas",
+    		SpriteEffects: "None",
+    		Color: #FFFFFFFF,
+    		DebugRenderEnabled: true
+    	),
+        Nez.PhysicsBody(),
+    	RoguelikeFNA.Projectile(
+    		Lifetime: 5,
+    		Damage: 5,
+    		FaceVelocity: true,
+    		ContactDamage: true,
+    		GroundHitBehaviour: "Destroy"
+    	)
+    ],
 	Children: [
 
 	]

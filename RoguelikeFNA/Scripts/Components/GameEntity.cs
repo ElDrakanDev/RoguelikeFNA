@@ -17,6 +17,7 @@ namespace RoguelikeFNA
         protected EntityStats _stats;
         protected TiledMapMover _mover;
         protected Collider _collider;
+        protected PhysicsBody _physicsBody;
 
         public override void OnAddedToEntity()
         {
@@ -27,6 +28,7 @@ namespace RoguelikeFNA
             _stats = Entity.GetComponent<EntityStats>();
             _mover = Entity.GetComponent<TiledMapMover>();
             _collider = Entity.GetComponent<Collider>();
+            _physicsBody = Entity.GetComponent<PhysicsBody>();
         }
 
         public virtual void LoadPrefab()
@@ -40,6 +42,7 @@ namespace RoguelikeFNA
             _mover = Entity.AddComponent(new TiledMapMover(Parent.GetComponent<TiledMapRenderer>()?.CollisionLayer));
 
             _collider = Entity.AddComponent(PrefabCollider());
+            _physicsBody = Entity.AddComponent(new PhysicsBody());
         }
 
         protected abstract Collider PrefabCollider();

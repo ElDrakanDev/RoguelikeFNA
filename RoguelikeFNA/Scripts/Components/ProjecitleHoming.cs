@@ -2,7 +2,6 @@
 using Nez.ImGuiTools.ObjectInspectors;
 using Microsoft.Xna.Framework;
 using System.Linq;
-using RoguelikeFNA.Prefabs;
 
 namespace RoguelikeFNA
 {
@@ -11,10 +10,12 @@ namespace RoguelikeFNA
         Projectile _proj;
         public float AttractSpeed = 0.1f;
         public float HomingRange = 150f;
+        PhysicsBody _body;
 
         public override void OnAddedToEntity()
         {
             _proj = Entity.GetComponent<Projectile>();
+            _body = Entity.GetComponent<PhysicsBody>();
         }
 
         public void Update()
@@ -25,7 +26,7 @@ namespace RoguelikeFNA
                     && (_proj.GroundHitBehaviour == GroundHitBehaviour.Ignore || stats.LineOfSight(Transform.Position)))
                 .ToArray().Closest(Transform.Position);
             if(closest != null)
-                _proj.Velocity += (closest.Transform.Position - Transform.Position) * Time.DeltaTime * AttractSpeed;
+                _body.Velocity += (closest.Transform.Position - Transform.Position) * Time.DeltaTime * AttractSpeed;
         }
 
         [InspectorDelegate]
