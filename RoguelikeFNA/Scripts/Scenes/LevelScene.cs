@@ -2,7 +2,8 @@
 using Microsoft.Xna.Framework.Input;
 using Nez;
 using RoguelikeFNA.Generation;
-using RoguelikeFNA.Items;
+using RoguelikeFNA.Player;
+using Nez.Sprites;
 using RoguelikeFNA.Rendering;
 using RoguelikeFNA.UI;
 using System.Collections.Generic;
@@ -45,10 +46,15 @@ namespace RoguelikeFNA
 
         void AddPlayer(PlayerInput input)
         {
+            var atlas = Content.LoadSpriteAtlas(ContentPath.Atlases.Zero.Zero_atlas);
+            var animator = new SpriteAnimator(){LocalOffset = new Vector2(20, 0)};
+            animator.AddAnimationsFromAtlas(atlas);
             AddEntity(new Entity())
                 .SetTag((int)Tag.Player)
                 .SetLocalPosition(FindEntity("camera").Position)
-                .AddComponent(new DemoComponent(input))
+                // .AddComponent(new DemoComponent(input))
+                .AddComponent(new AllrounderPlayerController(input))
+                .AddComponent(animator)
                 .AddComponent(new PlatformerMover());
         }
 

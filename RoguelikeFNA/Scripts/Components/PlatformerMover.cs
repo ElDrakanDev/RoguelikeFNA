@@ -8,6 +8,12 @@ namespace RoguelikeFNA
     {
         Collider _collider;
         public const float COLLISION_THRESHOLD = 0.01f;
+        public const float BROADPHASE_PADDING = 10f;
+
+        // If we were grounded last frame and are only moving down a tiny amount, push down a constant
+        // distance so collision resolution keeps us snapped to the ground (helps with tiny gaps/slopes).
+        public const float GROUNDED_GLUE_THRESHOLD = 0.05f;
+        public const float GROUNDED_GLUE_DOWN_AMOUNT = 2f;
 
         public struct CollisionState
         {
@@ -48,6 +54,11 @@ namespace RoguelikeFNA
             UpdatePreviousState();
             ResetState();
 
+            // Ground glue: if we were grounded and are trying to move down by a very small amount,
+            // increase the downward motion so we reliably collide with the ground and stay grounded.
+            if (PreviousState.Below && motion.Y > 0 && motion.Y < GROUNDED_GLUE_THRESHOLD)
+                motion.Y = GROUNDED_GLUE_DOWN_AMOUNT;
+
             bool collided = false;
 
             var bounds = _collider.Bounds;
@@ -55,6 +66,7 @@ namespace RoguelikeFNA
             endBounds.X += motion.X;
             endBounds.Y += motion.Y;
             bounds = RectangleF.Union(bounds, endBounds);
+            bounds.Inflate(BROADPHASE_PADDING, BROADPHASE_PADDING);
             var neighbors = Physics.BoxcastBroadphaseExcludingSelf(_collider, ref bounds, (int)CollisionLayer);
             // Move horizontally first
             if (motion.X != 0)
