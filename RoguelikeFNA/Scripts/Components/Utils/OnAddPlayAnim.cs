@@ -6,7 +6,7 @@ namespace RoguelikeFNA
     public class OnSpawnPlayAnim : Component
     {
         [Inspectable] public string AnimationName;
-        [Inspectable] public SpriteAnimator.LoopMode LoopMode = SpriteAnimator.LoopMode.ClampForever;
+        [Inspectable] public SpriteAnimator.LoopMode LoopMode = SpriteAnimator.LoopMode.Loop;
 
         public override void OnAddedToEntity()
         {

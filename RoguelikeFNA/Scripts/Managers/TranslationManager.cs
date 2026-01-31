@@ -12,7 +12,7 @@ namespace RoguelikeFNA
         FileInfo _translationsPath = new FileInfo(ContentPath.Translations_xlsx);
         public static Action OnLanguageChanged;
         public string ActiveLanguage { get => _configManager.Config.Language; private set => _configManager.Config.Language = value; }
-        Dictionary<string, string> _translations = new Dictionary<string, string>();
+        Dictionary<string, string> _translations = new();
         List<string> _headers = new List<string>();
         public List<string> AvailableLanguages => _headers.Except(new string[] { "id" }).ToList();
 

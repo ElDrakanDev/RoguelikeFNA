@@ -114,7 +114,7 @@ namespace RoguelikeFNA.Player
 
         public override bool WantsTransitionOut()
         {
-            return !_context.Mover.IsGrounded || !_context.WantsMove();
+            return !_context.Mover.IsGrounded || !_context.WantsMove() || _context.WantsAnyAction();
         }
 
         public override void Update(float deltaTime)
