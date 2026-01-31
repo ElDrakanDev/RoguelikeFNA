@@ -1,5 +1,5 @@
 RoguelikeFNA.Utils.SerializedEntity(
-	Name: "bullet",
+	Name: "slash",
 	Enabled: true,
 	Tag: 0,
 	TypeName: "",
@@ -21,7 +21,8 @@ RoguelikeFNA.Utils.SerializedEntity(
     		DebugRenderEnabled: true
     	),
 		RoguelikeFNA.OnSpawnPlayAnim(
-			AnimationName: "bullet",
+			AnimationName: "zero_slashfx",
+			LoopMode: "Once"
 		),
         Nez.PhysicsBody(),
 		Nez.ProjectileMover(),
@@ -30,11 +31,9 @@ RoguelikeFNA.Utils.SerializedEntity(
 			CollidesWithLayers: 3
 		),
     	RoguelikeFNA.Projectile(
-    		Lifetime: 5,
     		Damage: 5,
-    		FaceVelocity: true,
     		ContactDamage: true,
-    		GroundHitBehaviour: "Destroy"
+    		GroundHitBehaviour: "Ignore"
     	)
     ],
 	Children: [

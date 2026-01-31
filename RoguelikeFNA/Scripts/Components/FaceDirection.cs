@@ -6,6 +6,7 @@ namespace RoguelikeFNA
     public class FaceDirection : Component
     {
         public bool FacingRight { get; private set; } = false;
+        public int LookDirection => FacingRight ? 1 : -1;
 
         public override void OnAddedToEntity()
         {

@@ -51,6 +51,14 @@ namespace Nez
 				public const string Zero_png = @".\Content\Atlases\zero\zero.png";
 			}
 
+			public static class Zero_slashfx
+			{
+				public const string Directory = @".\Content\Atlases\zero_slashfx";
+			
+				public const string Zero_slashfx_atlas = @".\Content\Atlases\zero_slashfx\zero_slashfx.atlas";
+				public const string Zero_slashfx_png = @".\Content\Atlases\zero_slashfx\zero_slashfx.png";
+			}
+
 		}
 
 		public static class Audio
@@ -97,6 +105,7 @@ namespace Nez
 				public const string Directory = @".\Content\Serializables\Entities";
 			
 				public const string Bullet_nson = @".\Content\Serializables\Entities\bullet.nson";
+				public const string Slash_nson = @".\Content\Serializables\Entities\slash.nson";
 			}
 
 			public static class Hitboxes
@@ -143,7 +152,6 @@ namespace Nez
 			}
 
 			public const string Apple_png = @".\Content\Sprites\Apple.png";
-			public const string Bergentruckung_png = @".\Content\Sprites\bergentruckung.png";
 			public const string ExampleSword_png = @".\Content\Sprites\ExampleSword.png";
 			public const string Giant_png = @".\Content\Sprites\giant.png";
 			public const string Nezlogoblack_png = @".\Content\Sprites\nez-logo-black.png";

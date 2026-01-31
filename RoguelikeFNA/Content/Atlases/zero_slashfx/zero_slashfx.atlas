@@ -10,16 +10,3 @@ zero_slashfx3
 zero_slashfx4
 	121,81,120,80
 	0.5,0.5
-bullet1
-	0,162,20,20
-	0.5,0.5
-bullet2
-	21,162,20,20
-	0.5,0.5
-
-bullet
-	8
-	4,5
-zero_slashfx
-	8
-	0,1,2,3

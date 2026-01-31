@@ -5,6 +5,7 @@ namespace RoguelikeFNA
 {
     public class SoundEffectManager : GlobalManager
     {
+        static SoundEffectManager _instance;
         ConfigManager _config;
         float _volumeMultiplier => _config.Config.SoundEffectVolume * _config.Config.MasterVolume;
 
@@ -12,18 +13,12 @@ namespace RoguelikeFNA
         {
             base.OnEnabled();
             _config = Core.GetGlobalManager<ConfigManager>();
+            _instance = this;
         }
 
-        public void Play(SoundEffect sfx)
+        public static void Play(SoundEffect sfx, float volume = 1, float pitch = 0, float pan = 0)
         {
-            float volume = _volumeMultiplier;
-            if(volume > 0)
-                sfx.Play(volume, 0 ,0);
-        }
-
-        public void Play(SoundEffect sfx, float volume = 1, float pitch = 0, float pan = 0)
-        {
-            float finalVolume = _volumeMultiplier * volume;
+            float finalVolume = _instance._volumeMultiplier * volume;
             if (finalVolume > 0)
                 sfx.Play(finalVolume, pitch, pan);
         }

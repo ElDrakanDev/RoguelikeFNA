@@ -20,6 +20,7 @@ namespace RoguelikeFNA
         protected PhysicsBody _body;
         public bool FaceVelocity = true;
         public bool ContactDamage = true;
+        public bool CanBeDestroyed = true;
         [NsonExclude] public EntityTeam Team;
         [NsonExclude] public int TargetTeams;
         public GroundHitBehaviour GroundHitBehaviour = GroundHitBehaviour.Destroy;
@@ -64,7 +65,8 @@ namespace RoguelikeFNA
                     stats.HealthManager?.Hit(new DamageInfo(Damage, Entity));
 
                 Entity.GetComponents<IProjectileListener>().ForEach(x => x.OnEntityHit(this, other));
-                Entity.Destroy();
+                if(CanBeDestroyed)
+                    Entity.Destroy();
             }
             if(GroundHitBehaviour != GroundHitBehaviour.Ignore && Flags.IsFlagSet(other.PhysicsLayer, (int)CollisionLayer.Ground))
             {

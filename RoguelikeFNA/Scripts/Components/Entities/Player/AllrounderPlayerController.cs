@@ -1,7 +1,9 @@
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Nez;
 using Nez.Sprites;
+using RoguelikeFNA.Utils;
 
 namespace RoguelikeFNA.Player
 {
@@ -14,6 +16,18 @@ namespace RoguelikeFNA.Player
         [Inspectable] protected string _dashAnim = "zero_dash";
 
         [Inspectable] protected float _dashSpeedMultiplier = 1.75f;
+        [Inspectable] protected float _projectileSpeed = 150f;
+
+        Entity _shootPos;
+        Entity _slashPos;
+
+        SerializedEntity _projectile;
+        SerializedEntity _slash;
+
+        SoundEffect _slashSfx;
+        SoundEffect _dashSfx;
+        SoundEffect _jumpSfx;
+        SoundEffect _shootSfx;
 
         protected AttackState _groundedAttackState;
         protected AttackState _airAttackState;  
@@ -33,10 +47,29 @@ namespace RoguelikeFNA.Player
             _airShootState = new AirAttackState(_shootAirAnim, () => Input.Special){ Duration = 0.4f};
             _dashState = new DashState(_dashAnim);
 
+            _dashState.OnStateBegin += ActivateDash;
             _idleState.OnStateBegin += DeactivateDash;
             _walkState.OnStateBegin += DeactivateDash;
             _groundedAttackState.OnStateBegin += DeactivateDash;
+            _groundedAttackState.OnStateBegin += Slash;
             _groundedShootState.OnStateBegin += DeactivateDash;
+            _airAttackState.OnStateBegin += Slash;
+            _groundedShootState.OnStateBegin += Shoot;
+            _airShootState.OnStateBegin += Shoot;
+        }
+
+        void Slash()
+        {
+            var proj = MeleeAttack(_slash, _slashPos.LocalPosition);
+            SoundEffectManager.Play(_slashSfx);
+        }
+
+        void Shoot()
+        {
+            var proj = FireProjectile(
+                _projectile, _shootPos.Position, Vector2.UnitX * FaceDirection.LookDirection * _projectileSpeed
+            );
+            SoundEffectManager.Play(_shootSfx);
         }
 
         protected override void SetupStateMachine()
@@ -50,22 +83,36 @@ namespace RoguelikeFNA.Player
         }
 
         public virtual void ActivateDash() {
-            if(ApplyDashMultiplier) return;
+            if(ApplyDashMultiplier)
+                return;
             ApplyDashMultiplier = true;
-            Entity.GetComponent<SpriteTrail>()?.SetEnabled(true);
+            Entity.GetComponent<SpriteTrail>()?.EnableSpriteTrail();
             _speed *= _dashSpeedMultiplier;
+            SoundEffectManager.Play(_dashSfx);
         }
 
         protected virtual void DeactivateDash() {
             if(!ApplyDashMultiplier) return;
             _speed /= _dashSpeedMultiplier;
             ApplyDashMultiplier = false;
-            Entity.GetComponent<SpriteTrail>()?.SetEnabled(false);
+            Entity.GetComponent<SpriteTrail>()?.DisableSpriteTrail();
         }
 
         public override void OnAddedToEntity()
         {
             base.OnAddedToEntity();
+            _slashSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.SaberSlash_WAV);
+            _dashSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.ZeroDash_WAV);
+            _jumpSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.ZeroWalkJump_WAV);
+            _shootSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.BusterShot_WAV);
+            _projectile = Entity.Scene.Content.LoadNson<SerializedEntity>(ContentPath.Serializables.Entities.Bullet_nson);
+            _slash = Entity.Scene.Content.LoadNson<SerializedEntity>(ContentPath.Serializables.Entities.Slash_nson);
+            _shootPos = Entity.Scene.CreateEntity("shootPos")
+                .SetParent(Transform)
+                .SetLocalPosition(new Vector2(40, 0));
+            _slashPos = Entity.Scene.CreateEntity("slashPos")
+                .SetParent(Transform)
+                .SetLocalPosition(new Vector2(40, 0));
             var spriteTrail = Entity.AddComponent(new SpriteTrail());
             spriteTrail.SetInitialColor(new Color(0.5f, 0, 0, 0.5f)).SetFadeToColor(Color.Transparent);
             spriteTrail.SetFadeDuration(0.2f).SetMaxSpriteInstances(30).SetMinDistanceBetweenInstances(0.1f);
@@ -122,13 +169,6 @@ namespace RoguelikeFNA.Player
         public override bool WantsTransitionOut()
         {
             return !_context.Mover.IsGrounded || _machine.ElapsedTimeInState >= DashDuration || _context.WantsAttack() || _context.WantsSpecial();
-        }
-
-        public override void Begin()
-        {
-            base.Begin();
-            if (_context is AllrounderPlayerController allrounder)
-                allrounder.ActivateDash();
         }
 
         public override void Update(float deltaTime)

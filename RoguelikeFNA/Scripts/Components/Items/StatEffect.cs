@@ -23,12 +23,14 @@ namespace RoguelikeFNA.Items
             base.OnPickup(source, item);
             _modifier = new StatModifier(Value, item, Type);
             var stats = source.GetComponent<EntityStats>();
+            Insist.IsNotNull(stats, "EntityStats component not found on entity picking up StatEffect item.");
             stats[StatID].Add(_modifier);
         }
 
         public override void OnRemove()
         {
             var stats = Owner.GetComponent<EntityStats>();
+            Insist.IsNotNull(stats, "EntityStats component not found on entity removing StatEffect item.");
             stats[StatID].RemoveModifier(_modifier);
             base.OnRemove();
         }

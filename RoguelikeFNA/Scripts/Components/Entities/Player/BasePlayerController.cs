@@ -1,7 +1,10 @@
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Nez;
 using Nez.AI.FSM;
 using Nez.Sprites;
+using RoguelikeFNA.Utils;
 
 namespace RoguelikeFNA.Player
 {
@@ -40,6 +43,8 @@ namespace RoguelikeFNA.Player
 
         // Optional: if present, the states will play animations.
         public SpriteAnimator Animator { get; protected set; }
+        public HealthManager HealthManager { get; protected set; }
+        public EntityStats Stats { get; protected set; }
 
         protected StateMachine<BasePlayerController> _machine;
         public StateMachine<BasePlayerController> Machine => _machine;
@@ -101,6 +106,9 @@ namespace RoguelikeFNA.Player
             }
 
             Animator = Entity.GetComponent<SpriteAnimator>();
+            HealthManager = Entity.AddComponent(new HealthManager(25));
+            HealthManager.onDeath += e => { if (e.Canceled is false) Entity.Destroy(); };
+            Stats = Entity.AddComponent(new EntityStats(5) { Team = EntityTeam.Friendly });
 
             SetupStates();
             SetupStateMachine();
@@ -109,6 +117,7 @@ namespace RoguelikeFNA.Player
         public virtual void Update()
         {
             _machine?.Update(Time.DeltaTime);
+            HandleInteractables();
         }
 
         internal void UpdateJumpBuffers(float deltaTime, bool allowJumpInput)
@@ -217,5 +226,64 @@ namespace RoguelikeFNA.Player
         }
 
         public void ChangeStateTo(CharacterState newState) => Machine.ChangeState(newState);
+
+        void HandleInteractables()
+        {
+            var entities = Entity.Scene.Entities.EntitiesOfType<Entity>().Enabled().ToArray();
+            entities = entities.Where(e =>
+            {
+                var collider = e.GetComponent<Collider>();
+                if(collider is null)
+                    return false;
+                return collider.PhysicsLayer.IsFlagSet((int)CollisionLayer.Interactable) &&
+                    collider.CollidesWith(Collider, out var _)
+                    && e.HasComponent<IInteractListener>();
+            }).ToArray();
+            if(entities.Length > 0)
+            {
+                var entity = entities.Closest(Transform.Position);
+                entity.GetComponents<IInteractListener>().ForEach(i => i.OnHover(Entity));
+                if (Input.Interact.IsPressed)
+                    entity.GetComponents<IInteractListener>().ForEach(i => i.OnInteract(Entity));
+            }
+        }
+        
+        public Projectile FireProjectile(SerializedEntity projEntity, Vector2 position, Vector2 velocity, bool shootEvent = true)
+        {
+            var entity = projEntity.AddToScene(Entity.Scene)
+                .SetPosition(position)
+                .SetLocalScale(Transform.LocalScale)
+                .SetParent(Entity.Parent);
+            var proj = entity.GetComponent<Projectile>();
+            entity.GetComponent<PhysicsBody>().Velocity = velocity;
+            proj.SetValuesFromEntityStats(Stats);
+            if(shootEvent)
+                FireEvent<IProjectileShootListener, Projectile>(proj);
+            return proj;
+        }
+
+        public Projectile MeleeAttack(SerializedEntity meleeEntity, Vector2 relposition, bool attackEvent = true)
+        {
+            var proj = FireProjectile(meleeEntity, Vector2.Zero, Vector2.Zero, false);
+            proj.CanBeDestroyed = false;
+            proj.Lifetime = float.MaxValue;
+            proj.FaceVelocity = false;
+            proj.ContactDamage = true;
+            proj.AddComponent(new RelativeEntity(Entity, relposition));
+            var anim = proj.GetComponent<SpriteAnimator>();
+            if(anim != null)
+                anim.OnAnimationCompletedEvent += _ => {
+                    if(proj.Entity.IsDestroyed is false)
+                        proj.Entity.Destroy();
+                };
+            return proj;
+        }
+
+        protected void FireEvent<TListener, TParam>(TParam param) where TListener : class, IEvent<TParam>
+        {
+            Entity.GetComponents<TListener>().ForEach(i => i.Fire(param));
+            foreach (var item in Entity.GetComponents<Item>())
+                item.FireEvent<TListener, TParam>(param);
+        }
     }
 }

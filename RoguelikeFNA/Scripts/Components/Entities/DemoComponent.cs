@@ -10,7 +10,6 @@ namespace RoguelikeFNA
 {
     public class DemoComponent : Component, IUpdatable
     {
-        SoundEffectManager _sfxManager;
         SoundEffect _slashSfx;
         SoundEffect _dashSfx;
         SoundEffect _jumpSfx;
@@ -72,7 +71,6 @@ namespace RoguelikeFNA
             _fDir = Entity.AddComponent(new FaceDirection());
             Entity.AddComponent<EntranceTeleport>();
             _body = Entity.AddComponent(new PhysicsBody());
-            _sfxManager = Core.GetGlobalManager<SoundEffectManager>();
             _slashSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.SaberSlash_WAV);
             _dashSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.ZeroDash_WAV);
             _jumpSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.ZeroWalkJump_WAV);
@@ -166,7 +164,7 @@ namespace RoguelikeFNA
                 _dashState = true;
                 _isAttacking = false;
                 _spriteTrail.EnableSpriteTrail();
-                _sfxManager.Play(_dashSfx);
+                SoundEffectManager.Play(_dashSfx);
             }
             if (_input.Dash.IsReleased)
                 _dashTime = 0;
@@ -188,7 +186,7 @@ namespace RoguelikeFNA
                 _groundedBufferTime = 0;
                 _body.Velocity.Y = -_jumpForce;
                 _platformerMover.SetLeftGround();
-                _sfxManager.Play(_jumpSfx);
+                SoundEffectManager.Play(_jumpSfx);
                 _animator.Play(JUMP_START_ANIM, SpriteAnimator.LoopMode.Once);
             }
 
@@ -212,7 +210,7 @@ namespace RoguelikeFNA
                 _isAttacking = true;
                 _dashState = false;
                 _animator.Speed = 3;
-                _sfxManager.Play(_slashSfx);
+                SoundEffectManager.Play(_slashSfx);
             }
             // Air attack
             else if(
@@ -227,7 +225,7 @@ namespace RoguelikeFNA
                     _isAttacking = true;
                     _animator.Play(ATTACK_AIR_ANIM, SpriteAnimator.LoopMode.ClampForever);
                     _animator.Speed = 3;
-                    _sfxManager.Play(_slashSfx);
+                    SoundEffectManager.Play(_slashSfx);
                 }
                 _body.Velocity.X = speed * xInput;
                 _fDir.CheckFacingSide(xInput);
@@ -335,7 +333,7 @@ namespace RoguelikeFNA
         {
             _ammo -= 1;
             _isAttacking = true;
-            _sfxManager.Play(_shootSfx);
+            SoundEffectManager.Play(_shootSfx);
             var entity = _projectile.AddToScene(Entity.Scene)
                 .SetPosition(Transform.Position + offset * AimDirection)
                 .SetLocalScale(Transform.LocalScale)
