@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="17">
+ <tileset firstgid="1" name="Inca_front_by_Kronbits-extended" tilewidth="16" tileheight="16" tilecount="280" columns="20">
+  <image source="../assets/tiles/Inca_front_by_Kronbits-extended.png" width="320" height="224"/>
+ </tileset>
+ <layer id="1" name="ground" width="30" height="20">
+  <data encoding="csv">
+32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,
+32,32,72,72,72,72,72,72,72,72,72,72,72,72,72,72,72,72,72,72,72,72,72,72,72,72,72,72,32,32,
+32,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,32,
+32,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,32,
+32,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,32,
+32,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,32,
+32,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,32,
+32,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,11,12,12,12,12,12,12,12,32,32,
+32,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,32,32,32,32,32,32,32,32,32,
+32,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,32,32,32,32,32,32,32,32,32,
+32,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,32,32,32,32,32,32,32,32,32,
+32,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,32,32,32,32,32,32,32,32,32,
+32,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,32,32,32,32,32,32,32,32,32,
+32,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,32,32,32,32,32,32,32,32,32,
+32,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,32,32,32,32,32,32,32,32,32,
+32,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,32,32,32,32,32,32,32,32,32,
+32,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,32,32,32,32,32,32,32,32,32,
+32,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,32,32,32,32,32,32,32,32,32,
+32,32,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,32,32,32,32,32,32,32,32,32,32,
+32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32
+</data>
+ </layer>
+ <objectgroup id="2" name="Entities">
+  <object id="3" template="../assets/templates/Entrance.tx" x="96" y="256"/>
+  <object id="5" template="../assets/templates/Exit.tx" x="368" y="80"/>
+  <object id="12" name="PointSequence" x="272" y="256">
+   <properties>
+    <property name="InternalType" value="RoguelikeFNA.Prefabs.PointSequence"/>
+    <property name="NextPoint" type="object" value="13"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="13" name="PointSequence" x="272" y="128">
+   <properties>
+    <property name="InternalType" value="RoguelikeFNA.Prefabs.PointSequence"/>
+    <property name="NextPoint" type="object" value="14"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="14" name="PointSequence" x="192" y="128">
+   <properties>
+    <property name="InternalType" value="RoguelikeFNA.Prefabs.PointSequence"/>
+    <property name="NextPoint" type="object" value="15"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="15" name="PointSequence" x="192" y="256">
+   <properties>
+    <property name="InternalType" value="RoguelikeFNA.Prefabs.PointSequence"/>
+    <property name="NextPoint" type="object" value="12"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="16" name="MovingPlatform" x="176" y="256" width="40" height="10">
+   <properties>
+    <property name="InternalType" value="RoguelikeFNA.Prefabs.MovingPlatform"/>
+    <property name="MoveSpeed" type="float" value="50"/>
+    <property name="Start" type="object" value="12"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

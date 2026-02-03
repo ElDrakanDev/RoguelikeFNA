@@ -4,7 +4,6 @@ using Nez.Tiled;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Security.Cryptography;
 
 namespace RoguelikeFNA
 {
@@ -33,7 +32,7 @@ namespace RoguelikeFNA
 
             foreach (var obj in entities.Objects)
             {
-                var entity = new TiledEntity(obj.Name, obj.Id);
+                var entity = new TiledEntity(obj.Name, obj.Id, obj.Width, obj.Height);
                 map.Entity.Scene.AddEntity(entity)
                     .SetLocalPosition(new Vector2(obj.X, obj.Y))
                     .SetLocalRotation(Mathf.Deg2Rad * obj.Rotation)

@@ -15,10 +15,14 @@ namespace RoguelikeFNA
     public class TiledEntity : Entity
     {
         public int TiledId;
+        public float Width;
+        public float Height;
 
-        public TiledEntity(string name, int tiledId) : base(name)
+        public TiledEntity(string name, int tiledId, float width, float height) : base(name)
         {
             TiledId = tiledId;
+            Width = width;
+            Height = height;
         }
         
         public TiledEntity GetByTiledId(int id)
