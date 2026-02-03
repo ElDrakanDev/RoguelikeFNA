@@ -25,9 +25,11 @@ RoguelikeFNA.Utils.SerializedEntity(
 		),
         Nez.PhysicsBody(),
 		Nez.ProjectileMover(),
-		Nez.BoxCollider(
-			PhysicsLayer: 8,
-			CollidesWithLayers: 3
+		RoguelikeFNA.Utils.BoxColliderWrapper(
+			PhysicsLayer: "Projectile",
+			CollidesWithLayers: "Entity,Ground",
+			Width: 8,
+			Height: 8
 		),
     	RoguelikeFNA.Projectile(
     		Lifetime: 5,

@@ -26,9 +26,15 @@ RoguelikeFNA.Utils.SerializedEntity(
 		),
         Nez.PhysicsBody(),
 		Nez.ProjectileMover(),
-		Nez.BoxCollider(
-			PhysicsLayer: 8,
-			CollidesWithLayers: 3
+		RoguelikeFNA.Utils.BoxColliderWrapper(
+			PhysicsLayer: "Projectile",
+			CollidesWithLayers: "Entity,Ground",
+			Width: 80,
+			Height: 60,
+			Offset: Microsoft.Xna.Framework.Vector2(
+				X: 10,
+				Y: 0
+			),
 		),
     	RoguelikeFNA.Projectile(
     		Damage: 5,
