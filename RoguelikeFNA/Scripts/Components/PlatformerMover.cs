@@ -21,9 +21,12 @@ namespace RoguelikeFNA
             public bool Left;
             public bool Right;
             public bool Above;
+            public Collider StandingOn;
         }
 
-        public CollisionLayer CollisionLayer = CollisionLayer.Ground;
+        public bool IgnorePlatforms = false;
+        public CollisionLayer GroundLayer = CollisionLayer.Ground;
+        public CollisionLayer PlatformLayer = CollisionLayer.Platform;
         public CollisionState State = new CollisionState();
         public CollisionState PreviousState = new CollisionState();
 
@@ -35,6 +38,14 @@ namespace RoguelikeFNA
         public bool HitCeiling => !PreviousState.Above && State.Above;
         public bool IsOnWall => State.Left || State.Right;
         public bool BecameOnWall => (!PreviousState.Left || !PreviousState.Right) && IsOnWall;
+        public bool GroundedOnPlatform => IsPlatform(State.StandingOn);
+        public bool WasGroundedOnPlatform => IsPlatform(PreviousState.StandingOn);
+
+
+        public bool IsPlatform(Collider collider)
+        {
+            return Flags.IsFlagSet(collider?.PhysicsLayer ?? 0, (int)PlatformLayer);
+        }
 
         public override void OnAddedToEntity()
         {
@@ -44,6 +55,7 @@ namespace RoguelikeFNA
 
         public void SetLeftGround(){
             State.Below = false;
+            State.StandingOn = null;
         }
 
         public bool Move(Vector2 motion)
@@ -67,7 +79,8 @@ namespace RoguelikeFNA
             endBounds.Y += motion.Y;
             bounds = RectangleF.Union(bounds, endBounds);
             bounds.Inflate(BROADPHASE_PADDING, BROADPHASE_PADDING);
-            var neighbors = Physics.BoxcastBroadphaseExcludingSelf(_collider, ref bounds, (int)CollisionLayer);
+            var layerMask = !IgnorePlatforms ? GroundLayer | PlatformLayer : GroundLayer;
+            var neighbors = Physics.BoxcastBroadphaseExcludingSelf(_collider, ref bounds, (int)layerMask);
             // Move horizontally first
             if (motion.X != 0)
             {
@@ -87,19 +100,31 @@ namespace RoguelikeFNA
         {
             var collided = false;
             var verticalMotion = new Vector2(0, motion.Y);
+            var ignorePlatforms = IgnorePlatforms || (motion.Y <= 0); // Ignore platforms when moving up
 
             foreach (var neighbor in neighbors)
             {
-                if (neighbor.IsTrigger)
+                var isPlatform = IsPlatform(neighbor);
+                if (neighbor.IsTrigger || (ignorePlatforms && isPlatform))
                     continue;
 
                 if (_collider.CollidesWith(neighbor, verticalMotion, out CollisionResult result))
                 {
                     // Set collision flags
                     if (result.MinimumTranslationVector.Y > 0)
+                    {
+                        // Only collide with platform if moving down onto it and our feet are above its top                                continue;
+                        if (isPlatform && _collider.Bounds.Center.Y > neighbor.Bounds.Top)
+                            continue;
                         State.Below = true;
+                        State.StandingOn = neighbor;
+                    }
                     if (result.MinimumTranslationVector.Y < 0)
+                    {
+                        if(isPlatform)
+                            continue;
                         State.Above = true;
+                    }
 
                     verticalMotion.Y -= result.MinimumTranslationVector.Y;
                     collided = true;
@@ -117,7 +142,8 @@ namespace RoguelikeFNA
 
             foreach (var neighbor in neighbors)
             {
-                if (neighbor.IsTrigger)
+                // Ignore platforms when moving horizontally
+                if (neighbor.IsTrigger || IsPlatform(neighbor))
                     continue;
 
                 if (_collider.CollidesWith(neighbor, horizontalMotion, out CollisionResult result))
@@ -143,6 +169,7 @@ namespace RoguelikeFNA
             PreviousState.Left = State.Left;
             PreviousState.Right = State.Right;
             PreviousState.Above = State.Above;
+            PreviousState.StandingOn = State.StandingOn;
         }
 
         void ResetState()
@@ -151,6 +178,7 @@ namespace RoguelikeFNA
             State.Left = false;
             State.Right = false;
             State.Above = false;
+            State.StandingOn = null;
         }
     }
 }

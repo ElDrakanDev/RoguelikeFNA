@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using Nez;
 using System.Collections.Generic;
 
@@ -6,6 +7,7 @@ namespace RoguelikeFNA.Prefabs
     public class MovingPlatform : Component, IPrefab, IUpdatable
     {
         public float MoveSpeed = 50f;
+        public Vector2 DeltaMovement {get; private set;}
         public TiledEntity Start;
         [Inspectable] TiledEntity[] _points;
         int _currentPointIndex = 0;
@@ -17,7 +19,7 @@ namespace RoguelikeFNA.Prefabs
                 new BoxCollider(entity.Width, entity.Height)
                 {
                     CollidesWithLayers = (int)CollisionLayer.Entity,
-                    PhysicsLayer = (int)CollisionLayer.Ground
+                    PhysicsLayer = (int)CollisionLayer.Platform
                 }
             );
         }
@@ -60,7 +62,8 @@ namespace RoguelikeFNA.Prefabs
 
             // Move towards the target point
             direction.Normalize();
-            Entity.Position += direction * MoveSpeed * Time.DeltaTime;
+            DeltaMovement = direction * MoveSpeed * Time.DeltaTime;
+            Entity.Position += DeltaMovement;
         }
     }
 }

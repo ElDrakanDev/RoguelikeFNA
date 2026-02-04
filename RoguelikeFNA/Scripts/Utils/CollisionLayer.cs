@@ -10,5 +10,6 @@ namespace RoguelikeFNA
         Ground = 2,
         Interactable = 4,
         Projectile = 8,
+        Platform = 16,
     }
 }

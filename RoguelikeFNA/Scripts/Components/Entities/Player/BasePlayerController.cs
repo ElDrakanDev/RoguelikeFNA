@@ -101,10 +101,11 @@ namespace RoguelikeFNA.Player
                 Collider = Entity.AddComponent(new BoxCollider(new Rectangle(-12, -20, 33, 40))
                 {
                     PhysicsLayer = (int)CollisionLayer.Entity,
-                    CollidesWithLayers = (int)CollisionLayer.Ground
+                    CollidesWithLayers = (int)(CollisionLayer.Ground | CollisionLayer.Platform)
                 });
             }
 
+            Entity.GetOrCreateComponent<PlatformGroundedMovement>();
             Animator = Entity.GetComponent<SpriteAnimator>();
             HealthManager = Entity.AddComponent(new HealthManager(25));
             HealthManager.onDeath += e => { if (e.Canceled is false) Entity.Destroy(); };
@@ -117,6 +118,7 @@ namespace RoguelikeFNA.Player
         public virtual void Update()
         {
             _machine?.Update(Time.DeltaTime);
+            Mover.IgnorePlatforms = Input.Vertical.Value > 0;
             HandleInteractables();
         }
 
