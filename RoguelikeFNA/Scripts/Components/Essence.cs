@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Nez;
 using Nez.Sprites;
+using RoguelikeFNA.Generation;
 
 namespace RoguelikeFNA
 {
@@ -79,7 +80,7 @@ namespace RoguelikeFNA
                 Entity.Scene.GetSceneComponent<LevelNavigator>().OnRoomChanged -= AddEssence;
             }
 
-            void AddEssence(Entity _)
+            void AddEssence(Room _)
             {
                 _trail.Enabled = false;
                 Entity.Scene.GetSceneComponent<EssenceSceneComponent>().AddEssence(Value);

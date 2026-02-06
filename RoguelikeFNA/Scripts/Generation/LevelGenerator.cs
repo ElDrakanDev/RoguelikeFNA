@@ -28,8 +28,8 @@ namespace RoguelikeFNA.Generation
         //         return new RoomSpot() { DistanceToCenter = distance, Neighbors = neighbors, Position = position };
         //     }
         // }
-        Dictionary<RoomType, WeightedRandomGenerator<Room>> _roomGenerators = new();
-        List<Room> Rooms = new();
+        Dictionary<RoomType, WeightedRandomGenerator<RoomData>> _roomGenerators = new();
+        List<RoomData> Rooms = new();
         RNG rng;
         // Point _currentPos;
         // static Point[] _directions = new Point[] { new(-1, 0), new(1, 0), new(0, -1), new(0, 1) };
@@ -54,32 +54,32 @@ namespace RoguelikeFNA.Generation
             return level;
         }
 
-        Dictionary<RoomType, List<Room>> GetAvailableRooms(string roomFilesDir)
+        Dictionary<RoomType, List<RoomData>> GetAvailableRooms(string roomFilesDir)
         {
-            Dictionary<RoomType, List<Room>> rooms = new Dictionary<RoomType, List<Room>>();
+            Dictionary<RoomType, List<RoomData>> rooms = new Dictionary<RoomType, List<RoomData>>();
 
             var roomFiles = new List<string>();
             var types = Enum.GetValues(typeof(RoomType)).Cast<RoomType>();
 
             foreach (var type in types)
             {
-                rooms[type] = new List<Room>();
+                rooms[type] = new List<RoomData>();
                 var subdirectory = Path.Combine(roomFilesDir, Enum.GetName(typeof(RoomType), type));
                 if (Directory.Exists(subdirectory))
                 {
-                    roomFiles.AddRange(Directory.GetFiles(subdirectory, "*.tmx").Where(Room.IsValidFilename));
+                    roomFiles.AddRange(Directory.GetFiles(subdirectory, "*.tmx").Where(RoomData.IsValidFilename));
                 }
             }
 
             foreach (var roomFile in roomFiles)
             {
-                var room = Room.FromFilePath(roomFile);
+                var room = RoomData.FromFilePath(roomFile);
                 rooms[room.RoomType].Add(room);
             }
             return rooms;
         }
 
-        void CreateMinimumNormalRooms(Level level, Dictionary<RoomType, List<Room>> availableRooms, int amount)
+        void CreateMinimumNormalRooms(Level level, Dictionary<RoomType, List<RoomData>> availableRooms, int amount)
         {
             for (int i = 0; i < amount; i++)
             {
@@ -87,11 +87,11 @@ namespace RoguelikeFNA.Generation
             }
         }
 
-        void CreateRoom(Level level, Dictionary<RoomType, List<Room>> availableRooms, RoomType type)
+        void CreateRoom(Level level, Dictionary<RoomType, List<RoomData>> availableRooms, RoomType type)
         {
             if (!_roomGenerators.TryGetValue(type, out var generator))
             {
-                generator = new WeightedRandomGenerator<Room>(rng);
+                generator = new WeightedRandomGenerator<RoomData>(rng);
                 foreach (var room in availableRooms[type])
                     generator.AddItem(room, room.Weight);
                 _roomGenerators.Add(type, generator);
@@ -100,7 +100,7 @@ namespace RoguelikeFNA.Generation
         }
 
         void CreateAdditionalRooms(
-            Level level, Dictionary<RoomType, List<Room>> availableRooms, LevelGenerationConfig config
+            Level level, Dictionary<RoomType, List<RoomData>> availableRooms, LevelGenerationConfig config
         )
         {
             var types = new List<RoomType>();

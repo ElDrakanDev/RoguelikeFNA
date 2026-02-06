@@ -7,7 +7,7 @@ using System.Globalization;
 namespace RoguelikeFNA.Generation
 {
     [Serializable]
-    public class Room
+    public class RoomData
     {
         const char SEPARATOR = '_';
         const int EXPECTED_FILENAME_PARTS = 2;
@@ -18,7 +18,7 @@ namespace RoguelikeFNA.Generation
         public readonly int Weight;
         public readonly RoomType RoomType;
 
-        public Room(string tiledMapPath, string name, int weight, RoomType roomType)
+        public RoomData(string tiledMapPath, string name, int weight, RoomType roomType)
         {
             TiledMapPath = tiledMapPath;
             Name = name;
@@ -26,7 +26,7 @@ namespace RoguelikeFNA.Generation
             RoomType = roomType;
         }
 
-        public static Room FromFilePath(string path)
+        public static RoomData FromFilePath(string path)
         {
             var filename = Path.GetFileNameWithoutExtension(path);
             var parts = filename.Split(SEPARATOR);
@@ -37,7 +37,7 @@ namespace RoguelikeFNA.Generation
             var name = parts[0];
             var weight = int.Parse(parts[1], CultureInfo.InvariantCulture);
             var type = (RoomType)Enum.Parse(typeof(RoomType), Directory.GetParent(path).Name);
-            return new Room(path, name, weight, type);
+            return new RoomData(path, name, weight, type);
         }
 
         public static bool IsValidFilename(string path)

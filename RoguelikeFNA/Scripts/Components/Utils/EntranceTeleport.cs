@@ -1,5 +1,6 @@
 using System.Linq;
 using Nez;
+using RoguelikeFNA.Generation;
 
 namespace RoguelikeFNA
 {
@@ -20,7 +21,7 @@ namespace RoguelikeFNA
             Entity.Scene.GetSceneComponent<LevelNavigator>().OnRoomChanged -= MoveToEntrance;
         }
 
-        void MoveToEntrance(Entity tilemap)
+        void MoveToEntrance(Room room)
         {
             var entrances = Entity.Scene.FindEntitiesWithTag((int)Tag.Entrance).Enabled();
             if (entrances.Count() > 0)

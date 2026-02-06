@@ -3,6 +3,7 @@ using Nez;
 using Nez.Sprites;
 using Nez.Tweens;
 using System.Linq;
+using RoguelikeFNA.Generation;
 
 namespace RoguelikeFNA.Prefabs
 {

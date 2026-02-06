@@ -1,4 +1,5 @@
 using Nez;
+using RoguelikeFNA.Generation;
 
 namespace RoguelikeFNA.Rendering
 {
@@ -12,7 +13,7 @@ namespace RoguelikeFNA.Rendering
         public override void OnAddedToEntity()
         {
             base.OnAddedToEntity();
-            UpdateMapSize(Entity.Scene.GetSceneComponent<LevelNavigator>().ActiveTiledMap);
+            UpdateMapSize(Entity.Scene.GetSceneComponent<LevelNavigator>().ActiveRoom);
         }
 
         public override void OnEnabled()
@@ -27,8 +28,8 @@ namespace RoguelikeFNA.Rendering
             Entity.Scene.GetSceneComponent<LevelNavigator>().OnRoomChanged -= UpdateMapSize;
         }
 
-        void UpdateMapSize(Entity tmxEntity) {
-            MapSize = tmxEntity.GetComponent<TiledMapRenderer>().Bounds.Size;
+        void UpdateMapSize(Room room) {
+            MapSize = room.Entity.GetComponent<TiledMapRenderer>().Bounds.Size;
         }
     }
 }

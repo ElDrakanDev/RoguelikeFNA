@@ -69,6 +69,16 @@ namespace RoguelikeFNA
             foreach(var key in _directions.Keys)
                 if (Input.IsKeyPressed(key))
                     navigator.Move(_directions[key]);
+            
+            if(Core.DebugRenderEnabled && Input.RightMouseButtonPressed)
+            {
+                var player = FindEntitiesWithTag((int)Tag.Player);
+                if(player.Count == 0)
+                    return;
+                var nodes = navigator.ActiveRoom.FindPath(player[0].Position, Camera.MouseToWorldPoint());
+                foreach(var node in nodes)
+                    Debug.DrawPixel(node, 4, Color.Cyan, 3f);
+            }
         }
     }
 }

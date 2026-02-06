@@ -10,6 +10,6 @@ namespace RoguelikeFNA.Generation
     {
         public string Name;
         public LevelGenerationConfig GenerationConfig;
-        [NonSerialized] public List<Room> Rooms = new();
+        [NonSerialized] public List<RoomData> Rooms = new();
     }
 }
