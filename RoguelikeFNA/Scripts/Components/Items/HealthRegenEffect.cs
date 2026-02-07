@@ -27,7 +27,7 @@ namespace RoguelikeFNA.Items
             _counter += Time.DeltaTime;
             if(_counter >= RegenRate)
             {
-                Owner.GetComponent<HealthManager>()?.Heal(new HealInfo(RegenAmount, Owner));
+                Owner.GetComponent<HealthController>()?.Heal(new HealInfo(RegenAmount, Owner));
                 _counter = 0;
             }
         }

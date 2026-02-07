@@ -106,7 +106,7 @@ namespace RoguelikeFNA
             _hitboxHandler.OnCollisionEnter += OnHitOther;
             _hitboxHandler.Animator = _animator;
 
-            Entity.AddComponent(new HealthManager(25)).onDeath += e => { if (e.Canceled is false) Entity.Destroy(); };
+            Entity.AddComponent(new HealthController(25)).onDeath += e => { if (e.Canceled is false) Entity.Destroy(); };
             _stats = Entity.AddComponent(new EntityStats(5) { Team = EntityTeam.Friendly });
             _ammo = _maxAmmo;
 

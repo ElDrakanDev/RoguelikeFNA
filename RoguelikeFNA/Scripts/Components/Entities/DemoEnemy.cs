@@ -19,12 +19,12 @@ namespace RoguelikeFNA.Prefabs
         public override void OnAddedToEntity()
         {
             base.OnAddedToEntity();
-            _healthManager.onDeath += OnDeath;
+            HealthController.onDeath += OnDeath;
         }
 
         public override void OnRemovedFromEntity()
         {
-            _healthManager.onDeath -= OnDeath;
+            HealthController.onDeath -= OnDeath;
         }
 
         void OnDeath(object source)

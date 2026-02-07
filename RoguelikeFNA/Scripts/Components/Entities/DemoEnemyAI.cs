@@ -29,7 +29,7 @@ namespace RoguelikeFNA.Prefabs
         TiledMapMover.CollisionState _collisionState = new TiledMapMover.CollisionState();
         HitboxHandler _hitbox;
         FaceDirection _fDir;
-        HealthManager _healthManager;
+        HealthController _healthManager;
         PhysicsBody _body;
 
         const string IDLE_ANIM = "enemy_idle";
@@ -45,7 +45,7 @@ namespace RoguelikeFNA.Prefabs
             _fDir = Entity.GetComponent<FaceDirection>();
             _hitbox = Entity.GetComponent<HitboxHandler>();
             _stats = Entity.GetComponent<EntityStats>();
-            _healthManager = Entity.GetComponent<HealthManager>();
+            _healthManager = Entity.GetComponent<HealthController>();
             _body = Entity.GetComponent<PhysicsBody>();
             
             _healthManager.onDamageTaken += OnHit;

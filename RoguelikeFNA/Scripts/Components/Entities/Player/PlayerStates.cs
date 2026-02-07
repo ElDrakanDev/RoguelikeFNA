@@ -84,12 +84,12 @@ namespace RoguelikeFNA.Player
 
         public override bool WantsTransitionIn()
         {
-            return _context.Mover.IsGrounded && !_context.WantsAnyAction();
+            return _context.PlatformerMover.IsGrounded && !_context.WantsAnyAction();
         }
 
         public override bool WantsTransitionOut()
         {
-            return !_context.Mover.IsGrounded || _context.WantsAnyAction();
+            return !_context.PlatformerMover.IsGrounded || _context.WantsAnyAction();
         }
 
         public override void Update(float deltaTime)
@@ -109,12 +109,12 @@ namespace RoguelikeFNA.Player
 
         public override bool WantsTransitionIn()
         {
-            return _context.Mover.IsGrounded && _context.WantsMove();
+            return _context.PlatformerMover.IsGrounded && _context.WantsMove();
         }
 
         public override bool WantsTransitionOut()
         {
-            return !_context.Mover.IsGrounded || !_context.WantsMove() || _context.WantsAnyAction();
+            return !_context.PlatformerMover.IsGrounded || !_context.WantsMove() || _context.WantsAnyAction();
         }
 
         public override void Update(float deltaTime)
@@ -134,7 +134,7 @@ namespace RoguelikeFNA.Player
 
         public override bool WantsTransitionIn()
         {
-            return !_context.Mover.IsGrounded && _context.Body.Velocity.Y < 0;
+            return !_context.PlatformerMover.IsGrounded && _context.Body.Velocity.Y < 0;
         }
 
         public override void Update(float deltaTime)
@@ -156,7 +156,7 @@ namespace RoguelikeFNA.Player
 
         public override bool WantsTransitionIn()
         {
-            return !_context.Mover.IsGrounded && _context.Body.Velocity.Y > FALL_THRESHOLD;
+            return !_context.PlatformerMover.IsGrounded && _context.Body.Velocity.Y > FALL_THRESHOLD;
         }
 
         public override void Update(float deltaTime)
@@ -220,12 +220,12 @@ namespace RoguelikeFNA.Player
 
         public override bool WantsTransitionOut()
         {
-            return base.WantsTransitionOut() || !_context.Mover.IsGrounded;
+            return base.WantsTransitionOut() || !_context.PlatformerMover.IsGrounded;
         }
 
         public override bool WantsTransitionIn()
         {
-            return _attackButtonGetter().IsPressed && _context.Mover.IsGrounded;
+            return _attackButtonGetter().IsPressed && _context.PlatformerMover.IsGrounded;
         }
 
         public override void Update(float deltaTime)
@@ -241,12 +241,12 @@ namespace RoguelikeFNA.Player
 
         public override bool WantsTransitionOut()
         {
-            return base.WantsTransitionOut() || _context.Mover.IsGrounded;
+            return base.WantsTransitionOut() || _context.PlatformerMover.IsGrounded;
         }
 
         public override bool WantsTransitionIn()
         {
-            return !_context.Mover.IsGrounded && _attackButtonGetter().IsPressed;
+            return !_context.PlatformerMover.IsGrounded && _attackButtonGetter().IsPressed;
         }
 
         public override void Update(float deltaTime)

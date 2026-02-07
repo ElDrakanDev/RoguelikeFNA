@@ -14,7 +14,7 @@ namespace RoguelikeFNA.Player
     /// 
     /// This is intentionally minimal and meant to be extended.
     /// </summary>
-    public abstract class BasePlayerController : Component, IUpdatable
+    public abstract class BasePlayerController : GameEntity, IUpdatable
     {
         [Inspectable] protected float _speed = 150f;
         [Inspectable] protected float _gravity = 900f;
@@ -37,18 +37,14 @@ namespace RoguelikeFNA.Player
         public PlayerInput Input { get; }
 
         public FaceDirection FaceDirection { get; protected set; }
-        public PhysicsBody Body { get; protected set; }
-        public PlatformerMover Mover { get; protected set; }
-        public BoxCollider Collider { get; protected set; }
 
         // Optional: if present, the states will play animations.
         public SpriteAnimator Animator { get; protected set; }
-        public HealthManager HealthManager { get; protected set; }
-        public EntityStats Stats { get; protected set; }
 
         protected StateMachine<BasePlayerController> _machine;
         public StateMachine<BasePlayerController> Machine => _machine;
         public CharacterState CurrentState => (CharacterState)_machine.CurrentState;
+        public PlatformerMover PlatformerMover => (PlatformerMover)Mover;
 
         internal bool HurtRequested => _hurtRequested;
         internal void ClearHurtRequest() => _hurtRequested = false;
@@ -85,40 +81,35 @@ namespace RoguelikeFNA.Player
 
         public override void OnAddedToEntity()
         {
+            Team = EntityTeam.Friendly; // Ensure player team is set to Friendly
             base.OnAddedToEntity();
 
             FaceDirection = Entity.GetOrCreateComponent<FaceDirection>();
             Entity.AddComponent<EntranceTeleport>();
 
-            // These are required for motion.
-            Body = Entity.GetOrCreateComponent<PhysicsBody>();
-            Mover = Entity.GetOrCreateComponent<PlatformerMover>();
-
-            // Collider is required for PlatformerMover.
-            Collider = Entity.GetComponent<BoxCollider>();
-            if (Collider == null)
-            {
-                Collider = Entity.AddComponent(new BoxCollider(new Rectangle(-12, -20, 33, 40))
-                {
-                    PhysicsLayer = (int)CollisionLayer.Entity,
-                    CollidesWithLayers = (int)(CollisionLayer.Ground | CollisionLayer.Platform)
-                });
-            }
-
             Entity.GetOrCreateComponent<PlatformGroundedMovement>();
             Animator = Entity.GetComponent<SpriteAnimator>();
-            HealthManager = Entity.AddComponent(new HealthManager(25));
-            HealthManager.onDeath += e => { if (e.Canceled is false) Entity.Destroy(); };
-            Stats = Entity.AddComponent(new EntityStats(5) { Team = EntityTeam.Friendly });
+            HealthController.onDeath += e => { if (e.Canceled is false) Entity.Destroy(); };
 
             SetupStates();
             SetupStateMachine();
         }
 
+        protected override Collider PrefabCollider()
+        {
+            return new BoxCollider(new Rectangle(-12, -20, 33, 40))
+            {
+                PhysicsLayer = (int)CollisionLayer.Entity,
+                CollidesWithLayers = (int)(CollisionLayer.Ground | CollisionLayer.Platform)
+            };
+        }
+
+        protected override IMover CreateMover() => new PlatformerMover();
+
         public virtual void Update()
         {
             _machine?.Update(Time.DeltaTime);
-            Mover.IgnorePlatforms = Input.Vertical.Value > 0;
+            PlatformerMover.IgnorePlatforms = Input.Vertical.Value > 0;
             HandleInteractables();
         }
 
@@ -133,14 +124,14 @@ namespace RoguelikeFNA.Player
 
         internal void ApplyCommonVerticalPhysics()
         {
-            if (Mover == null)
+            if (PlatformerMover == null)
                 return;
 
             // Ceiling bonk: cancel upward velocity
-            if (Mover.State.Above && Body.Velocity.Y < 0)
+            if (PlatformerMover.State.Above && Body.Velocity.Y < 0)
                 Body.Velocity.Y = 0;
 
-            if (!Mover.IsGrounded)
+            if (!PlatformerMover.IsGrounded)
             {
                 Body.Velocity.Y += _gravity * Time.DeltaTime;
             }
@@ -154,7 +145,7 @@ namespace RoguelikeFNA.Player
 
         public CharacterState DefaultState()
         {
-            if (Mover.IsGrounded)
+            if (PlatformerMover.IsGrounded)
             {
                 if(WantsMove())
                     return _walkState;
@@ -176,7 +167,7 @@ namespace RoguelikeFNA.Player
 
         internal void TryConsumeJump()
         {
-            if (Mover == null || !CurrentState.CanJump())
+            if (PlatformerMover == null || !CurrentState.CanJump())
                 return;
 
             if (_groundedBufferTime > 0 && _jumpInputBufferTime > 0)
@@ -185,11 +176,11 @@ namespace RoguelikeFNA.Player
                 _groundedBufferTime = 0;
 
                 Body.Velocity.Y = -_jumpForce;
-                Mover.SetLeftGround();
+                PlatformerMover.SetLeftGround();
             }
 
             // Jump cut (short hop)
-            if (!Mover.IsGrounded && Body.Velocity.Y < 0 && (Input?.Jump.IsReleased ?? false))
+            if (!PlatformerMover.IsGrounded && Body.Velocity.Y < 0 && (Input?.Jump.IsReleased ?? false))
                 Body.Velocity.Y *= 0.5f;
         }
 

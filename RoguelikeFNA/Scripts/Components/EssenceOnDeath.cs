@@ -13,12 +13,12 @@ namespace RoguelikeFNA
 
         public override void OnAddedToEntity()
         {
-            Entity.GetComponent<HealthManager>().onDeath += DropEssence;
+            Entity.GetComponent<HealthController>().onDeath += DropEssence;
         }
 
         public override void OnRemovedFromEntity()
         {
-            Entity.GetComponent<HealthManager>().onDeath -= DropEssence;
+            Entity.GetComponent<HealthController>().onDeath -= DropEssence;
         }
 
         void DropEssence(DeathInfo dInfo)

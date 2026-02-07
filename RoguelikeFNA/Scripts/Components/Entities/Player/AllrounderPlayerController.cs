@@ -128,7 +128,7 @@ namespace RoguelikeFNA.Player
 
         public override CharacterState AttackState()
         {
-            if(Mover.IsGrounded)
+            if(PlatformerMover.IsGrounded)
                 return _groundedAttackState;
             else
                 return _airAttackState;
@@ -136,7 +136,7 @@ namespace RoguelikeFNA.Player
 
         public override CharacterState SpecialState()
         {
-            if(Mover.IsGrounded)
+            if(PlatformerMover.IsGrounded)
                 return _groundedShootState;
             else
                 return _airShootState;
@@ -144,7 +144,7 @@ namespace RoguelikeFNA.Player
 
         public override CharacterState DashState()
         {
-            if(Mover.IsGrounded)
+            if(PlatformerMover.IsGrounded)
                 return _dashState;
             else
                 return null;
@@ -168,7 +168,7 @@ namespace RoguelikeFNA.Player
 
         public override bool WantsTransitionOut()
         {
-            return !_context.Mover.IsGrounded || _machine.ElapsedTimeInState >= DashDuration || _context.WantsAttack() || _context.WantsSpecial();
+            return !_context.PlatformerMover.IsGrounded || _machine.ElapsedTimeInState >= DashDuration || _context.WantsAttack() || _context.WantsSpecial();
         }
 
         public override void Update(float deltaTime)

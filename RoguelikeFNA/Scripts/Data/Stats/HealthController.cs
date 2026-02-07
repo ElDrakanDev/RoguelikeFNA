@@ -42,7 +42,7 @@ namespace RoguelikeFNA
             Source = source;
         }
     }
-    public class HealthManager : Component
+    public class HealthController : Component
     {
         int _health;
         public readonly Stat MaxHealth;
@@ -57,22 +57,22 @@ namespace RoguelikeFNA
                 else _health = value;
             }
         }
-        public HealthManager(int health, int maxHealth, int minMaxHealth = 1)
+        public HealthController(int health, int maxHealth, int minMaxHealth = 1)
         {
             MaxHealth = new Stat(maxHealth, Entity, minMaxHealth);
             Health = health;
         }
-        public HealthManager(int health, Stat maxHealth)
+        public HealthController(int health, Stat maxHealth)
         {
             MaxHealth = maxHealth;
             Health = health;
         }
-        public HealthManager(int maxHealth, int minMaxHealth = 1)
+        public HealthController(int maxHealth, int minMaxHealth = 1)
         {
             MaxHealth = new Stat(maxHealth, Entity, minMaxHealth);
             Health = Mathf.RoundToInt(MaxHealth);
         }
-        public HealthManager(Stat maxHealth)
+        public HealthController(Stat maxHealth)
         {
             MaxHealth = maxHealth;
             Health = Mathf.RoundToInt(MaxHealth);

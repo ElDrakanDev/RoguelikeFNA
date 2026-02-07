@@ -22,7 +22,7 @@ namespace RoguelikeFNA
         public readonly Dictionary<StatID, Stat> Stats = new();
         [Inspectable] public EntityTeam Team;
         [Inspectable] public int TargetTeams;
-        public HealthManager HealthManager { get; private set; }
+        public HealthController HealthManager { get; private set; }
 
         public EntityStats(float damage = 1)
         {
@@ -32,7 +32,7 @@ namespace RoguelikeFNA
         public override void OnAddedToEntity()
         {
             base.OnAddedToEntity();
-            HealthManager = Entity.GetComponent<HealthManager>();
+            HealthManager = Entity.GetComponent<HealthController>();
             Stats[StatID.Health] = HealthManager.MaxHealth;
 
             foreach (var stat in Stats.Values)
