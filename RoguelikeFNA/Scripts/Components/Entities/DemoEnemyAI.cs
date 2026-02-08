@@ -182,17 +182,18 @@ namespace RoguelikeFNA.Prefabs
 
         #endregion
 
-        EntityStats GetClosestTarget()
+        GameEntity GetClosestTarget()
         {
-            var enemies = Entity.Scene.FindComponentsOfType<EntityStats>()
-                .Where(s => Flags.IsFlagSet(_stats.TargetTeams, (int)s.Team)
-                    && s.InRange(Transform.Position, _detectRange)
-                    && s.LineOfSight(Transform.Position)).ToList();
+            var enemies = GameEntityManager.Entities
+                .OfTeam(_stats.TargetTeams)
+                .InRange(Transform.Position, _detectRange)
+                .LineOfSight(Transform.Position)
+                .ToList();
 
             Debug.DrawCircle(Transform.Position, Color.Yellow, _detectRange);
 
             if (enemies.Count > 0)
-                return enemies.Closest(Transform.Position);
+                return enemies.ClosestTo(Transform.Position);
             return null;
         }
 

@@ -37,7 +37,15 @@ namespace RoguelikeFNA
             Mover = Entity.GetComponent<IMover>();
             Collider = Entity.GetComponent<Collider>();
             Body = Entity.GetComponent<PhysicsBody>();
+
+            HealthController.onDeath += (source) => UnregisterEntity();
+
+            GameEntityManager.RegisterEntity(this);
         }
+
+        public override void OnRemovedFromEntity() => UnregisterEntity();
+
+        protected void UnregisterEntity() => GameEntityManager.UnregisterEntity(this);
 
         public virtual void LoadPrefab()
         {

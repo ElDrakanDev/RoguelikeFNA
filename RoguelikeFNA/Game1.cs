@@ -20,6 +20,8 @@ namespace RoguelikeFNA
             Core.RegisterGlobalManager(new InputManager());
             Core.RegisterGlobalManager(new RNGManager());
             Core.RegisterGlobalManager(new ItemRepository());
+            Core.RegisterGlobalManager(new GameEntityManager());
+
 #if DEBUG
             // DebugRenderEnabled = true;
             System.Diagnostics.Debug.Listeners.Add(new System.Diagnostics.TextWriterTraceListener(System.Console.Out));
