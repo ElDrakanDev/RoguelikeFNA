@@ -54,6 +54,7 @@ namespace RoguelikeFNA
             Mover = (IMover)Entity.AddComponent((Component)CreateMover());
             Collider = Entity.AddComponent(PrefabCollider());
             Body = Entity.AddComponent(new PhysicsBody());
+            _isInitialized = true;
         }
 
         protected virtual IMover CreateMover() => new TiledMapMover(Parent.GetComponent<TiledMapRenderer>()?.CollisionLayer);
