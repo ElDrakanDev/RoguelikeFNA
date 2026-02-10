@@ -27,6 +27,23 @@ namespace RoguelikeFNA.Utils
 
         public List<SerializedChild> Children;
 
+        public Entity ToEntity(Entity parent)
+        {
+            Entity entity;
+            if (TypeName != string.Empty)
+            {
+                if (_types.TryGetValue(TypeName, out Type type) is false)
+                {
+                    type = Type.GetType(TypeName, true);
+                    _types[TypeName] = type;
+                }
+                entity = (Entity)Activator.CreateInstance(type);
+            }
+            else
+                entity = new Entity();
+            return SetEntityValues(entity, parent);
+        }
+
         /// <summary>
         /// Converts the SerializedEntity to Entity and adds it to the Scene. Will also add its children.
         /// </summary>
@@ -46,30 +63,17 @@ namespace RoguelikeFNA.Utils
         /// </summary>
         /// <param name="parent"></param>
         /// <returns></returns>
-        public virtual Entity ToEntity(Entity parent = null)
-        {
-            Entity entity;
-            if (TypeName != string.Empty)
-            {
-                if (_types.TryGetValue(TypeName, out Type type) is false)
-                {
-                    type = Type.GetType(TypeName, true);
-                    _types[TypeName] = type;
-                }
-                entity = (Entity)Activator.CreateInstance(type);
-            }
-            else
-                entity = new Entity();
-            
-            entity.LocalScale = Scale;
-            entity.Enabled = Enabled;
-            entity.Name = Name;
-            entity.Tag = Tag;
+        public virtual Entity SetEntityValues(Entity self, Entity parent = null)
+        {            
+            self.LocalScale = Scale;
+            self.Enabled = Enabled;
+            self.Name = Name;
+            self.Tag = Tag;
 
             foreach(var component in Components)
-               entity.AddComponent(component.Clone());
+               self.AddComponent(component.Clone());
 
-            return entity;
+            return self;
         }
     }
 
@@ -79,9 +83,9 @@ namespace RoguelikeFNA.Utils
         public Vector2 Offset;
         public float Rotation;
 
-        override public Entity ToEntity(Entity parent = null)
+        override public Entity SetEntityValues(Entity self, Entity parent = null)
         {
-            var entity = base.ToEntity(parent);
+            var entity = base.SetEntityValues(self, parent);
             if(parent != null)
             {
                 entity.SetParent(parent);
