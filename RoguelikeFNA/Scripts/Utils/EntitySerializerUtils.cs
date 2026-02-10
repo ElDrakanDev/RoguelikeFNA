@@ -21,13 +21,11 @@ namespace RoguelikeFNA.Utils
         public int Tag;
         public string TypeName;
 
-        public Vector2 Offset;
         public Vector2 Scale;
-        public float Rotation;
 
         public List<Component> Components;
 
-        public List<SerializedEntity> Children;
+        public List<SerializedChild> Children;
 
         /// <summary>
         /// Converts the SerializedEntity to Entity and adds it to the Scene. Will also add its children.
@@ -48,7 +46,7 @@ namespace RoguelikeFNA.Utils
         /// </summary>
         /// <param name="parent"></param>
         /// <returns></returns>
-        public Entity ToEntity(Entity parent = null)
+        public virtual Entity ToEntity(Entity parent = null)
         {
             Entity entity;
             if (TypeName != string.Empty)
@@ -63,12 +61,6 @@ namespace RoguelikeFNA.Utils
             else
                 entity = new Entity();
             
-            if(parent != null)
-            {
-                entity.SetParent(parent);
-                entity.LocalPosition = Offset;
-            }
-            entity.LocalRotation = Rotation;
             entity.LocalScale = Scale;
             entity.Enabled = Enabled;
             entity.Name = Name;
@@ -77,6 +69,25 @@ namespace RoguelikeFNA.Utils
             foreach(var component in Components)
                entity.AddComponent(component.Clone());
 
+            return entity;
+        }
+    }
+
+    [Serializable]
+    public class SerializedChild : SerializedEntity
+    {
+        public Vector2 Offset;
+        public float Rotation;
+
+        override public Entity ToEntity(Entity parent = null)
+        {
+            var entity = base.ToEntity(parent);
+            if(parent != null)
+            {
+                entity.SetParent(parent);
+                entity.LocalPosition = Offset;
+            }
+            entity.LocalRotation = Rotation;
             return entity;
         }
     }
@@ -134,7 +145,6 @@ namespace RoguelikeFNA.Utils
             }
         }
 
-
         public static SerializedEntity ConvertToSerialized(Entity entity)
         {
             var serialized = new SerializedEntity()
@@ -144,33 +154,63 @@ namespace RoguelikeFNA.Utils
                 Enabled = entity.Enabled,
                 Tag = entity.Tag,
                 Scale = entity.LocalScale,
-                Rotation = entity.LocalRotation,
-                Children = new List<SerializedEntity>(),
-                Components = new List<Component>()
+                Children = new(),
+                Components = new()
             };
-            if (entity.GetType().IsSubclassOf(typeof(Entity)))
-                serialized.TypeName = entity.GetType().FullName;
+            SetEntityTypeName(serialized, entity);
+            AddChildrenToSerialized(serialized, entity);
+            AddComponentsToSerialized(serialized, entity);
 
-            if (entity.Transform.Parent != null)
-                serialized.Offset = entity.LocalPosition;
+            return serialized;
+        }
 
-            if(entity.ChildCount > 0)
+        static SerializedChild ConvertToSerializedChild(Entity entity)
+        {
+            var serialized = new SerializedChild()
             {
-                for (int i = 0; i < entity.ChildCount; i++)
-                {
-                    var child = entity.Transform.GetChild(i).Entity;
-                    serialized.Children.Add(ConvertToSerialized(child));
-                }
-            }
+                Name = entity.Name,
+                TypeName = string.Empty,
+                Enabled = entity.Enabled,
+                Tag = entity.Tag,
+                Scale = entity.LocalScale,
+                Rotation = entity.LocalRotation,
+                Offset = entity.LocalPosition,
+                Children = new(),
+                Components = new()
+            };
+            SetEntityTypeName(serialized, entity);
+            AddChildrenToSerialized(serialized, entity);
+            AddComponentsToSerialized(serialized, entity);
 
+            return serialized;
+        }
+
+        static void AddComponentsToSerialized(SerializedEntity serialized, Entity entity)
+        {
             for (int i = 0; i < entity.Components.Count; i++)
             {
                 var component = entity.Components[i];
                 if (component.GetType().GetAttribute<SerializableAttribute>() != null)
                     serialized.Components.Add(component.Clone());
             }
+        }
 
-            return serialized;
+        static void AddChildrenToSerialized(SerializedEntity serialized, Entity entity)
+        {
+            if(entity.ChildCount > 0)
+            {
+                for (int i = 0; i < entity.ChildCount; i++)
+                {
+                    var child = entity.Transform.GetChild(i).Entity;
+                    serialized.Children.Add(ConvertToSerializedChild(child));
+                }
+            }
+        }
+
+        static void SetEntityTypeName(SerializedEntity serialized, Entity entity)
+        {
+            if (entity.GetType().IsSubclassOf(typeof(Entity)))
+                serialized.TypeName = entity.GetType().FullName;
         }
     }
 }

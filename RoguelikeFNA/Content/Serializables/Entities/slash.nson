@@ -3,15 +3,10 @@ RoguelikeFNA.Utils.SerializedEntity(
 	Enabled: true,
 	Tag: 0,
 	TypeName: "",
-	Offset: Microsoft.Xna.Framework.Vector2(
-		X: 0,
-		Y: 0
-	),
 	Scale: Microsoft.Xna.Framework.Vector2(
 		X: 1,
 		Y: 1
 	),
-	Rotation: 0,
 	Components: [
     	Nez.Sprites.SpriteAnimator(
     		Speed: 1,
