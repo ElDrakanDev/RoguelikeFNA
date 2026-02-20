@@ -1,0 +1,88 @@
+RoguelikeFNA.Utils.SerializedEntity(
+	Name: "zero",
+	Enabled: true,
+	Tag: 2,
+	TypeName: "",
+	Scale: Microsoft.Xna.Framework.Vector2(
+		X: 1,
+		Y: 1
+	),
+	Components: [
+    	Nez.Sprites.SpriteAnimator(
+    		Speed: 1,
+    		AtlasPath: "./Content/Atlases/zero/zero.atlas",
+    		SpriteEffects: "None",
+    		Color: #FFFFFFFF,
+    		DebugRenderEnabled: true,
+            _localOffset: Microsoft.Xna.Framework.Vector2(
+                X: 12,
+                Y: 0
+            )
+    	),
+        Nez.PhysicsBody(),
+		RoguelikeFNA.PlatformerMover(),
+		RoguelikeFNA.Utils.BoxColliderWrapper(
+			PhysicsLayer: "Entity",
+			CollidesWithLayers: "Ground,Platform",
+			Width: 33,
+			Height: 40,
+			IsTrigger: false,
+			Offset: Microsoft.Xna.Framework.Vector2(
+				X: 0,
+				Y: 0
+			),
+		),
+        RoguelikeFNA.Utils.EntranceTeleport(),
+        RoguelikeFNA.Utils.EntityStatsWrapper(
+            BaseStats: {
+                Health: 25,
+                Damage: 1
+            },
+            Team: "Friendly",
+            TargetTeams: "Enemy"
+        ),
+        RoguelikeFNA.HealthController(),
+        Nez.Sprites.SpriteTrail(
+            InitialColor: #800080FF,
+            FadeToColor: #80008000,
+            FadeDelay: 0,
+            FadeDuration: 0.2,
+            _maxSpriteInstances: 30,
+            MinDistanceBetweenInstances: 0.1
+        ),
+    	RoguelikeFNA.Player.AllrounderPlayerController()
+    ],
+	Children: [
+        RoguelikeFNA.Utils.SerializedChild(
+            Name: "shootPos",
+            Enabled: true,
+            Tag: 0,
+            TypeName: "",
+            Scale: Microsoft.Xna.Framework.Vector2(
+                X: 1,
+                Y: 1
+            ),
+            Offset: Microsoft.Xna.Framework.Vector2(
+                X: 40,
+                Y: 0
+            ),
+            Components: []
+        ),
+        RoguelikeFNA.Utils.SerializedChild(
+            Name: "slashPos",
+            Enabled: true,
+            Tag: 0,
+            TypeName: "",
+            Scale: Microsoft.Xna.Framework.Vector2(
+                X: 1,
+                Y: 1
+            ),
+            Offset: Microsoft.Xna.Framework.Vector2(
+                X: 40,
+                Y: 0
+            ),
+            ,
+            Components: []
+        )
+	]
+)

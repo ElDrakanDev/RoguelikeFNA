@@ -16,6 +16,7 @@ namespace RoguelikeFNA
         Shop = 2,
         Boss = 4,
         Story = 8,
+        Treasure = 16,
     }
 
     public class Item : Component, IInteractListener, IUpdatable
@@ -45,9 +46,9 @@ namespace RoguelikeFNA
             Insist.IsNotNull(ItemId);
             if (_hasBeenPickedUp) return;
             Insist.IsNotNull(Texture);
-            Entity.AddComponent(new SpriteRenderer(Texture));
-            Entity.AddComponent(new InteractableOutline());
-            Entity.AddComponent(new BoxCollider() { PhysicsLayer = (int)CollisionLayer.Interactable });
+            Entity.GetOrCreateComponent<SpriteRenderer>().SetTexture(Texture);
+            Entity.GetOrCreateComponent<InteractableOutline>();
+            Entity.GetOrCreateComponent<BoxCollider>().PhysicsLayer = (int)CollisionLayer.Interactable;
         }
 
         public void OnHover(Entity source)
@@ -63,8 +64,7 @@ namespace RoguelikeFNA
 
             foreach (var effect in itemClone.Effects)
                 effect.OnPickup(source, itemClone);
-            if (Entity != null)
-                Entity.Destroy();
+            Entity?.Destroy();
         }
 
         public void RemoveItem()
@@ -74,7 +74,7 @@ namespace RoguelikeFNA
 
             foreach (var effect in Effects)
                 effect.OnRemove();
-            Entity.RemoveComponent(this);
+            Entity?.RemoveComponent(this);
         }
 
         public void Update()

@@ -1,6 +1,7 @@
 using Nez;
 using Nez.ImGuiTools;
 using RoguelikeFNA.Items;
+using RoguelikeFNA.Entities;
 
 namespace RoguelikeFNA
 {

@@ -1,8 +1,10 @@
 ﻿using Nez;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace RoguelikeFNA
 {
+    [Serializable]
     public class FaceDirection : Component
     {
         public bool FacingRight { get; private set; } = false;

@@ -7,6 +7,7 @@ using RoguelikeFNA.Utils;
 
 namespace RoguelikeFNA.Player
 {
+    [Serializable]
     public class AllrounderPlayerController : BasePlayerController
     {
         [Inspectable] protected string _attackAnim = "zero_attack1";
@@ -35,6 +36,8 @@ namespace RoguelikeFNA.Player
         protected AttackState _airShootState;
         protected WalkState _dashState;
         public bool ApplyDashMultiplier = false;
+
+        public AllrounderPlayerController() : base() { }
 
         public AllrounderPlayerController(PlayerInput input) : base(input){}
 
@@ -107,15 +110,13 @@ namespace RoguelikeFNA.Player
             _shootSfx = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.BusterShot_WAV);
             _projectile = Entity.Scene.Content.LoadNson<SerializedEntity>(ContentPath.Serializables.Entities.Bullet_nson);
             _slash = Entity.Scene.Content.LoadNson<SerializedEntity>(ContentPath.Serializables.Entities.Slash_nson);
-            _shootPos = Entity.Scene.CreateEntity("shootPos")
-                .SetParent(Transform)
-                .SetLocalPosition(new Vector2(40, 0));
-            _slashPos = Entity.Scene.CreateEntity("slashPos")
-                .SetParent(Transform)
-                .SetLocalPosition(new Vector2(40, 0));
-            var spriteTrail = Entity.AddComponent(new SpriteTrail());
-            spriteTrail.SetInitialColor(new Color(0.5f, 0, 0, 0.5f)).SetFadeToColor(Color.Transparent);
-            spriteTrail.SetFadeDuration(0.2f).SetMaxSpriteInstances(30).SetMinDistanceBetweenInstances(0.1f);
+            _shootPos = Entity.GetChild("shootPos");
+                // .SetParent(Transform)
+                // .SetLocalPosition(new Vector2(40, 0));
+            _slashPos = Entity.GetChild("slashPos");
+                // .SetParent(Transform)
+                // .SetLocalPosition(new Vector2(40, 0));
+            var spriteTrail = Entity.GetComponent<SpriteTrail>();
             spriteTrail.DisableSpriteTrail();
         }
 
@@ -124,6 +125,11 @@ namespace RoguelikeFNA.Player
             if((_machine.CurrentState == _idleState || _machine.CurrentState == _walkState) && Input.Dash.IsPressed)
                 ChangeStateTo(_dashState);
             base.Update();
+        }
+
+        protected override void OnJump()
+        {
+            SoundEffectManager.Play(_jumpSfx);
         }
 
         public override CharacterState AttackState()

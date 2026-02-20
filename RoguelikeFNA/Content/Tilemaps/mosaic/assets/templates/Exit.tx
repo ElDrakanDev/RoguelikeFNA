@@ -2,8 +2,7 @@
 <template>
  <object name="Exit" width="32" height="32">
   <properties>
-   <property name="InternalType" value="RoguelikeFNA.Prefabs.Portal"/>
-   <property name="IsExit" type="bool" value="true"/>
+   <property name="Serializable" value="./Content/Serializables/Entities/exit.nson"/>
   </properties>
  </object>
 </template>

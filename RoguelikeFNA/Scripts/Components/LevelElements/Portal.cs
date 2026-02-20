@@ -1,15 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Nez;
-using Nez.Sprites;
 using Nez.Tweens;
-using System.Linq;
 using RoguelikeFNA.Generation;
 
-namespace RoguelikeFNA.Prefabs
+namespace RoguelikeFNA.LevelElements
 {
-    public class Portal : Component, IInteractListener, IPrefab
+    public class Portal : Component, IInteractListener
     {
-        SpriteAnimator _anim;
         public bool IsExit;
         const float ENTRANCE_TWEEN_TIME = 1f;
         ITween<Vector2> _tween;
@@ -27,15 +24,6 @@ namespace RoguelikeFNA.Prefabs
                 Transform.LocalScale = Vector2.One;
                 _tween.Start();
             }
-        }
-
-        public void LoadPrefab()
-        {
-            _anim = Entity.AddComponent(new SpriteAnimator())
-                .AddAnimationsFromAtlas(Entity.Scene.Content.LoadSpriteAtlas(ContentPath.Atlases.Portal.Portal_atlas));
-            _anim.Play(_anim.Animations.Keys.First());
-            if (IsExit)
-                Entity.AddComponent(new InteractableOutline());
         }
 
         public void OnHover(Entity source)

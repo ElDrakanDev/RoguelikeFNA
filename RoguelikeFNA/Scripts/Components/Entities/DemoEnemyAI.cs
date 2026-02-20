@@ -2,45 +2,39 @@ using System;
 using Nez;
 using Nez.Sprites;
 using Nez.AI.FSM;
-using Nez.Tiled;
 using Microsoft.Xna.Framework;
 using System.Linq;
 
-namespace RoguelikeFNA.Prefabs
+namespace RoguelikeFNA.Entities
 {
-    public enum PatrolStates
+    [Serializable]
+    public class DemoEnemyAI : Component, IUpdatable
     {
-        Stay, Patrol, Hurt, Chase, Attack
-    }
+        [Inspectable] public float Gravity = 20;
+        [Inspectable] public float Speed = 40;
+        [Inspectable] public float DetectRange = 150f;
+        [Inspectable] public float StayTime = 2f;
 
-    public class DemoEnemyAI : SimpleStateMachine<PatrolStates>
-    {
-        [Inspectable] float _gravity = 20;
-        [Inspectable] float _speed = 40;
-        [Inspectable] float _detectRange = 150f;
-        [Inspectable] float _stayTime = 2f;
-
-        Vector2 _movingTowards;
-
+        StateMachine<GameEntity> _stateMachine;
+        
         EntityStats _stats;
         SpriteAnimator _animator;
-        TiledMapMover _mover;
+        PlatformerMover _mover;
         BoxCollider _collider;
-        TiledMapMover.CollisionState _collisionState = new TiledMapMover.CollisionState();
         HitboxHandler _hitbox;
         FaceDirection _fDir;
         HealthController _healthManager;
         PhysicsBody _body;
+        GameEntity _gameEntity;
 
         const string IDLE_ANIM = "enemy_idle";
-        const string HIT_ANIM = "enemy_hit";
-        const string WALK_ANIM = "enemy_move";
-        const string ATTACK_ANIM = "enemy_attack";
 
         public override void OnAddedToEntity()
         {
+            base.OnAddedToEntity();
+            _gameEntity = Entity.GetComponent<GameEntity>();
             _animator = Entity.GetComponent<SpriteAnimator>();
-            _mover = Entity.GetComponent<TiledMapMover>();
+            _mover = Entity.GetComponent<PlatformerMover>();
             _collider = Entity.GetComponent<BoxCollider>();
             _fDir = Entity.GetComponent<FaceDirection>();
             _hitbox = Entity.GetComponent<HitboxHandler>();
@@ -48,11 +42,16 @@ namespace RoguelikeFNA.Prefabs
             _healthManager = Entity.GetComponent<HealthController>();
             _body = Entity.GetComponent<PhysicsBody>();
             
+            // Create state machine with initial state
+            _stateMachine = new StateMachine<GameEntity>(_gameEntity, new StayState());
+            _stateMachine.AddState(new PatrolState());
+            _stateMachine.AddState(new ChaseState());
+            _stateMachine.AddState(new HurtState());
+            _stateMachine.AddState(new AttackState());
+            
             _healthManager.onDamageTaken += OnHit;
             _animator.OnAnimationCompletedEvent += OnAnimationComplete;
             _hitbox.OnCollisionEnter += OnHitboxEnter;
-            
-            InitialState = PatrolStates.Stay;
         }
 
         public override void OnRemovedFromEntity()
@@ -66,138 +65,62 @@ namespace RoguelikeFNA.Prefabs
         void OnHit(DamageInfo info)
         {
             if (info.Canceled is false)
-                CurrentState = PatrolStates.Hurt;
+                _stateMachine.ChangeState<HurtState>();
         }
 
         void OnAnimationComplete(string anim)
         {
-            if (anim == HIT_ANIM || anim == ATTACK_ANIM)
-                CurrentState = PatrolStates.Stay;
+            if (_stateMachine.CurrentState is HurtState hurtState)
+            {
+                hurtState.OnAnimationComplete(anim);
+            }
+            else if (_stateMachine.CurrentState is AttackState attackState)
+            {
+                attackState.OnAnimationComplete(anim);
+            }
         }
 
-        public override void Update()
+        public void Update()
         {
-            _body.Velocity.Y += _gravity * Time.DeltaTime;
-            if (_collisionState.Below)
+            _body.Velocity.Y += Gravity * Time.DeltaTime;
+            if (_mover.IsGrounded)
                 _body.Velocity.Y = 0;
-            _mover.Move(_body.Velocity, _collider, _collisionState);
             _fDir.CheckFacingSide(_body.Velocity.X);
-            base.Update();
+            
+            _stateMachine.Update(Time.DeltaTime);
         }
 
         void OnHitboxEnter(Entity other)
         {
             // We detected an enemy inside our detection box. We change state to attack
-            if (CurrentState == PatrolStates.Chase)
+            if (_stateMachine.CurrentState is ChaseState)
             {
-                CurrentState = PatrolStates.Attack;
+                _stateMachine.ChangeState<AttackState>();
             }
-            else if (CurrentState == PatrolStates.Attack
-                && other.TryGetComponent(out EntityStats stats)
-                && _stats.TargetTeams.IsFlagSet((int)stats.Team))
+            else if (_stateMachine.CurrentState is AttackState
+                && other.TryGetComponent(out GameEntity gameEntity)
+                && _stats.TargetTeams.IsFlagSet((int)gameEntity.Stats.Team))
             {
-                stats.HealthManager.Hit(new DamageInfo(_stats[StatID.Damage], Entity));
-            }
-        }
-
-        #region AI States
-        void Stay_Enter()
-        {
-            _animator.Play(IDLE_ANIM, SpriteAnimator.LoopMode.Loop);
-            _body.Velocity.X = 0;
-        }
-
-        void Stay_Tick()
-        {
-            if (GetClosestTarget() != null)
-                CurrentState = PatrolStates.Chase;
-            else if (elapsedTimeInState > _stayTime)
-            {
-                CurrentState = PatrolStates.Patrol;
-                _movingTowards = GetPointOnCurrentPlatform();
+                gameEntity.HealthController.Hit(new DamageInfo(_stats[StatID.Damage], Entity));
             }
         }
 
-        void Patrol_Enter() => _animator.Play(WALK_ANIM, SpriteAnimator.LoopMode.Loop);
-
-        void Patrol_Tick()
-        {
-            // Arrived at target location or vertical axis is unaligned from target
-            if (Vector2.Distance(Transform.Position, _movingTowards) < 1 || Math.Abs(_movingTowards.Y - Transform.Position.Y) > 1)
-            {
-                CurrentState = PatrolStates.Stay;
-                return;
-            }
-            else if (GetClosestTarget() is not null)
-            {
-                CurrentState = PatrolStates.Chase;
-                return;
-            }
-
-            var moveInput = Math.Sign(_movingTowards.X - Transform.Position.X);
-            _fDir.CheckFacingSide(moveInput);
-            _body.Velocity.X = moveInput * _speed * Time.DeltaTime;
-
-            var rect = new RectangleF(_movingTowards - _collider.Bounds.Size / 2, _collider.Bounds.Size);
-            Debug.DrawHollowRect(rect, Color.Yellow);
-        }
-
-        void Chase_Enter()
-        {
-            _animator.Play(WALK_ANIM, SpriteAnimator.LoopMode.Loop);
-        }
-
-        void Chase_Tick()
-        {
-            var target = GetClosestTarget();
-            if (target is null)
-            {
-                CurrentState = PatrolStates.Stay;
-                return;
-            }
-            var moveInput = Math.Sign(target.Transform.Position.X - Transform.Position.X);
-            _fDir.CheckFacingSide(moveInput);
-            _body.Velocity.X = moveInput * _speed * Time.DeltaTime;
-        }
-
-        void Hurt_Enter()
-        {
-            _animator.Play(HIT_ANIM, SpriteAnimator.LoopMode.Once);
-            _body.Velocity.X = 0;
-        }
-
-        void Attack_Enter()
-        {
-            _animator.Play(ATTACK_ANIM, SpriteAnimator.LoopMode.Once);
-            _body.Velocity.X = 0;
-            _hitbox.ClearCollisions();
-            _animator.Speed = 0.8f;
-        }
-
-        void Attack_Exit()
-        {
-            _hitbox.ClearCollisions();
-            _animator.Speed = 1;
-        }
-
-        #endregion
-
-        GameEntity GetClosestTarget()
+        public GameEntity GetClosestTarget()
         {
             var enemies = GameEntityManager.Entities
                 .OfTeam(_stats.TargetTeams)
-                .InRange(Transform.Position, _detectRange)
+                .InRange(Transform.Position, DetectRange)
                 .LineOfSight(Transform.Position)
                 .ToList();
 
-            Debug.DrawCircle(Transform.Position, Color.Yellow, _detectRange);
+            Debug.DrawCircle(Transform.Position, Color.Yellow, DetectRange);
 
             if (enemies.Count > 0)
                 return enemies.ClosestTo(Transform.Position);
             return null;
         }
 
-        Vector2 GetPointOnCurrentPlatform()
+        public Vector2 GetPointOnCurrentPlatform()
         {
             var ray = Physics.Linecast(
                 Transform.Position, Transform.Position + Vector2.UnitY * _animator.Height, (int)CollisionLayer.Ground);

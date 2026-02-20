@@ -1,9 +1,12 @@
+using System;
 using System.Linq;
+using Microsoft.Xna.Framework;
 using Nez;
 using RoguelikeFNA.Generation;
 
-namespace RoguelikeFNA
+namespace RoguelikeFNA.Utils
 {
+    [Serializable]
     public class EntranceTeleport : Component
     {
         public override void OnAddedToEntity()
@@ -27,6 +30,8 @@ namespace RoguelikeFNA
             if (entrances.Count() > 0)
             {
                 Entity.Position = entrances.First().Position;
+                if(Entity.TryGetComponent(out PhysicsBody body))
+                    body.Velocity = Vector2.Zero;
             }
         }
     }

@@ -1,10 +1,10 @@
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Nez;
 using Nez.AI.FSM;
 using Nez.Sprites;
 using RoguelikeFNA.Utils;
+using RoguelikeFNA.Entities;
 
 namespace RoguelikeFNA.Player
 {
@@ -34,7 +34,7 @@ namespace RoguelikeFNA.Player
 
         bool _hurtRequested;
 
-        public PlayerInput Input { get; }
+        public PlayerInput Input;
 
         public FaceDirection FaceDirection { get; protected set; }
 
@@ -54,6 +54,8 @@ namespace RoguelikeFNA.Player
         protected JumpState _jumpState;
         protected FallState _fallState;
         protected HurtState _hurtState;
+
+        public BasePlayerController() { }
 
         public BasePlayerController(PlayerInput input)
         {
@@ -81,11 +83,9 @@ namespace RoguelikeFNA.Player
 
         public override void OnAddedToEntity()
         {
-            Team = EntityTeam.Friendly; // Ensure player team is set to Friendly
             base.OnAddedToEntity();
 
             FaceDirection = Entity.GetOrCreateComponent<FaceDirection>();
-            Entity.AddComponent<EntranceTeleport>();
 
             Entity.GetOrCreateComponent<PlatformGroundedMovement>();
             Animator = Entity.GetComponent<SpriteAnimator>();
@@ -93,15 +93,6 @@ namespace RoguelikeFNA.Player
 
             SetupStates();
             SetupStateMachine();
-        }
-
-        protected override Collider PrefabCollider()
-        {
-            return new BoxCollider(new Rectangle(-12, -20, 33, 40))
-            {
-                PhysicsLayer = (int)CollisionLayer.Entity,
-                CollidesWithLayers = (int)(CollisionLayer.Ground | CollisionLayer.Platform)
-            };
         }
 
         protected override IMover CreateMover() => new PlatformerMover();
@@ -165,6 +156,8 @@ namespace RoguelikeFNA.Player
         public abstract CharacterState SpecialState();
         public abstract CharacterState DashState();
 
+        protected virtual void OnJump() { }
+
         internal void TryConsumeJump()
         {
             if (PlatformerMover == null || !CurrentState.CanJump())
@@ -177,6 +170,7 @@ namespace RoguelikeFNA.Player
 
                 Body.Velocity.Y = -_jumpForce;
                 PlatformerMover.SetLeftGround();
+                OnJump();
             }
 
             // Jump cut (short hop)

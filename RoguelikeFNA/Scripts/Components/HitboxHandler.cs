@@ -34,7 +34,7 @@ namespace RoguelikeFNA
         public override void OnAddedToEntity()
         {
             Entity.AddComponent(_collider);
-            Animator = Animator ?? Entity.GetComponent<SpriteAnimator>();
+            Animator ??= Entity.GetComponent<SpriteAnimator>();
         }
 
         public void Update()

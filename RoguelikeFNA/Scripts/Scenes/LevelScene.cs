@@ -7,6 +7,7 @@ using Nez.Sprites;
 using RoguelikeFNA.Rendering;
 using RoguelikeFNA.UI;
 using System.Collections.Generic;
+using RoguelikeFNA.Utils;
 
 namespace RoguelikeFNA
 {
@@ -46,16 +47,10 @@ namespace RoguelikeFNA
 
         void AddPlayer(PlayerInput input)
         {
-            var atlas = Content.LoadSpriteAtlas(ContentPath.Atlases.Zero.Zero_atlas);
-            var animator = new SpriteAnimator(){LocalOffset = new Vector2(20, 0)};
-            animator.AddAnimationsFromAtlas(atlas);
-            AddEntity(new Entity())
-                .SetTag((int)Tag.Player)
-                .SetLocalPosition(FindEntity("camera").Position)
-                // .AddComponent(new DemoComponent(input))
-                .AddComponent(new AllrounderPlayerController(input))
-                .AddComponent(animator)
-                .AddComponent(new PlatformerMover());
+            var zeroEntity = Content.LoadNson<SerializedEntity>(ContentPath.Serializables.Entities.Zero_nson);
+            var entity = zeroEntity.AddToScene(this);
+            entity.GetComponent<BasePlayerController>().Input = input;
+            entity.SetLocalPosition(FindEntity("camera").Position);
         }
 
         Dictionary<Keys, int> _directions = new ()

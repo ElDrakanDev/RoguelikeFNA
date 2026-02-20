@@ -1,15 +1,12 @@
+using System;
 using Nez;
 
 namespace RoguelikeFNA
 {
+    [Serializable]
     public class EssenceOnDeath : Component
     {
         public int EssenceDropped;
-
-        public EssenceOnDeath(int essence)
-        {
-            EssenceDropped = essence;
-        }
 
         public override void OnAddedToEntity()
         {

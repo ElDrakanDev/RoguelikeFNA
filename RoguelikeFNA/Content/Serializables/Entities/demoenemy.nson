@@ -14,7 +14,35 @@ RoguelikeFNA.Utils.SerializedEntity(
 			SpriteEffects: "None",
 			Color: #FFFFFFFF,
 			DebugRenderEnabled: true
-		)
+		),
+		Nez.PhysicsBody(),
+		RoguelikeFNA.Utils.EntityStatsWrapper(
+            BaseStats: {
+                Health: 20,
+                Damage: 1
+            },
+			Team: "Enemy",
+			TargetTeams: "Friendly"
+        ),
+        RoguelikeFNA.HealthController(),
+		RoguelikeFNA.Utils.HitboxHandlerJson(
+			HitboxJsonPath: "./Content/Serializables/Hitboxes/demoenemy_hitbox.json",
+			PhysicsLayer: 0,
+			HitboxLayers: 1
+		),
+		RoguelikeFNA.FaceDirection(),
+		RoguelikeFNA.Utils.BoxColliderWrapper(
+			PhysicsLayer: "Entity",
+			CollidesWithLayers: "Entity,Ground",
+			Width: 28,
+			Height: 38
+		),
+		RoguelikeFNA.EssenceOnDeath(
+			EssenceDropped: 20
+		),
+		RoguelikeFNA.PlatformerMover(),
+		RoguelikeFNA.Entities.DemoEnemyAI(),
+		RoguelikeFNA.Entities.DemoEnemy()
 	],
 	Children: [
 

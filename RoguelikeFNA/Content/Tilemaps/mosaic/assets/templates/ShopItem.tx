@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object name="ShopItem">
+  <properties>
+   <property name="RoguelikeFNA.Items.ShopItem:ItemPath" value=""/>
+   <property name="RoguelikeFNA.Items.ShopItem:ItemPool" value="Shop"/>
+  </properties>
+ </object>
+</template>

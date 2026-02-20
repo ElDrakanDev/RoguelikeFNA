@@ -1,13 +1,14 @@
+using System;
 using Nez;
-using RoguelikeFNA.Items;
 
-namespace RoguelikeFNA.Prefabs
+namespace RoguelikeFNA.Items
 {
-    public class ItemPrefab : Component, IPrefab
+    [Serializable]
+    public class ItemWrapper : Component
     {
         public string ItemPath;
 
-        void IPrefab.LoadPrefab()
+        public override void OnAddedToEntity()
         {
             var item = Core.GetGlobalManager<ItemRepository>().LoadItem(ItemPath);
             this.AddComponent(item);

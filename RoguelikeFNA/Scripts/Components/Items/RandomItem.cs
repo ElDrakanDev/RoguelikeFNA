@@ -1,13 +1,14 @@
+using System;
 using Nez;
-using RoguelikeFNA.Items;
 
-namespace RoguelikeFNA.Prefabs
+namespace RoguelikeFNA.Items
 {
-    public class RandomItemPrefab : Component, IPrefab
+    [Serializable]
+    public class RandomItem : Component
     {
         public ItemPool ItemPools;
 
-        void IPrefab.LoadPrefab()
+        public override void OnAddedToEntity()
         {
             var item = Core.GetGlobalManager<ItemRepository>().GetRandomItemFromPool(ItemPools);
             this.AddComponent(item);

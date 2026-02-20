@@ -1,28 +1,36 @@
 using Microsoft.Xna.Framework;
 using Nez;
+using System;
 using System.Collections.Generic;
 
-namespace RoguelikeFNA.Prefabs
+namespace RoguelikeFNA.LevelElements
 {
-    public class MovingPlatform : Component, IPrefab, IUpdatable
+    [Serializable]
+    public class PointSequence : Component
+    {
+        public TiledEntity NextPoint;
+    }
+
+    [Serializable]
+    public class MovingPlatform : Component, IUpdatable
     {
         public float MoveSpeed = 50f;
         public Vector2 DeltaMovement {get; private set;}
         public TiledEntity Start;
-        [Inspectable] TiledEntity[] _points;
+        TiledEntity[] _points;
         int _currentPointIndex = 0;
 
-        void IPrefab.LoadPrefab()
-        {
-            var entity = Entity as TiledEntity;
-            Entity.AddComponent(
-                new BoxCollider(entity.Width, entity.Height)
-                {
-                    CollidesWithLayers = (int)CollisionLayer.Entity,
-                    PhysicsLayer = (int)CollisionLayer.Platform
-                }
-            );
-        }
+        // public override void OnAddedToEntity()
+        // {
+        //     var entity = Entity as TiledEntity;
+        //     Entity.AddComponent(
+        //         new BoxCollider(entity.Width, entity.Height)
+        //         {
+        //             CollidesWithLayers = (int)CollisionLayer.Entity,
+        //             PhysicsLayer = (int)CollisionLayer.Platform
+        //         }
+        //     );
+        // }
 
         public override void OnAddedToEntity()
         {
@@ -38,9 +46,17 @@ namespace RoguelikeFNA.Prefabs
 
         TiledEntity GetNextPoint(TiledEntity current)
         {
+            if(current is null)
+            {
+                Debug.Warn("MovingPlatform {0} has a null point in its sequence.", Entity.Name);
+                return null;
+            }
             var point = current.GetComponent<PointSequence>();
             if(point is null)
+            {
+                Debug.Warn("MovingPlatform {0} has a point without a PointSequence component.", Entity.Name);
                 return null;
+            }
             return point.NextPoint;
         }
 

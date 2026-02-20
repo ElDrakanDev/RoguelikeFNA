@@ -23,9 +23,9 @@ namespace RoguelikeFNA.Utils
 
         public Vector2 Scale;
 
-        public List<Component> Components;
+        public List<Component> Components = new();
 
-        public List<SerializedChild> Children;
+        public List<SerializedChild> Children = new();
 
         public Entity ToEntity(Entity parent)
         {

@@ -1,10 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nez;
 using Nez.Sprites;
 
 namespace RoguelikeFNA
 {
+    [Serializable]
     public class InteractableOutline : Component, IUpdatable, IInteractListener
     {
         public static Color InteractColor = Color.White;

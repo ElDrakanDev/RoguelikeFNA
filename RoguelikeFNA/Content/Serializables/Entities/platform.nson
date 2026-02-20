@@ -1,0 +1,24 @@
+RoguelikeFNA.Utils.SerializedEntity(
+	Name: "MovingPlatform",
+	Enabled: true,
+	Tag: 0,
+	TypeName: "RoguelikeFNA.TiledEntity",
+	Scale: Microsoft.Xna.Framework.Vector2(
+		X: 1,
+		Y: 1
+	),
+	Components: [
+		RoguelikeFNA.Utils.BoxColliderWrapper(
+			PhysicsLayer: "Platform",
+			CollidesWithLayers: "Entity",
+			UseTiledSize: true
+		),
+        RoguelikeFNA.LevelElements.MovingPlatform(
+            MoveSpeed: 50,
+            Start: null
+        )
+	],
+	Children: [
+
+	]
+)

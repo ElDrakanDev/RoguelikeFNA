@@ -13,7 +13,7 @@ Set-Location ..\RoguelikeFNA
 if ((Test-Path("T4Templates\Output")) -eq 0) { New-Item  -ItemType "directory" -Path "T4Templates\Output" }
 
 $files = Get-ChildItem ".\T4Templates\*" -Include *.tt
-$t4Path = "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/TextTransform.exe"
+$t4Path = "C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\TextTransform.exe"
 
 foreach ($file in $files)
 {

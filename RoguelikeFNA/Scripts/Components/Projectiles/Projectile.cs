@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System;
 using Nez.Persistence;
+using RoguelikeFNA.Entities;
 
 namespace RoguelikeFNA
 {
@@ -58,11 +59,11 @@ namespace RoguelikeFNA
         public void OnTriggerEnter(Collider other, Collider local)
         {
             if(_collisions.Contains(other) is false
-                && other.Entity.TryGetComponent(out EntityStats stats)
-                && Flags.IsFlagSet(TargetTeams, (int)stats.Team))
+                && other.Entity.TryGetComponent(out GameEntity gameEntity)
+                && Flags.IsFlagSet(TargetTeams, (int)gameEntity.Stats.Team))
             {
                 if(ContactDamage)
-                    stats.HealthManager?.Hit(new DamageInfo(Damage, Entity));
+                    gameEntity.HealthController.Hit(new DamageInfo(Damage, Entity));
 
                 Entity.GetComponents<IProjectileListener>().ForEach(x => x.OnEntityHit(this, other));
                 if(CanBeDestroyed)

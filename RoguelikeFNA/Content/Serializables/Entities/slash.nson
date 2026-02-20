@@ -26,6 +26,7 @@ RoguelikeFNA.Utils.SerializedEntity(
 			CollidesWithLayers: "Entity,Ground",
 			Width: 80,
 			Height: 60,
+			IsTrigger: true,
 			Offset: Microsoft.Xna.Framework.Vector2(
 				X: 10,
 				Y: 0

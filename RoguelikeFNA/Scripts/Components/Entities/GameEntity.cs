@@ -1,20 +1,16 @@
+using System;
 using Nez;
 using Nez.Tiled;
 
-namespace RoguelikeFNA
+namespace RoguelikeFNA.Entities
 {
+    [Serializable]
     /// <summary>
     /// Base class for game entities that have stats, health, collision, and movement.
     /// Provides common functionality for player characters, enemies, and other interactive entities.
     /// </summary>
-    public abstract class GameEntity : Component, IPrefab
+    public class GameEntity : Component
     {
-        [Inspectable] protected int Health = 10;
-        [Inspectable] protected int Damage = 5;
-        [Inspectable] protected EntityTeam Team = EntityTeam.Enemy;
-
-        private bool _isInitialized = false;
-
         public HealthController HealthController { get; private set; }
         public EntityStats Stats { get; private set; }
         public IMover Mover { get; private set; }
@@ -22,15 +18,7 @@ namespace RoguelikeFNA
         public PhysicsBody Body { get; private set; }
 
         public override void OnAddedToEntity()
-        {   
-            // Ensure prefab is loaded and components are initialized, even if
-            // the entity is created without calling LoadPrefab directly.
-            if (!_isInitialized)
-            {
-                LoadPrefab();
-                _isInitialized = true;
-            }
-
+        {
             // Get component references
             HealthController = Entity.GetComponent<HealthController>();
             Stats = Entity.GetComponent<EntityStats>();
@@ -38,28 +26,24 @@ namespace RoguelikeFNA
             Collider = Entity.GetComponent<Collider>();
             Body = Entity.GetComponent<PhysicsBody>();
 
-            HealthController.onDeath += (source) => UnregisterEntity();
+            HealthController.onDeath += OnDeath;
 
             GameEntityManager.RegisterEntity(this);
         }
 
-        public override void OnRemovedFromEntity() => UnregisterEntity();
+        public override void OnRemovedFromEntity(){
+            UnregisterEntity();
+            HealthController.onDeath -= OnDeath;
+        }
+
+        protected virtual void OnDeath(DeathInfo source)
+        {
+            UnregisterEntity();
+        }
 
         protected void UnregisterEntity() => GameEntityManager.UnregisterEntity(this);
 
-        public virtual void LoadPrefab()
-        {
-            HealthController = Entity.AddComponent(new HealthController(Health));
-            Stats = Entity.AddComponent(new EntityStats(Damage) { Team = Team });
-            Mover = (IMover)Entity.AddComponent((Component)CreateMover());
-            Collider = Entity.AddComponent(PrefabCollider());
-            Body = Entity.AddComponent(new PhysicsBody());
-            _isInitialized = true;
-        }
-
         protected virtual IMover CreateMover() => new TiledMapMover(Parent.GetComponent<TiledMapRenderer>()?.CollisionLayer);
-
-        protected abstract Collider PrefabCollider();
 
         /// <summary>
         /// Get the health manager for this entity.
@@ -95,32 +79,5 @@ namespace RoguelikeFNA
         /// Check if this entity is alive.
         /// </summary>
         public bool IsAlive => HealthController?.IsAlive ?? false;
-
-        public override void OnEnabled()
-        {
-            AdjustPositionToPreventGroundOverlap();
-        }
-
-        void AdjustPositionToPreventGroundOverlap()
-        {
-            // Adjust position to prevent overlapping with ground
-            if (Collider == null || Collider.IsTrigger)
-                return;
-
-            var broadphase = Physics.BoxcastBroadphase(Collider.Bounds, (int)CollisionLayer.Ground);
-            
-            foreach (var collider in broadphase)
-            {
-                if (collider.IsTrigger)
-                    continue;
-
-                if (Collider.CollidesWith(collider, out var result))
-                {
-                    // Apply position adjustment to separate from ground
-                    Transform.Position -= result.MinimumTranslationVector;
-                }
-            }
-            
-        }
     }
 }

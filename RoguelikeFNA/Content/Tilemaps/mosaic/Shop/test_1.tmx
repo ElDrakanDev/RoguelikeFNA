@@ -30,10 +30,6 @@
  <objectgroup id="2" name="Entities">
   <object id="1" template="../assets/templates/Exit.tx" x="368" y="256"/>
   <object id="2" template="../assets/templates/Entrance.tx" x="80" y="256"/>
-  <object id="3" x="248" y="279.818">
-   <properties>
-    <property name="InternalType" value="RoguelikeFNA.Prefabs.ShopItemPrefab"/>
-   </properties>
-  </object>
+  <object id="3" template="../assets/templates/ShopItem.tx" x="248" y="279.818"/>
  </objectgroup>
 </map>

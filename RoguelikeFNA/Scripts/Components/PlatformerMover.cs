@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Nez;
 
 namespace RoguelikeFNA
 {
+    [Serializable]
     public class PlatformerMover : Component, IMover
     {
         Collider _collider;

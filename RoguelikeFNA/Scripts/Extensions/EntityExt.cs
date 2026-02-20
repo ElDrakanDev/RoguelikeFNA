@@ -7,6 +7,18 @@ namespace RoguelikeFNA
 {
     public static class EntityExt
     {
+        public static Entity GetChild(this Entity entity, string name)
+        {
+            for (int i = 0; i < entity.Transform.ChildCount; i++)
+            {
+                var child = entity.Transform.GetChild(i).Entity;
+                if (child.Name == name)
+                    return child;
+            }
+
+            return null;
+        }
+
         public static Entity Closest(this IEnumerable<Entity> list, Vector2 position)
         {
             Entity closest = null;

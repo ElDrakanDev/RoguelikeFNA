@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Nez;
 
-namespace RoguelikeFNA
+namespace RoguelikeFNA.Entities
 {
     public class GameEntityManager : GlobalManager
     {

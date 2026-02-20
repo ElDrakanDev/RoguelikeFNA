@@ -105,7 +105,9 @@ namespace Nez
 				public const string Directory = @".\Content\Serializables\Entities";
 			
 				public const string Bullet_nson = @".\Content\Serializables\Entities\bullet.nson";
+				public const string Demoenemy_nson = @".\Content\Serializables\Entities\demoenemy.nson";
 				public const string Slash_nson = @".\Content\Serializables\Entities\slash.nson";
+				public const string Zero_nson = @".\Content\Serializables\Entities\zero.nson";
 			}
 
 			public static class Hitboxes
@@ -126,7 +128,6 @@ namespace Nez
 				public const string Regen_item_item = @".\Content\Serializables\Items\regen_item.item";
 			}
 
-			public const string Testserializable_nson = @".\Content\Serializables\test-serializable.nson";
 		}
 
 		public static class Shaders
@@ -219,6 +220,7 @@ namespace Nez
 				{
 					public const string Directory = @".\Content\Tilemaps\mosaic\Normal";
 				
+					public const string MovingPlatform_1_tmx = @".\Content\Tilemaps\mosaic\Normal\movingPlatform_1.tmx";
 					public const string Test_1_tmx = @".\Content\Tilemaps\mosaic\Normal\test_1.tmx";
 					public const string TestBigger_2_tmx = @".\Content\Tilemaps\mosaic\Normal\testBigger_2.tmx";
 				}

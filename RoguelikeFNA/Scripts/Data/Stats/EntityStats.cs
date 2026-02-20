@@ -1,10 +1,11 @@
 ﻿using Nez;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace RoguelikeFNA
 {
-    [System.Flags]
+    [Flags]
     public enum EntityTeam
     {
         Friendly = 1,
@@ -18,22 +19,15 @@ namespace RoguelikeFNA
     }
     public class EntityStats : Component
     {
-        const float DEFAULT_MIN_STAT = 0.1f;
         public readonly Dictionary<StatID, Stat> Stats = new();
         [Inspectable] public EntityTeam Team;
         [Inspectable] public int TargetTeams;
-        public HealthController HealthManager { get; private set; }
 
-        public EntityStats(float damage = 1)
-        {
-            Stats[StatID.Damage] = new Stat(damage, null, DEFAULT_MIN_STAT);
-        }
+        public EntityStats() { }
 
         public override void OnAddedToEntity()
         {
             base.OnAddedToEntity();
-            HealthManager = Entity.GetComponent<HealthController>();
-            Stats[StatID.Health] = HealthManager.MaxHealth;
 
             foreach (var stat in Stats.Values)
                 stat.Owner = Entity;

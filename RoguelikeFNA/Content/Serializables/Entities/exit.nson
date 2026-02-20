@@ -1,0 +1,36 @@
+RoguelikeFNA.Utils.SerializedEntity(
+	Name: "Portal",
+	Enabled: true,
+	Tag: 0,
+	TypeName: "RoguelikeFNA.TiledEntity",
+	Scale: Microsoft.Xna.Framework.Vector2(
+		X: 1,
+		Y: 1
+	),
+	Components: [
+		Nez.Sprites.SpriteAnimator(
+			Speed: 1,
+    		AtlasPath: "./Content/Atlases/portal/portal.atlas",
+    		SpriteEffects: "None",
+    		Color: #FFFFFFFF,
+    		DebugRenderEnabled: true,
+		),
+        RoguelikeFNA.OnSpawnPlayAnim(
+			AnimationName: "idle",
+			LoopMode: "Loop"
+		),
+        RoguelikeFNA.InteractableOutline(),
+        RoguelikeFNA.Utils.BoxColliderWrapper(
+            Width: 32,
+            Height: 32,
+            PhysicsLayer: "Interactable",
+			CollidesWithLayers: "Entity"
+        )
+        RoguelikeFNA.LevelElements.Portal(
+            IsExit: true
+        )
+	],
+	Children: [
+
+	]
+)

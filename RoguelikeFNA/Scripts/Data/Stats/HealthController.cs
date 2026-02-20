@@ -42,10 +42,11 @@ namespace RoguelikeFNA
             Source = source;
         }
     }
+    [Serializable]
     public class HealthController : Component
     {
         int _health;
-        public readonly Stat MaxHealth;
+        public Stat MaxHealth { get; private set; }
         public bool IsAlive => Health > 0;
         public int Health
         {
@@ -57,26 +58,7 @@ namespace RoguelikeFNA
                 else _health = value;
             }
         }
-        public HealthController(int health, int maxHealth, int minMaxHealth = 1)
-        {
-            MaxHealth = new Stat(maxHealth, Entity, minMaxHealth);
-            Health = health;
-        }
-        public HealthController(int health, Stat maxHealth)
-        {
-            MaxHealth = maxHealth;
-            Health = health;
-        }
-        public HealthController(int maxHealth, int minMaxHealth = 1)
-        {
-            MaxHealth = new Stat(maxHealth, Entity, minMaxHealth);
-            Health = Mathf.RoundToInt(MaxHealth);
-        }
-        public HealthController(Stat maxHealth)
-        {
-            MaxHealth = maxHealth;
-            Health = Mathf.RoundToInt(MaxHealth);
-        }
+        public HealthController() { }
 
         /// <summary>
         /// Pre damage taken event.
@@ -98,6 +80,12 @@ namespace RoguelikeFNA
         /// Event invoked when entity dies
         /// </summary>
         public event Action<DeathInfo> onDeath;
+
+        public override void OnAddedToEntity()
+        {
+            MaxHealth ??= Entity.GetComponent<EntityStats>()?[StatID.Health] ?? new Stat(1, Entity);
+            Health = Mathf.RoundToInt(MaxHealth);
+        }
 
         public void Hit(DamageInfo info)
         {
