@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="17">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="18">
  <tileset firstgid="1" name="Inca_front_by_Kronbits-extended" tilewidth="16" tileheight="16" tilecount="280" columns="20">
   <image source="../assets/tiles/Inca_front_by_Kronbits-extended.png" width="320" height="224"/>
  </tileset>
@@ -61,5 +61,6 @@
     <property name="Serializable" value="./Content/Serializables/Entities/platform.nson"/>
    </properties>
   </object>
+  <object id="17" template="../assets/templates/Skull.tx" x="224" y="160"/>
  </objectgroup>
 </map>

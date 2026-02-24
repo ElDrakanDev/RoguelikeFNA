@@ -1,5 +1,5 @@
 RoguelikeFNA.Utils.SerializedEntity(
-	Name: "DemoEnemy",
+	Name: "FlyingEnemy",
 	Enabled: true,
 	Tag: 0,
 	TypeName: "RoguelikeFNA.TiledEntity",
@@ -9,8 +9,8 @@ RoguelikeFNA.Utils.SerializedEntity(
 	),
 	Components: [
 		Nez.Sprites.SpriteAnimator(
-			Speed: 0.8,
-			AtlasPath: ".\\Content\\Atlases\\enemy\\enemy.atlas",
+			Speed: 1,
+			AtlasPath: ".\\Content\\Atlases\\skull\\skull.atlas",
 			SpriteEffects: "None",
 			Color: #FFFFFFFF,
 			DebugRenderEnabled: true
@@ -18,30 +18,25 @@ RoguelikeFNA.Utils.SerializedEntity(
 		Nez.PhysicsBody(),
 		RoguelikeFNA.Utils.EntityStatsWrapper(
             BaseStats: {
-                Health: 20,
+                Health: 15,
                 Damage: 1
             },
 			Team: "Enemy",
 			TargetTeams: "Friendly"
         ),
         RoguelikeFNA.HealthController(),
-		RoguelikeFNA.Utils.HitboxHandlerJson(
-			HitboxJsonPath: "./Content/Serializables/Hitboxes/demoenemy_hitbox.json",
-			PhysicsLayer: 0,
-			HitboxLayers: 1
-		),
 		RoguelikeFNA.FaceDirection(),
 		RoguelikeFNA.Utils.BoxColliderWrapper(
 			PhysicsLayer: "Entity",
 			CollidesWithLayers: "Entity,Ground",
-			Width: 28,
-			Height: 38
+			Width: 21,
+			Height: 25
 		),
 		RoguelikeFNA.EssenceOnDeath(
 			EssenceDropped: 20
 		),
 		RoguelikeFNA.PlatformerMover(),
-		RoguelikeFNA.Entities.DemoEnemyAI(),
+		RoguelikeFNA.Entities.RangedEnemyAI(),
 		RoguelikeFNA.Entities.GameEntity(),
 		RoguelikeFNA.Entities.ExplodeDeathFx()
 	],

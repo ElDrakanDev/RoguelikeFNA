@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object name="Skull">
+  <properties>
+   <property name="Serializable" value="./Content/Serializables/Entities/flyingskull.nson"/>
+  </properties>
+  <point/>
+ </object>
+</template>

@@ -5,17 +5,16 @@ using Nez.Particles;
 namespace RoguelikeFNA.Entities
 {
     [Serializable]
-    public class DemoEnemy : GameEntity
+    public class ExplodeDeathFx : Component
     {
         public override void OnAddedToEntity()
         {
-            base.OnAddedToEntity();
-            HealthController.onDeath += OnDeath;
+            Entity.GetComponent<HealthController>().onDeath += OnDeath;
         }
 
         public override void OnRemovedFromEntity()
         {
-            HealthController.onDeath -= OnDeath;
+            Entity.GetComponent<HealthController>().onDeath -= OnDeath;
         }
 
         void OnDeath(object source)
