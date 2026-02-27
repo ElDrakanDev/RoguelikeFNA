@@ -20,7 +20,9 @@ RoguelikeFNA.Utils.SerializedEntity(
             )
     	),
         Nez.PhysicsBody(),
-		RoguelikeFNA.PlatformerMover(),
+		RoguelikeFNA.PlatformerMover(
+            FireCollisionEvents: true
+        ),
 		RoguelikeFNA.Utils.BoxColliderWrapper(
 			PhysicsLayer: "Entity",
 			CollidesWithLayers: "Ground,Platform",

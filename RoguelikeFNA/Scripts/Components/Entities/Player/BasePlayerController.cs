@@ -87,9 +87,7 @@ namespace RoguelikeFNA.Player
 
             FaceDirection = Entity.GetOrCreateComponent<FaceDirection>();
 
-            Entity.GetOrCreateComponent<PlatformGroundedMovement>();
             Animator = Entity.GetComponent<SpriteAnimator>();
-            HealthController.onDeath += e => { if (e.Canceled is false) Entity.Destroy(); };
 
             SetupStates();
             SetupStateMachine();

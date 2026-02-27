@@ -5,6 +5,11 @@ using Nez;
 
 namespace RoguelikeFNA
 {
+    public interface IPlatformerGroundedListener
+    {
+        void OnGrounded(Collider collider);
+    }
+
     [Serializable]
     public class PlatformerMover : Component, IMover
     {
@@ -26,6 +31,7 @@ namespace RoguelikeFNA
             public Collider StandingOn;
         }
 
+        public bool FireCollisionEvents = false;
         public bool IgnorePlatforms = false;
         public CollisionLayer GroundLayer = CollisionLayer.Ground;
         public CollisionLayer PlatformLayer = CollisionLayer.Platform;
@@ -120,6 +126,15 @@ namespace RoguelikeFNA
                             continue;
                         State.Below = true;
                         State.StandingOn = neighbor;
+
+                        if (FireCollisionEvents)
+                        {
+                            var groundedListeners = neighbor.GetComponents<IPlatformerGroundedListener>();
+                            foreach (var listener in groundedListeners)
+                            {
+                                listener.OnGrounded(_collider);
+                            }
+                        }
                     }
                     if (result.MinimumTranslationVector.Y < 0)
                     {
