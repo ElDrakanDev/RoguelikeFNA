@@ -5,19 +5,19 @@ using Nez.Particles;
 namespace RoguelikeFNA.Entities
 {
     [Serializable]
-    public class ExplodeDeathFx : Component
+    public class ExplodeDeathFx : Component, IDeathListener
     {
         public override void OnAddedToEntity()
         {
-            Entity.GetComponent<HealthController>().onDeath += OnDeath;
+            Entity.GetComponent<HealthController>().DeathListeners.Add(this);
         }
 
         public override void OnRemovedFromEntity()
         {
-            Entity.GetComponent<HealthController>().onDeath -= OnDeath;
+            Entity.GetComponent<HealthController>().DeathListeners.Remove(this);
         }
 
-        void OnDeath(object source)
+        public void OnDeath(DeathInfo deathInfo)
         {
             var deathSound = Entity.Scene.Content.LoadSoundEffect(ContentPath.Audio.EnemyExplode_WAV);
             SoundEffectManager.Play(deathSound);

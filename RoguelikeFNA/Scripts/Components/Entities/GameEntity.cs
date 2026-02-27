@@ -9,7 +9,7 @@ namespace RoguelikeFNA.Entities
     /// Base class for game entities that have stats, health, collision, and movement.
     /// Provides common functionality for player characters, enemies, and other interactive entities.
     /// </summary>
-    public class GameEntity : Component
+    public class GameEntity : Component, IDeathListener
     {
         public HealthController HealthController { get; private set; }
         public EntityStats Stats { get; private set; }
@@ -26,17 +26,17 @@ namespace RoguelikeFNA.Entities
             Collider = Entity.GetComponent<Collider>();
             Body = Entity.GetComponent<PhysicsBody>();
 
-            HealthController.onDeath += OnDeath;
+            HealthController.DeathListeners.Add(this);
 
             GameEntityManager.RegisterEntity(this);
         }
 
         public override void OnRemovedFromEntity(){
             UnregisterEntity();
-            HealthController.onDeath -= OnDeath;
+            HealthController.DeathListeners.Remove(this);
         }
 
-        protected virtual void OnDeath(DeathInfo source)
+        public virtual void OnDeath(DeathInfo deathInfo)
         {
             UnregisterEntity();
         }

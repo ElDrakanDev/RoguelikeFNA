@@ -12,10 +12,10 @@ namespace RoguelikeFNA.LevelElements
     }
 
     [Serializable]
-    public class MovingPlatform : Component, IUpdatable
+    public class MovingPlatform : Component, IUpdatable, IPlatformerGroundedListener
     {
         public float MoveSpeed = 50f;
-        public Vector2 DeltaMovement {get; private set;}
+        public Vector2 DeltaMovement { get; private set; }
         public TiledEntity Start;
         TiledEntity[] _points;
         int _currentPointIndex = 0;
@@ -80,6 +80,11 @@ namespace RoguelikeFNA.LevelElements
             direction.Normalize();
             DeltaMovement = direction * MoveSpeed * Time.DeltaTime;
             Entity.Position += DeltaMovement;
+        }
+
+        public void OnGrounded(Collider collider)
+        {
+            collider.Entity.Position += DeltaMovement;
         }
     }
 }

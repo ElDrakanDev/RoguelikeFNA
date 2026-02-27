@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Nez;
 
@@ -42,6 +43,10 @@ namespace RoguelikeFNA
             Source = source;
         }
     }
+    public enum DeathBehaviour
+    {
+        None, Destroy
+    }
     [Serializable]
     public class HealthController : Component
     {
@@ -58,28 +63,25 @@ namespace RoguelikeFNA
                 else _health = value;
             }
         }
+        public DeathBehaviour DeathBehaviour = DeathBehaviour.Destroy;
         public HealthController() { }
 
-        /// <summary>
-        /// Pre damage taken event.
-        /// </summary>
-        public event Action<DamageInfo> preDamageTaken;
-        /// <summary>
-        /// Event invoked after taking damage
-        /// </summary>
-        public event Action<DamageInfo> onDamageTaken;
-        /// <summary>
-        /// Pre healing event
-        /// </summary>
-        public event Action<HealInfo> preHeal;
-        /// <summary>
-        /// Pre death event
-        /// </summary>
-        public event Action<DeathInfo> preDeath;
-        /// <summary>
-        /// Event invoked when entity dies
-        /// </summary>
-        public event Action<DeathInfo> onDeath;
+        public List<IPreDamageListener> PreDamageListeners {get; protected set;}
+        public List<IDamageListener> DamageListeners {get; protected set;}
+        public List<IPreHealListener> PreHealListeners {get; protected set;}
+        public List<IHealListener> HealListeners {get; protected set;}
+        public List<IPreDeathListener> PreDeathListeners {get; protected set;}
+        public List<IDeathListener> DeathListeners {get; protected set;}
+
+        public override void Initialize()
+        {
+            PreDamageListeners = ListPool<IPreDamageListener>.Obtain();
+            DamageListeners = ListPool<IDamageListener>.Obtain();
+            PreHealListeners = ListPool<IPreHealListener>.Obtain();
+            HealListeners = ListPool<IHealListener>.Obtain();
+            PreDeathListeners = ListPool<IPreDeathListener>.Obtain();
+            DeathListeners = ListPool<IDeathListener>.Obtain();
+        }
 
         public override void OnAddedToEntity()
         {
@@ -87,24 +89,67 @@ namespace RoguelikeFNA
             Health = Mathf.RoundToInt(MaxHealth);
         }
 
-        public void Hit(DamageInfo info)
+        public override void OnRemovedFromEntity()
         {
-            preDamageTaken?.Invoke(info);
-            if (info.Canceled is false) {
-                Health -= info.Damage;
-                onDamageTaken?.Invoke(info);
-                if (Health == 0) Die(new DeathInfo(info.Source));
-            }
+            ListPool<IPreDamageListener>.Free(PreDamageListeners);
+            ListPool<IDamageListener>.Free(DamageListeners);
+            ListPool<IHealListener>.Free(HealListeners);
+            ListPool<IPreDeathListener>.Free(PreDeathListeners);
+            ListPool<IDeathListener>.Free(DeathListeners);
         }
+
+        public bool Hit(DamageInfo info)
+        {
+            foreach(var listener in PreDamageListeners)
+            {
+                if(info.Canceled) return false;
+                listener.PreDamageTaken(info);
+            }
+
+            if (info.Canceled)
+                return false;
+
+            Health -= info.Damage;
+            foreach(var listener in DamageListeners)
+            {
+                listener.OnDamageTaken(info);
+            }
+            if (Health == 0) Die(new DeathInfo(info.Source));
+            return true;
+        }
+
         public void Heal(HealInfo info)
         {
-            preHeal?.Invoke(info);
+            foreach(var listener in PreHealListeners)
+            {
+                listener.PreHealed(info);
+            }
+        
             Health += info.Amount;
+            foreach(var listener in HealListeners)
+            {
+                listener.OnHealed(info);
+            }
         }
+
         public void Die(DeathInfo info)
         {
-            preDeath?.Invoke(info);
-            if(info.Canceled is false) onDeath?.Invoke(info);
+            foreach(var listener in PreDeathListeners)
+            {
+                if(info.Canceled) return;
+                listener.PreDeath(info);
+            }
+            if(info.Canceled)
+                return;
+
+            foreach(var listener in DeathListeners)
+            {
+                listener.OnDeath(info);
+            }
+            if(DeathBehaviour == DeathBehaviour.Destroy)
+            {
+                Entity.Destroy();
+            }
         }
     }
 }

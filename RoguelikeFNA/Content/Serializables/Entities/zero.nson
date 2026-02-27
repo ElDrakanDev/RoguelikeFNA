@@ -44,6 +44,7 @@ RoguelikeFNA.Utils.SerializedEntity(
             TargetTeams: "Enemy"
         ),
         RoguelikeFNA.HealthController(),
+        RoguelikeFNA.IframeHandler(),
         Nez.Sprites.SpriteTrail(
             InitialColor: #800080FF,
             FadeToColor: #80008000,

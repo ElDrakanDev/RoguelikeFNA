@@ -8,7 +8,7 @@ using System.Linq;
 namespace RoguelikeFNA.Entities
 {
     [Serializable]
-    public class DemoEnemyAI : Component, IUpdatable
+    public class DemoEnemyAI : Component, IUpdatable, IDamageListener
     {
         [Inspectable] public float Gravity = 20;
         [Inspectable] public float Speed = 40;
@@ -49,23 +49,17 @@ namespace RoguelikeFNA.Entities
             _stateMachine.AddState(new HurtState());
             _stateMachine.AddState(new AttackState());
             
-            _healthManager.onDamageTaken += OnHit;
+            _healthManager.DamageListeners.Add(this);
             _animator.OnAnimationCompletedEvent += OnAnimationComplete;
             _hitbox.OnCollisionEnter += OnHitboxEnter;
         }
 
         public override void OnRemovedFromEntity()
         {
-            _healthManager.onDamageTaken -= OnHit;
+            _healthManager.DamageListeners.Add(this);
             _animator.OnAnimationCompletedEvent -= OnAnimationComplete;
             _animator.Play(IDLE_ANIM, SpriteAnimator.LoopMode.Loop);
             _hitbox.OnCollisionEnter -= OnHitboxEnter;
-        }
-
-        void OnHit(DamageInfo info)
-        {
-            if (info.Canceled is false)
-                _stateMachine.ChangeState<HurtState>();
         }
 
         void OnAnimationComplete(string anim)
@@ -135,6 +129,11 @@ namespace RoguelikeFNA.Entities
             }
             // If no platform was found we stay in the same place
             return Transform.Position;
+        }
+
+        public void OnDamageTaken(DamageInfo damageInfo)
+        {
+            _stateMachine.ChangeState<HurtState>();
         }
     }
 }
