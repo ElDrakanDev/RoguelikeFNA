@@ -18,6 +18,8 @@ namespace RoguelikeFNA
         public float Width;
         public float Height;
 
+        public TiledEntity() { }
+
         public TiledEntity(string name, int tiledId, float width, float height) : base(name)
         {
             TiledId = tiledId;

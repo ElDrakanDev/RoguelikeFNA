@@ -95,7 +95,7 @@ namespace RoguelikeFNA.Entities
                 && other.TryGetComponent(out GameEntity gameEntity)
                 && _stats.TargetTeams.IsFlagSet((int)gameEntity.Stats.Team))
             {
-                gameEntity.HealthController.Hit(new DamageInfo(_stats[StatID.Damage], Entity));
+                gameEntity.HealthController.Hit(new (){Damage = Mathf.CeilToInt(_stats[StatID.Damage]), Source=Entity});
             }
         }
 

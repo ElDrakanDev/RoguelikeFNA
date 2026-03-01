@@ -11,15 +11,6 @@ namespace RoguelikeFNA
         public Vector2 Knockback;
         public object Source;
         public bool Canceled = false;
-
-        public DamageInfo(int damage, Entity source, Vector2 knockback = default)
-        {
-            Damage = damage;
-            Knockback = knockback;
-            Source = source;
-        }
-
-        public DamageInfo(float damage, Entity source, Vector2 knockback = default) : this(Mathf.RoundToInt(damage), source, knockback) { }
     }
 
     public class HealInfo

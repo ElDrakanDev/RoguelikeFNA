@@ -6,6 +6,38 @@ using System.Linq;
 namespace RoguelikeFNA
 {
     [Serializable]
+    public class StatBool
+    {
+        public bool DefaultValue;
+        public class Condition
+        {
+            public bool Value;
+        }
+        public enum ConditionType
+        {
+            Any, All
+        }
+        public readonly List<Condition> Conditions = new List<Condition>();
+        public ConditionType Type;
+
+        public bool Value
+        {
+            get
+            {
+                if(Conditions.Count == 0)
+                    return DefaultValue;
+                if (Type == ConditionType.Any)
+                    return Conditions.Any(c => c.Value);
+                else if (Type == ConditionType.All)
+                    return Conditions.All(c => c.Value);
+                return false;
+            }
+        }
+
+        public static implicit operator bool(StatBool stat) => stat.Value;
+    }
+
+    [Serializable]
     public class Stat
     {
         /// <summary>

@@ -60,12 +60,14 @@ namespace RoguelikeFNA
         {
             if(_collisions.Contains(other) is false
                 && other.Entity.TryGetComponent(out GameEntity gameEntity)
+                && !gameEntity.Stats.IsIntangible
                 && Flags.IsFlagSet(TargetTeams, (int)gameEntity.Stats.Team))
             {
-                if(ContactDamage)
-                    gameEntity.HealthController.Hit(new DamageInfo(Damage, Entity));
+                if(ContactDamage && !gameEntity.Stats.IsInvincible)
+                    gameEntity.HealthController.Hit(new(){Damage = Mathf.CeilToInt(Damage), Source = Entity});
 
-                Entity.GetComponents<IProjectileListener>().ForEach(x => x.OnEntityHit(this, other));
+                Entity.GetComponents<IProjectileListener>()
+                    .ForEach(x => x.OnEntityHit(this, other));
                 if(CanBeDestroyed)
                     Entity.Destroy();
             }
