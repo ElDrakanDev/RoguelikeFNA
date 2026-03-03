@@ -137,7 +137,7 @@ namespace RoguelikeFNA
             {
                 listener.OnDeath(info);
             }
-            if(DeathBehaviour == DeathBehaviour.Destroy)
+            if(DeathBehaviour == DeathBehaviour.Destroy && !Entity.IsDestroyed)
             {
                 Entity.Destroy();
             }

@@ -47,7 +47,8 @@ namespace RoguelikeFNA
                 if (_target is null || !_target.Enabled)
                 {
                     Entity.Scene.GetSceneComponent<EssenceSceneComponent>().AddEssence(Value);
-                    Entity.Destroy();
+                    if(!Entity.IsDestroyed)
+                        Entity.Destroy();
                 }
                 else
                 {
@@ -84,7 +85,8 @@ namespace RoguelikeFNA
             {
                 _trail.Enabled = false;
                 Entity.Scene.GetSceneComponent<EssenceSceneComponent>().AddEssence(Value);
-                Entity.Destroy();
+                if(!Entity.IsDestroyed)
+                    Entity.Destroy();
             }
         }
 
