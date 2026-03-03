@@ -5,9 +5,25 @@ using RoguelikeFNA.Utils;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Linq;
 
 namespace RoguelikeFNA
 {
+    public class TiledGridLayer : Component
+    {
+        public TmxLayer Layer { get; private set; }
+        public CollisionLayer PhysicsLayer { get; private set; }
+        public Collider[] Colliders { get; private set; }
+
+        public TiledGridLayer(TmxLayer layer, Collider[] colliders)
+        {
+            Layer = layer;
+            if (layer.Properties != null && layer.Properties.TryGetValue("PhysicsLayer", out var physicsLayer))
+                PhysicsLayer = (CollisionLayer)Enum.Parse(typeof(CollisionLayer), physicsLayer);
+            Colliders = colliders;
+        }
+    }
+
     public static class TiledMapRendererExt
     {
         static Dictionary<string, Type> _typeNames = new();
@@ -61,7 +77,48 @@ namespace RoguelikeFNA
             }
         }
 
-        static void AddComponentsFromProperties(TiledEntity entity, Dictionary<string, string> properties, Dictionary<int, TiledEntity> entities)
+        public static void AddAllGridLayerComponents(this TiledMapRenderer map)
+        {
+            var layers = map.TiledMap.Layers.Where(
+                l => l.Name.Contains("_values") is false
+                    && l.Properties != null
+                    && l.Properties.ContainsKey("PhysicsLayer")
+            );
+            foreach(var layer in layers)
+            {
+                if (layer is TmxLayer tiledLayer)
+                    map.CreateGridLayerEntity(tiledLayer);
+            }
+        }
+
+        public static void CreateGridLayerEntity(this TiledMapRenderer map, TmxLayer layer)
+        {
+            var colliders = CreateLayerColliders(map, layer);
+            if(colliders.Length == 0)
+                return;
+            var entity = new Entity(layer.Name);
+            entity.AddComponent(new TiledGridLayer(layer, colliders));
+            map.Entity.Scene.AddEntity(entity)
+                .SetParent(map.Entity)
+                .SetLocalPosition(layer.Offset);
+            AddComponentsFromProperties(entity, layer.Properties);
+        }
+
+        static Collider[] CreateLayerColliders(TiledMapRenderer map, TmxLayer layer)
+        {
+            try
+            {
+                var layerMask = (int)Enum.Parse(typeof(CollisionLayer), layer.Properties["PhysicsLayer"]);
+                return map.AddCollidersForLayer(layer.Name, layerMask);
+            }
+            catch(Exception ex)
+            {
+                Debug.Error("Failed to create colliders for tiled map layer {0}: {1}", layer.Name, ex.Message);
+            }
+            return Array.Empty<Collider>();
+        }
+
+        static void AddComponentsFromProperties(Entity entity, Dictionary<string, string> properties, Dictionary<int, TiledEntity> entities = null)
         {
             foreach (var prop in properties)
             {
