@@ -89,6 +89,11 @@ namespace RoguelikeFNA
             ListPool<IDeathListener>.Free(DeathListeners);
         }
 
+        public bool Hit(int damage, Entity source, Vector2 knockback = default)
+        {
+            return Hit(new DamageInfo() {Damage = damage, Source = source, Knockback = knockback});
+        }
+
         public bool Hit(DamageInfo info)
         {
             foreach(var listener in PreDamageListeners)

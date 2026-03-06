@@ -13,6 +13,7 @@ namespace RoguelikeFNA
     [Serializable]
     public class PlatformerMover : Component, IMover
     {
+        ColliderTriggerHelper _triggerHelper;
         Collider _collider;
         public const float COLLISION_THRESHOLD = 0.01f;
         public const float BROADPHASE_PADDING = 10f;
@@ -59,6 +60,7 @@ namespace RoguelikeFNA
         {
             _collider = Entity.GetComponent<Collider>();
             Debug.WarnIf(_collider == null, "PlatformerMover has no Collider. PlatformerMover requires a Collider!");
+            _triggerHelper = new ColliderTriggerHelper(Entity);
         }
 
         public void SetLeftGround(){
@@ -100,6 +102,8 @@ namespace RoguelikeFNA
             {
                 collided |= MoveVertically(motion, neighbors);
             }
+
+            _triggerHelper.Update();
 
             return collided;
         }

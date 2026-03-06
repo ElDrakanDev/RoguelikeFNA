@@ -25,10 +25,10 @@ RoguelikeFNA.Utils.SerializedEntity(
         ),
 		RoguelikeFNA.Utils.BoxColliderWrapper(
 			PhysicsLayer: "Entity",
-			CollidesWithLayers: "Ground,Platform",
+			CollidesWithLayers: "Ground,Platform,Trap",
 			Width: 33,
 			Height: 40,
-			IsTrigger: false,
+			IsTrigger: true,
 			Offset: Microsoft.Xna.Framework.Vector2(
 				X: 0,
 				Y: 0

@@ -12,5 +12,6 @@ namespace RoguelikeFNA
         Interactable = 4,
         Projectile = 8,
         Platform = 16,
+        Trap = 32,
     }
 }

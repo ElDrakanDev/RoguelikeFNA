@@ -29,6 +29,7 @@ namespace RoguelikeFNA.Generation
             _pathfindingGraph = CreatePathfindingGraph();
             TiledMapRenderer.CreateObjects();
             SetLayersToRender();
+            TiledMapRenderer.AddAllGridLayerComponents();
         }
 
         public override void OnEnabled()
