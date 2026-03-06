@@ -12,14 +12,10 @@ namespace RoguelikeFNA.Utils
         public override void OnAddedToEntity()
         {
             MoveToEntrance(null);
-        }
-
-        public override void OnEnabled()
-        {
             Entity.Scene.GetSceneComponent<LevelNavigator>().OnRoomChanged += MoveToEntrance;
         }
 
-        public override void OnDisabled()
+        public override void OnRemovedFromEntity()
         {
             Entity.Scene.GetSceneComponent<LevelNavigator>().OnRoomChanged -= MoveToEntrance;
         }

@@ -31,6 +31,7 @@
  <layer id="3" name="traps" width="30" height="20">
   <properties>
    <property name="PhysicsLayer" value="Trap"/>
+   <property name="RoguelikeFNA.LevelElements.Spikes:Damage" type="int" value="5"/>
   </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

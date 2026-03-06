@@ -22,6 +22,20 @@ namespace RoguelikeFNA
                 PhysicsLayer = (CollisionLayer)Enum.Parse(typeof(CollisionLayer), physicsLayer);
             Colliders = colliders;
         }
+
+        // Set the Entity reference on each collider so they can report trigger events, etc.
+        // this is a hack to avoid adding each collider as a component
+        public override void OnAddedToEntity()
+        {
+            foreach (var collider in Colliders)
+                collider.Entity = Entity;
+        }
+
+        public override void OnRemovedFromEntity()
+        {
+            foreach (var collider in Colliders)
+                collider.Entity = null;
+        }
     }
 
     public static class TiledMapRendererExt
