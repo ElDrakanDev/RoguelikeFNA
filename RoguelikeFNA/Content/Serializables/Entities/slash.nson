@@ -33,7 +33,7 @@ RoguelikeFNA.Utils.SerializedEntity(
 			),
 		),
     	RoguelikeFNA.Projectile(
-    		Damage: 5,
+    		BaseDamage: 5,
     		ContactDamage: true,
     		GroundHitBehaviour: "Ignore"
     	)

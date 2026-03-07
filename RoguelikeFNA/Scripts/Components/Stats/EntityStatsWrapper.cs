@@ -7,14 +7,14 @@ namespace RoguelikeFNA.Utils
     [Serializable]
     public class EntityStatsWrapper : Component
     {
-        const float DEFAULT_MIN_STAT = 0.1f;
+        const float DEFAULT_MIN_STAT = -0.9f;
         public Dictionary<StatID, float> BaseStats = new();
         public EntityTeam Team;
         public EntityTeam TargetTeams;
 
         public static Dictionary<StatID, float> DefaultStats = new()
         {
-            {StatID.Damage, 1},
+            {StatID.Damage, 0},
             {StatID.Health, 25}
         };
 
@@ -34,12 +34,13 @@ namespace RoguelikeFNA.Utils
                 Team = Team,
                 TargetTeams = (int)TargetTeams
             };
-            foreach (var stat in BaseStats)
+            foreach (var baseStat in BaseStats)
             {
                 var min = DEFAULT_MIN_STAT;
-                if (stat.Key == StatID.Health)
+                if (baseStat.Key == StatID.Health)
                     min = 1;
-                stats.Stats[stat.Key] = new Stat(stat.Value, Entity, min);
+                var stat = new Stat(baseStat.Value, Entity, min);
+                stats.Stats[baseStat.Key] = stat;
             }
             Entity.AddComponent(stats);
         }

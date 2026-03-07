@@ -46,29 +46,9 @@ namespace RoguelikeFNA
         public readonly float Min;
         public readonly float Max;
         public Entity Owner;
-        private float _value;
         [Inspectable] readonly List<IStatModifier> _stats = new List<IStatModifier>();
 
-        public float Value
-        {
-            get
-            {
-                if (!NeedsUpdate())
-                {
-                    if (_value < Min) return Min;
-                    else if (_value > Max) return Max;
-                    return _value;
-                }
-                UpdateValue();
-                return _value;
-            }
-            set
-            {
-                if (value < Min) _value = Min;
-                else if (value > Max) _value = Max;
-                else _value = value;
-            }
-        }
+        public float Value => CalculateValue();
 
         public Stat(float baseValue, Entity owner, float min = 1, float max = float.MaxValue)
         {
@@ -78,7 +58,7 @@ namespace RoguelikeFNA
             Owner = owner;
         }
 
-        private float UpdateValue()
+        private float CalculateValue()
         {
             float flatStats = 0;
             float multStats = 1;
@@ -92,8 +72,7 @@ namespace RoguelikeFNA
                 stat.IsDirty = false;
             }
 
-            _value = (float)Math.Round(flatStats * multStats, 2);
-            return _value;
+            return (float)Math.Round(flatStats * multStats, 2);
         }
 
         public void Add(IStatModifier modifier)
@@ -114,8 +93,6 @@ namespace RoguelikeFNA
                 return remove;
             });
         }
-
-        public bool NeedsUpdate() => _stats.Any(s => s.IsDirty);
 
         public static implicit operator float(Stat stat) => stat.Value;
     }

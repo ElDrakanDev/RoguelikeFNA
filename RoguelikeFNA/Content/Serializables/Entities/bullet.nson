@@ -29,7 +29,7 @@ RoguelikeFNA.Utils.SerializedEntity(
 		),
     	RoguelikeFNA.Projectile(
     		Lifetime: 5,
-    		Damage: 5,
+    		BaseDamage: 5,
     		FaceVelocity: true,
     		ContactDamage: true,
     		GroundHitBehaviour: "Destroy"

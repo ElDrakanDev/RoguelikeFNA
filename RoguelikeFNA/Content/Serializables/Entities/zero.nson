@@ -38,7 +38,6 @@ RoguelikeFNA.Utils.SerializedEntity(
         RoguelikeFNA.Utils.EntityStatsWrapper(
             BaseStats: {
                 Health: 25,
-                Damage: 1
             },
             Team: "Friendly",
             TargetTeams: "Enemy"

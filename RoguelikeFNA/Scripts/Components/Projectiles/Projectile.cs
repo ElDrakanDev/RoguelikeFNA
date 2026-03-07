@@ -15,9 +15,10 @@ namespace RoguelikeFNA
     public class Projectile : Component, IUpdatable, ITriggerListener, IPerishable
     {
         HashSet<Collider> _collisions;
+        public float BaseDamage = 1;
         [NsonExclude] public ProjectileMover Mover { get; private set; }
         public float Lifetime;
-        public float Damage;
+        [NsonExclude] public Stat Damage;
         protected PhysicsBody _body;
         public bool FaceVelocity = true;
         public bool ContactDamage = true;
@@ -31,6 +32,11 @@ namespace RoguelikeFNA
         {
             get => _body.Velocity;
             set => _body.Velocity = value;
+        }
+
+        public override void Initialize()
+        {
+            Damage ??= new Stat(BaseDamage, Owner);
         }
 
         public override void OnAddedToEntity()
@@ -96,6 +102,8 @@ namespace RoguelikeFNA
             Owner = stats.Entity;
             Team = stats.Team;
             TargetTeams = stats.TargetTeams;
+            if(stats.TryGetStat(StatID.Damage, out var damageStat))
+                Damage.Add(new RefStatModifier(damageStat, this, StatType.Mult));
         }
     }
 }
