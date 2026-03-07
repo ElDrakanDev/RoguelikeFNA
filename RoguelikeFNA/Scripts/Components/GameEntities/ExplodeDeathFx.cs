@@ -25,7 +25,6 @@ namespace RoguelikeFNA.Entities
                 .AddComponent(new Perishable())
                 .AddComponent(new ParticleEmitter(Entity.Scene.Content.LoadParticleEmitterConfig(ContentPath.Particles.Explosion_pex)))
                 .OnAllParticlesExpired += (particle) => particle.Entity.Destroy();
-            Entity.Destroy();
         }
     }
 }

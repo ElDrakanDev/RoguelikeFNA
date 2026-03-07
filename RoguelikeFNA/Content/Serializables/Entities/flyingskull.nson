@@ -38,7 +38,14 @@ RoguelikeFNA.Utils.SerializedEntity(
 		RoguelikeFNA.PlatformerMover(),
 		RoguelikeFNA.Entities.RangedEnemyAI(),
 		RoguelikeFNA.Entities.GameEntity(),
-		RoguelikeFNA.Entities.ExplodeDeathFx()
+		RoguelikeFNA.Entities.ExplodeDeathFx(),
+		RoguelikeFNA.Entities.DeathCorpseParticles(
+			Sprites: [
+				"Sprites/Gore/SkullCorpse1.png",
+				"Sprites/Gore/SkullCorpse2.png",
+				"Sprites/Gore/SkullCorpse3.png"
+			]
+		)
 	],
 	Children: [
 
